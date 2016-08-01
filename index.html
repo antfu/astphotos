@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Photos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
+  <link rel="stylesheet" href="static/style.css">
+  <script type="text/javascript" src="static/js/jquery-3.1.0.min.js"></script>
+  <script type="text/javascript" src="static/js/vue.js"></script>
+</head>
+<body>
+  <div class="nav" id="nav">
+    <div v-if="!album" class="headers">
+      <div class="header">${title}</div>
+      <div class="sub header">${des}</div>
+    </div>
+    <div v-if="album" class="headers">
+      <div class="header">${album.name.toLowerCase()}</div>
+      <div class="sub header">${album.des || (album.amount + ' photos')}</div>
+    </div>
+    <div v-if="album" class="pages">
+      <div class="current">${current_page}</div>
+      <div class="divider">/</div>
+      <div class="total">${album.amount}</div>
+    </div>
+    <div @click="collapse" v-if="album" class="back">
+      <
+    </div>
+  </div>
+
+  <div id="gallery" class="gallery hidden">
+    <div class="horizontal scroller">
+      <div v-for="photo in photos" class="detail">
+        <div class="photo full" :style="{background: photo.color, width: photo.width * photo_height() / photo.height, height: photo_height()}">
+          <img class="image" :src="photo.path"
+               v-full-photo style="opacity:0;transition: opacity 0.3s ease-in;">
+        </div>
+        <div v-if="display_info" class="info">
+          <div v-if="photo.title" class="title">${photo.title}</div>
+          <div v-if="photo.des"class="des">${photo.des}</div>
+          <div v-if="photo.photographer" class="photographer"><span class="label">photographer:</span> ${photo.photographer}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="albums" class="horizontal albums">
+    <div v-if="gallery_view" class="block title">albums</div>
+    <div v-for="album in albums" @click="expand(album)" class="square photo cover" :style="{background:album.color}">
+      <img class="image" :src="album.cover" v-square-image style="opacity:0;transition: opacity 0.3s ease-in;">
+      <div class="overlay">
+        <div class="info">
+          <div class="amount">${album.amount} photos</div>
+          <div class="dash"></div>
+          <p class="name">${album.name}</p>
+          <p v-if="album.des" class="des">${album.des}</p>
+          <p v-if="album.photographer"><span class="label">photographer:</span> ${album.photographer}</p>
+          <p v-if="album.location"><span class="label">location:</span> ${album.location}</p>
+          <div v-if="album.comments" class="dash"></div>
+          <p v-if="album.comments">${album.comments} comments</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a class="cell" href="https://antnf.com">&anthony</a>
+    <a class="cell" href="https://creativecommons.org/licenses/by-nc-nd/4.0">CC BY-NC-ND</a>
+  </div>
+
+</body>
+<script type="text/javascript" src="static/index.js"></script>
+</html>

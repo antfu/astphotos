@@ -1,0 +1,312 @@
+html, body, div
+{
+  font-family: monospace, 'Hiragino Sans GB', 'Microsoft Yahei', '微软雅黑', MingLiU, Arial, sans-serif;
+  color: #fff;
+  cursor: default;
+}
+body
+{
+  margin: 0;
+  background: rgba(0,0,0,0.015);
+}
+
+a
+{
+  color: #fff;
+  opacity: 0.7;
+  text-decoration: none;
+  transition: opacity 0.3s ease-in;
+}
+a:hover
+{
+  opacity: 1;
+}
+
+.nav
+{
+  padding: 2em 3em 3em 3em;
+  transition: all 0.3s ease-in-out;
+}
+.nav *
+{
+  color: #222;
+}
+.nav .headers
+{
+  display: inline-block;
+}
+.nav .header
+{
+  transition: all 0.3s ease-in-out;
+}
+.nav .sub.header
+{
+  opacity: 0.5;
+}
+.nav .pages
+{
+  margin-left: 2em;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+}
+.nav .back
+{
+  margin: 0.5em;
+  vertical-align: middle;
+  transition: all 0.3s ease-in-out;
+  display: inline-block;
+}
+.nav .pages .total
+{
+  opacity: 0.6;
+}
+.nav .pages *
+{
+  display: inline-block;
+}
+.block.title
+{
+  margin: 1em 2em;
+  color: #222;
+  font-weight: bold;
+}
+
+.footer
+{
+  padding: 2em 1em;
+  transition: all 0.3s ease-in-out;
+}
+.footer *
+{
+  color: #222;
+}
+.footer .cell
+{
+  margin: 0 3em;
+}
+
+/* =============== Albums =============== */
+.albums.horizontal
+{
+  margin: 0;
+  width: 100%;
+  overflow-y: hidden;
+  position: relative;
+}
+.albums.horizontal .photo
+{
+  display: inline-block;
+}
+.albums.horizontal .hover.arrow
+{
+  width: 5%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0);
+}
+
+/* =============== Photo =============== */
+.photo
+{
+  cursor: default;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  margin-bottom: -4px;
+  overflow: hidden;
+}
+.photo.full .image
+{
+  /*max-width: 100%;*/
+  max-height: 100%;
+  margin: 0;
+}
+
+/* =============== Overlay =============== */
+.overlay
+{
+  position: absolute;
+  opacity: 0;
+  color: #fff;
+  font-size: 0.8em;
+  padding: 2em;
+  background: rgba(0,0,0,0.4);
+  transition: all 0.3s ease-in;
+}
+.overlay.left
+{
+  width: 20em;
+  top:0;
+  left:0;
+  bottom:0;
+}
+.overlay.right
+{
+  width: 20em;
+  top:0;
+  bottom:0;
+  right:0;
+}
+.overlay.bottom
+{
+  height: 10em;
+  left:0;
+  bottom:0;
+  right:0;
+}
+.overlay:not(.left):not(.right):not(.bottom)
+{
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+}
+.overlay:hover
+{
+  opacity: 1;
+}
+.overlay .info .dash
+{
+  background: #ffffff;
+  width: 1.4em;
+  height: 0.1em;
+  margin: 1em 0;
+  opacity: 0.7;
+}
+.overlay .info .label
+{
+  color: #ccc;
+}
+.overlay .info .des
+{
+  opacity: 0.6;
+  margin-top: -1em;
+  margin-bottom: -0.5em;
+}
+.overlay .text
+{
+  margin: 2em 0;
+}
+.overlay.bottom .info, .overlay.bottom .text
+{
+  margin: 0 0 0 10em;
+  max-width: 40em;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* =============== Gallery =============== */
+.gallery
+{
+  transition: all 0.4s ease-in-out;
+  padding-bottom: 2em;
+  margin: 0;
+}
+.gallery.hidden
+{
+  padding-bottom: 0;
+}
+.gallery .detail{
+  padding: 0;
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 1em;
+}
+.gallery .detail *{
+  color: #222;
+}
+.gallery .detail .info, .gallery .detail .comments {
+  padding: 0.5em 1em;
+}
+.gallery .detail .info .title{
+}
+.gallery .detail .info .desc{
+  opacity: 0.5;
+}
+.gallery .photo{
+  margin: 0;
+  height: 40em;
+  padding: 0;
+}
+.horizontal.scroller
+{
+  overflow-y: hidden;
+  overflow-x: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
+
+
+.hidden
+{
+  opacity: 0 !important;
+}
+
+/* =============== Media Query =============== */
+/* tablets and desktop */
+@media only screen and (min-width: 1001px) {
+  .photo.cover
+  {
+    width: 20%;
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1000px) {
+  .photo.cover
+  {
+    width: 25%;
+  }
+  .gallery .photo{
+    height: 30em;
+  }
+}
+
+/* phones landscope */
+@media only screen and (min-width: 431px) and (max-width: 767px) {
+  .photo.cover
+  {
+    width: 33.33333333%;
+  }
+  .gallery .detail{
+    margin: 0 0.5em;
+  }
+  .gallery .photo{
+    height: 25em;
+  }
+}
+
+/* phones */
+@media only screen and (max-width: 430px) {
+  .photo.cover
+  {
+    width: 50%;
+  }
+  .nav
+  {
+    padding: 1.5em 2em;
+  }
+  .overlay
+  {
+    padding: 1.3em;
+  }
+  .gallery .detail{
+    margin: 0 0.2em;
+  }
+  .gallery .photo{
+    height: 20em;
+  }
+  .horizontal.scroller
+  {
+    overflow-y: scroll;
+  }
+}
+
+
+/* small phones */
+@media only screen and (max-width: 367px) {
+  .photo.cover
+  {
+    width: 100%;
+  }
+}
