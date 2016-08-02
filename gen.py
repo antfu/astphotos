@@ -19,6 +19,10 @@ class infodict(dict):
     def __getattr__(self,key):
         return self.get(key,None)
 
+    def __delattr__(self,key):
+        if key in self.keys():
+            del(self[key])
+
 
 configs = infodict(
     src_dir = 'static/img',
@@ -45,6 +49,9 @@ configs = infodict(
     # For title and desc you should modify the "ImageDescription",
     # in format [title|desc]
     extract_exif = True,
+
+    # Display exposure and aperture info
+    exif_exposure = True,
 
     # TODO
     # Extract the photo's location info from EXIF
@@ -111,6 +118,11 @@ def generate_struct_tree(save = True):
             photo.path = photo_path.replace('\\','/')
             if configs.use_filename_as_default_title and not photo.title:
                 photo.title = clear_ext(os.path.basename(photo_path))
+            if not photo.photographer and configs.default_photographer:
+                photo.photographer = configs.default_photographer
+            if not configs.exif_exposure:
+                del(photo.aperture)
+                del(photo.exposure)
             album.photos.append(photo)
             photo_id += 1
 

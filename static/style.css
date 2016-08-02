@@ -74,7 +74,7 @@ a:hover
 
 .footer
 {
-  padding: 2em 1em;
+  padding: 2em 3em 3em 3em;
   transition: all 0.3s ease-in-out;
 }
 .footer *
@@ -233,7 +233,21 @@ a:hover
 .gallery .detail .info .title{
 }
 .gallery .detail .info .desc{
-  opacity: 0.5;
+  font-size: 0.8em;
+  color: rgba(0,0,0,0.9);
+}
+.gallery .detail .info .meta{
+  font-size: 0.7em;
+  color: rgba(0,0,0,0.7);
+}
+.gallery .detail .info .sub.meta{
+  opacity: 0.7;
+  float: right;
+  display: inline-block;
+  margin-left: 0.5em;
+}
+.gallery .detail .info .label{
+  color: rgba(0,0,0,1);
 }
 .gallery .photo{
   margin: 0;

@@ -36,10 +36,14 @@
           <img class="image" :src="photo.path"
                v-full-photo style="opacity:0;transition: opacity 0.3s ease-in;">
         </div>
-        <div v-if="display_info" class="info">
+        <div v-if="current.display_info" class="info">
+          <div v-if="photo.aperture" class="sub meta">${photo.aperture}</div>
+          <div v-if="photo.exposure" class="sub meta">${photo.exposure}</div>
+
           <div v-if="photo.title" class="title">${photo.title}</div>
           <div v-if="photo.des" class="des">${photo.des}</div>
-          <div v-if="photo.photographer" class="photographer"><span class="label">photographer:</span> ${photo.photographer}</div>
+          <div v-if="photo.photographer" class="meta"><span class="label">&</span>${photo.photographer}</div>
+          <div v-if="photo.location" class="meta"><span class="label">@</span>${photo.location}</div>
         </div>
       </div>
     </div>

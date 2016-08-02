@@ -63,7 +63,7 @@ function get_gallery_photo_height() {
   if (!gallery_photo_resized)
     return gallery_photo_height;
   var temp = $('<div class="gallery" class="opacity:0"><div class="photo"></div></div>').appendTo('body');
-  gallery_photo_height = temp.find('.photo').height();
+  gallery_photo_height = temp.find('.photo').height() + 50;
   gallery_photo_resized = false;
   temp.remove();
   return gallery_photo_height;
