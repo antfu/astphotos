@@ -45,7 +45,7 @@ configs = infodict(
 
     # If there is not title infomation in JSON file or EXIF tags,
     # use the file name as the title of the photo
-    use_filename_as_default_title = False,
+    use_filename_as_default_title = True,
 
     # TODO
     # The order of gallery photos,
@@ -80,7 +80,7 @@ configs = infodict(
     # this feature can bring a better user-experience in website,
     # but may cost more time while generating structure tree
     # (default: True)
-    calc_image_average_color = True,
+    calc_image_average_color = False,
 
     # Display the info in gallery view, such as title, desc, etc.
     # Can be overrided in "_album.json" and "[photo_name].json"
@@ -95,6 +95,10 @@ cfg = configs
 def run():
     log('*** Generator Start ***')
 
+    log('- Copying static files...')
+    copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
+    log('- Copying completed')
+
     log('- Generating Structure tree...')
     struct_tree = generate_struct_tree()
     log('- Generating completed')
@@ -104,12 +108,8 @@ def run():
     save_json(json_path ,struct_tree)
     log('- Saving completed')
 
-    log('- Copying static files...')
-    copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
-    log('- Copying completed')
-
     log('- Rendering template file...')
-    render(pjoin(cfg.src_dir,'template.html'),pjoin(cfg.out_dir,'index.html'))
+    render(pjoin(cfg.src_dir,'index.html'),pjoin(cfg.out_dir,'index.html'))
     log('- Rendering completed')
 
     log('*** Task Completed ***')
@@ -171,7 +171,9 @@ def generate_struct_tree():
             photo.update_json(change_ext(photo_path,'json'))
             photo.path = photo_href_path.replace('\\','/')
             if cfg.use_filename_as_default_title and not photo.title:
-                photo.title = clear_ext(os.path.basename(photo_path))
+                name = clear_ext(os.path.basename(photo_path))
+                if not name.startswith('_'):
+                    photo.title = clear_ext(os.path.basename(photo_path))
             if not photo.photographer and cfg.default_photographer:
                 photo.photographer = cfg.default_photographer
             if not cfg.exif_exposure:
@@ -198,9 +200,16 @@ def generate_struct_tree():
             album.photos.append(photo)
             photo_id += 1
 
+        log('  ' + '-' * 20)
+        album.cover = album.cover or ('_cover.'+src_file_type)
+        if not os.path.exists(pjoin(album_out_path,album.cover)):
+            del(album.cover)
+            log('  !Warning: cover [',album.cover,'] not exist.')
+
         if album.cover:
-            album.cover = os.path.join(img_src_dir,album_name,album.cover).replace('\\','/')
-            if album.photos:
+            album.cover = pjoin(cfg.static_dir,cfg.img_dir,album_name,album.cover).replace('\\','/')
+            # Take the color of cover if need
+            if cfg.calc_image_average_color and album.photos:
                 for p in album.photos:
                     if p.path == album.cover:
                         album.color = album.color
@@ -208,11 +217,15 @@ def generate_struct_tree():
 
         if album.photos:
             if not album.cover:
+                # Random choice a photo as cover
                 choiced_cover = (random.choice(album.photos))
                 album.cover = choiced_cover.path
                 album.color = choiced_cover.color
             album.amount = len(album.photos)
             struct_tree.albums.append(album)
+            log('  Cover :',os.path.basename(album.cover))
+            log('  Amount:',album.amount)
+            log()
             album_id += 1
 
     return struct_tree
@@ -293,7 +306,10 @@ def get_exif(img_path):
     # Exposure Time
     exposure = tags.get('EXIF ExposureTime',None)
     if exposure:
-        result.exposure = exposure.printable
+        exposure = exposure.printable
+        if not '/' in exposure:
+            exposure += 's'
+        result.exposure = exposure
     # Tooken DateTime
     dt = tags.get('EXIF DateTimeOriginal',None)
     if dt:
@@ -366,5 +382,5 @@ def clear_ext(filepath):
 
 
 if __name__ == '__main__':
-    if input('Sure? [y/n]') == 'y':
-        run()
+    #if input('Sure? [y/n]') == 'y':
+    run()

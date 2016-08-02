@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="static/vue-animate.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script type="text/javascript" src="static/jquery-3.1.0.min.js"></script>
-  <script type="text/javascript" src="static/vue.js"></script>
+  <script type="text/javascript" src="static/vue.min.js"></script>
   <script type="text/javascript" src="static/vue-animated-list.js"></script>
 </head>
 <body>
@@ -58,10 +58,10 @@
       <img class="image" :src="album.cover" v-square-image style="opacity:0;transition: opacity 0.3s ease-in;">
       <div class="overlay">
         <div class="info">
-          <div class="amount">${album.amount} photos</div>
-          <div class="dash"></div>
-          <p class="name">${album.name}</p>
+          <div class="name">${album.name}</div>
           <p v-if="album.des" class="des">${album.des}</p>
+          <div class="dash"></div>
+          <p class="amount">${album.amount} photos</p>
           <p v-if="album.photographer"><span class="label">photographer:</span> ${album.photographer}</p>
           <p v-if="album.location"><span class="label">location:</span> ${album.location}</p>
           <div v-if="album.comments" class="dash"></div>

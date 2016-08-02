@@ -147,7 +147,7 @@ a:hover
   color: #fff;
   font-size: 0.8em;
   padding: 2em;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.5);
   transition: all 0.3s ease-in;
 }
 .overlay.left
@@ -182,6 +182,10 @@ a:hover
 {
   opacity: 1;
 }
+.overlay .info .name
+{
+  font-weight: bold;
+}
 .overlay .info .dash
 {
   background: #ffffff;
@@ -190,15 +194,18 @@ a:hover
   margin: 1em 0;
   opacity: 0.7;
 }
+.overlay .info p
+{
+  opacity: 0.8;
+  font-weight: lighter;
+}
 .overlay .info .label
 {
-  color: #ccc;
+  opacity: 0.7;
 }
 .overlay .info .des
 {
-  opacity: 0.6;
-  margin-top: -1em;
-  margin-bottom: -0.5em;
+  opacity: 0.8;
 }
 .overlay .text
 {
