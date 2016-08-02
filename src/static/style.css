@@ -65,7 +65,7 @@ a:hover
   margin-left: 2em;
   display: inline-block;
   transition: all 0.3s ease-in-out;
-  vertical-align: bottom;
+  vertical-align: baseline;
 }
 .nav .pages .total
 {
@@ -355,5 +355,8 @@ a:hover
   .footer .cell{
     display: block;
     margin-left: 0;
+  }
+  .nav .pages{
+    display: block;
   }
 }

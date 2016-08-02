@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Photos</title>
+  <title></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
   <link rel="stylesheet" href="static/style.css">
@@ -42,7 +42,6 @@
         <div v-if="current.display_info" class="info">
           <div v-if="photo.aperture" class="sub meta">${photo.aperture}</div>
           <div v-if="photo.exposure" class="sub meta">${photo.exposure}</div>
-
           <div v-if="photo.title" class="title">${photo.title}</div>
           <div v-if="photo.des" class="des">${photo.des}</div>
           <div v-if="photo.photographer" class="meta"><span class="label">&</span>${photo.photographer}</div>
@@ -71,11 +70,10 @@
     </div>
   </div>
 
-  <div class="footer">
+  <div id="footer" class="footer">
     <a class="cell" href="https://antnf.com">&anthony</a>
     <a class="cell" href="https://creativecommons.org/licenses/by-nc-nd/4.0">CC BY-NC-ND</a>
   </div>
-
 </body>
 <script type="text/javascript" src="static/index.js"></script>
 </html>

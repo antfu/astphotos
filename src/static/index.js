@@ -57,8 +57,17 @@ $.getJSON('/static/struct.json',function(data){
   vue_inst_nav.$data = full_data;
   vue_inst_albums.$data = full_data;
   vue_inst_gallery.$data = full_data;
+  update_title();
 })
 
+
+function update_title() {
+  if (full_data.viewmode == 0)
+    document.title = full_data.title;
+  else if (full_data.current) {
+    document.title = full_data.current.name + ' - ' +full_data.title;
+  }
+}
 function get_gallery_photo_height() {
   if (!gallery_photo_resized)
     return gallery_photo_height;
@@ -73,12 +82,15 @@ function gallery_expend(album) {
   Vue.set(full_data,'current',album);
   Vue.set(full_data,'viewmode',1);
   $('#gallery').removeClass('hidden');
+  gallery_scroll_reset();
   resize_gallery();
+  update_title();
 }
 function gallery_collapse() {
   Vue.set(full_data,'viewmode',0);
   $('#gallery').addClass('hidden');
   resize_gallery();
+  update_title();
 }
 
 function resize_gallery() {
@@ -100,21 +112,74 @@ function get_gallery_photo_y_offset() {
   return result;
 }
 
+var $scroller = $('.horizontal.scroller');
+var scrolling = false;
+function gallery_scroll(direction) {
+  if (scrolling)
+    return;
+
+  var current = $scroller.scrollLeft();
+  var offsets = get_gallery_photo_y_offset();
+
+  var min_value;
+  var min_index = 0;
+  for (var i = 0; i < offsets.length; i++) {
+    var value = Math.abs(offsets[i]);
+    if (min_value === undefined || min_value > value){
+      min_index = i;
+      min_value = value;
+    }
+  }
+
+  var target_index = min_index + direction;
+  var target = offsets[target_index] + current;
+  var distance = Math.abs(offsets[target_index]);
+
+  if (target_index < 0 || target_index >= offsets.length)
+    return;
+
+  scrolling = true;
+  $scroller.animate({
+     scrollLeft: target,
+  }, distance / 2, function() {
+    // Animation complete.
+    scrolling = false;
+  });
+}
+function gallery_scroll_reset() {
+  scrolling = true;
+  $scroller.animate({
+     scrollLeft: 0,
+  }, $scroller.scrollLeft() / 2, function() {
+    // Animation complete.
+    scrolling = false;
+  });
+}
 function horizontal_scroll(e) {
+  if (scrolling) {
+    e.preventDefault();
+    return;
+  }
   e = window.event || e;
   var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-  var $scroller = $('.horizontal.scroller');
-  var scroller = $scroller[0];
-  scroller.scrollLeft -= (delta*40); // Multiplied by 40
-  /*
-  if (delta < 0) delta = -1;
-  else if (delta == 0) delta = 0;
-  else delta = 1;
-  $('.horizontal.scroller')[0].scrollLeft -= (delta * $('#gallery .photo').width());
-  */
-  if (scroller.scrollLeft > 10 && scroller.scrollLeft < scroller.scrollWidth - $scroller.width() - 10)
-    e.preventDefault();
+  if (delta == 0)
+    return;
+  else if (delta < 0)
+  {
+    if ($scroller.scrollLeft() >= ($scroller[0].scrollWidth - $scroller.width()))
+      return
+    direction = 1;
+  }
+  else
+  {
+    if ($scroller.scrollLeft() <= 0)
+      return;
+    direction = -1;
+  }
+
+  gallery_scroll(direction);
+  e.preventDefault();
 }
-$('.horizontal.scroller').bind('mousewheel DOMMouseScroll',horizontal_scroll);
+$scroller.bind('mousewheel DOMMouseScroll',horizontal_scroll);
 $(window).resize(resize_updete);
 $(resize_updete);
