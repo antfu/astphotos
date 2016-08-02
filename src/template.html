@@ -6,13 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
   <link rel="stylesheet" href="static/style.css">
-  <script type="text/javascript" src="static/js/jquery-3.1.0.min.js"></script>
-  <script type="text/javascript" src="static/js/vue.js"></script>
+  <link rel="stylesheet" href="static/vue-animate.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script type="text/javascript" src="static/jquery-3.1.0.min.js"></script>
+  <script type="text/javascript" src="static/vue.js"></script>
+  <script type="text/javascript" src="static/vue-animated-list.js"></script>
 </head>
 <body>
   <div class="nav" id="nav">
     <div @click="collapse" v-if="viewmode" class="back">
-      <
+      <div><</div>
     </div>
     <div v-if="!viewmode" class="headers">
       <div class="header">${title}</div>

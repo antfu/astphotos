@@ -30,6 +30,7 @@ a:hover
 .nav *
 {
   color: #222;
+  vertical-align: top;
 }
 .nav .headers
 {
@@ -43,19 +44,28 @@ a:hover
 {
   opacity: 0.5;
 }
+.nav .back
+{
+  font-size: 1.2em;
+  line-height: 2em;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  display: inline-block;
+}
+.nav .back:hover
+{
+  background: rgba(0,0,0,0.2);
+}
+.nav .back div
+{
+  margin: 0 0.5em;
+}
 .nav .pages
 {
   margin-left: 2em;
   display: inline-block;
   transition: all 0.3s ease-in-out;
-}
-.nav .back
-{
-  padding: 0.5em;
-  height: 2em;
-  vertical-align: middle;
-  transition: all 0.3s ease-in-out;
-  display: inline-block;
+  vertical-align: bottom;
 }
 .nav .pages .total
 {
@@ -101,6 +111,7 @@ a:hover
 .albums.horizontal .photo
 {
   display: inline-block;
+  cursor: pointer;
 }
 .albums.horizontal .hover.arrow
 {

@@ -1,12 +1,14 @@
 import os
+import sys
 import json
 import glob
 import codecs
 import random
 import datetime
 import exifread
+import shutil
+import jinja2
 from   PIL import Image # PIL using Pillow (PIL fork)
-
 
 class infodict(dict):
     def update_json(self,jsonpath):
@@ -25,10 +27,21 @@ class infodict(dict):
 
 
 configs = infodict(
-    src_dir = 'static/img',
+    src_dir = 'src',
+    out_dir = 'out',
+
+    static_dir = 'static',
+    img_dir = 'img',
+    sturct_filename = 'struct.json',
     src_file_type = 'jpg',
+
+    use_out = False,
+    lazy_copy = True,
+    photo_resize = True,
+    photo_resize_horizontal_max_size = (3000,0),
+    photo_resize_vertical_max_size = (0,3000),
+
     default_photographer = 'anthony.f',
-    sturct_output_filename = 'struct.json',
 
     # If there is not title infomation in JSON file or EXIF tags,
     # use the file name as the title of the photo
@@ -74,60 +87,119 @@ configs = infodict(
     display_info = True
 )
 
+# Shorthand alias
 log = print
+pjoin = os.path.join
+cfg = configs
 
-def generate_struct_tree(save = True):
-    src_dir = configs.src_dir
-    src_file_type = configs.src_file_type
+def run():
+    log('*** Generator Start ***')
 
-    log('Structure tree generator started at',src_dir)
+    log('- Generating Structure tree...')
+    struct_tree = generate_struct_tree()
+    log('- Generating completed')
+
+    json_path = pjoin(cfg.out_dir,cfg.static_dir,cfg.sturct_filename)
+    log('- Saving struct json file...')
+    save_json(json_path ,struct_tree)
+    log('- Saving completed')
+
+    log('- Copying static files...')
+    copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
+    log('- Copying completed')
+
+    log('- Rendering template file...')
+    render(pjoin(cfg.src_dir,'template.html'),pjoin(cfg.out_dir,'index.html'))
+    log('- Rendering completed')
+
+    log('*** Task Completed ***')
+
+
+def generate_struct_tree():
+    img_src_dir = os.path.join(cfg.src_dir,cfg.img_dir)
+    img_out_dir = os.path.join(cfg.out_dir,cfg.static_dir,cfg.img_dir)
+
+    if not os.path.exists(os.path.join(cfg.out_dir,cfg.static_dir)):
+        os.mkdir(os.path.join(cfg.out_dir,cfg.static_dir))
+    if not os.path.exists(img_out_dir):
+        os.mkdir(img_out_dir)
+
+    src_file_type = cfg.src_file_type
 
     struct_tree = infodict()
-    struct_tree.update_json(os.path.join(src_dir,'_site.json'))
+    struct_tree.update_json(os.path.join(img_src_dir,'_site.json'))
     struct_tree.albums = []
 
     album_id = 0
-    for album_path in os.listdir(src_dir):
+    for album_name in os.listdir(img_src_dir):
+        album_path = pjoin(img_src_dir,album_name)
+        album_out_path = pjoin(img_out_dir,album_name)
+
         # Skip if it's not a dir
-        if not os.path.isdir(os.path.join(src_dir,album_path)):
+        if not os.path.isdir(album_path):
             continue
+
+        if not os.path.exists(album_out_path):
+            os.mkdir(album_out_path)
 
         album = infodict()
         album.id = album_id
-        album.display_info = configs.display_info
-        album.update_json(os.path.join(src_dir,album_path,'_album.json'))
+        album.display_info = cfg.display_info
+        album.update_json(pjoin(album_path,'_album.json'))
         if not album.name:
-            album.name = album_path
-        if not album.photographer and configs.default_photographer:
-            album.photographer = configs.default_photographer
+            album.name = album_name
+        if not album.photographer and cfg.default_photographer:
+            album.photographer = cfg.default_photographer
 
-        log('  Ablum:', album.name)
+        log('  Ablum:', remove_unicode(album.name))
 
         album.photos = []
         photo_id = 0
-        for photo_path in glob.glob(os.path.join(src_dir,album_path,'*.'+src_file_type)):
-            log('    ', os.path.basename(photo_path))
+        for photo_path in glob.glob(pjoin(album_path,'*.'+src_file_type)):
+            photo_filename = os.path.basename(photo_path)
+            photo_out_path = pjoin(album_out_path,photo_filename)
+            photo_href_path = pjoin(cfg.static_dir,cfg.img_dir,album_name,photo_filename)
+
+            log('    ', remove_unicode(photo_filename), end='')
 
             photo = infodict()
             photo.id = photo_id
             # Update info from the image's EXIF tags
-            if configs.extract_exif:
+            if cfg.extract_exif:
                 photo.update(get_exif(photo_path))
             # Update info from the same-name json file if it exists
             photo.update_json(change_ext(photo_path,'json'))
-            photo.path = photo_path.replace('\\','/')
-            if configs.use_filename_as_default_title and not photo.title:
+            photo.path = photo_href_path.replace('\\','/')
+            if cfg.use_filename_as_default_title and not photo.title:
                 photo.title = clear_ext(os.path.basename(photo_path))
-            if not photo.photographer and configs.default_photographer:
-                photo.photographer = configs.default_photographer
-            if not configs.exif_exposure:
+            if not photo.photographer and cfg.default_photographer:
+                photo.photographer = cfg.default_photographer
+            if not cfg.exif_exposure:
                 del(photo.aperture)
                 del(photo.exposure)
+
+            # Lazy copy
+            if cfg.lazy_copy and os.path.exists(photo_out_path):
+                log('  [Skip]', end='')
+            else:
+                # Resize and Save
+                if cfg.photo_resize:
+                    log('  [Resizing]', end='')
+                    im = Image.open(photo_path)
+                    rim = im_resize(im)
+                    rim.save(photo_out_path)
+                    im.close()
+                # Just copy
+                else:
+                    log('  [Copying]', end='')
+                    shutil.copy(photo_path,photo_out_path)
+
+            log()
             album.photos.append(photo)
             photo_id += 1
 
         if album.cover:
-            album.cover = os.path.join(src_dir,album_path,album.cover).replace('\\','/')
+            album.cover = os.path.join(img_src_dir,album_name,album.cover).replace('\\','/')
             if album.photos:
                 for p in album.photos:
                     if p.path == album.cover:
@@ -143,19 +215,64 @@ def generate_struct_tree(save = True):
             struct_tree.albums.append(album)
             album_id += 1
 
-    log()
-    log('Generate finished')
-    if save:
-        json_path = os.path.join('static',configs.sturct_output_filename)
-        log('Saving json file at', json_path)
-        save_json(json_path ,struct_tree)
+    return struct_tree
 
-    log('=== Task finished ===')
+def codecs_open(filename,open_type,encode=None):
+    return codecs.open(
+        filename.encode(sys.getfilesystemencoding()),
+        open_type,
+        encode)
+
+def copydir(src,dst):
+    if not os.path.exists(dst):
+        os.mkdir(dst)
+    for f in glob.glob(os.path.join(src,'*.*')):
+        filename = os.path.basename(f)
+        dst_path = os.path.join(dst,filename)
+        shutil.copy(f,dst_path)
+
+def render(src,dst,**kwargs):
+    f = codecs_open(src,'r','utf-8')
+    s = f.read()
+    f.close()
+    j = jinja2.Template(s)
+    s = j.render(**kwargs)
+    f = codecs_open(dst,'w','utf-8')
+    f.write(s)
+    f.close()
+
+def im_resize(img):
+    size = img.size
+    if size[0] >= size[1]:
+        t_size = cfg.photo_resize_horizontal_max_size
+    else:
+        t_size = cfg.photo_resize_vertical_max_size
+    if not t_size:
+        return img
+    if t_size[0] == 0 and t_size[1] == 0:
+        return img
+    if t_size[0] > size[0] and t_size[1] > size[1]:
+        return img
+
+    t_width = size[0]
+    t_height = size[1]
+    if t_size[0] != 0 and t_width > t_size[0]:
+        old_width = t_width
+        t_width = t_size[0]
+        t_height = t_height * t_width / old_width
+    if t_size[1] != 0 and t_height > t_size[1]:
+        old_height = t_height
+        t_height = t_size[1]
+        t_width = t_width * t_height / old_height
+
+    resized_img = img.resize((int(t_width),int(t_height)))
+
+    return resized_img
 
 # === Utils === #
 def get_tags(img_path):
     # Open image file for reading (binary mode)
-    f = open(img_path, 'rb')
+    f = codecs_open(img_path, 'rb')
     # Return Exif tags
     tags = exifread.process_file(f, details=False)
     f.close()
@@ -188,7 +305,7 @@ def get_exif(img_path):
     result.height = im.size[1]
 
     # Calc average color
-    if configs.calc_image_average_color:
+    if cfg.calc_image_average_color:
         resize_width = 10
         resize_height = 10
         s_im = im.resize((resize_width,resize_height))
@@ -218,6 +335,9 @@ def get_exif(img_path):
 
     return result
 
+def remove_unicode(string):
+    return string.encode('ascii','ignore').decode('utf-8')
+
 def hex_to_rgb(value):
     value = value.lstrip('#')
     lv = len(value)
@@ -228,13 +348,13 @@ def rgb_to_hex(rgb):
 
 
 def open_json(filepath):
-    f = codecs.open(filepath,'r','utf-8')
+    f = codecs_open(filepath,'r','utf-8')
     s = f.read()
     f.close()
     return json.loads(s)
 
 def save_json(filepath,obj):
-    f = codecs.open(filepath, 'w', 'utf-8')
+    f = codecs_open(filepath, 'w', 'utf-8')
     f.write(json.dumps(obj))
     f.close()
 
@@ -247,4 +367,4 @@ def clear_ext(filepath):
 
 if __name__ == '__main__':
     if input('Sure? [y/n]') == 'y':
-        generate_struct_tree()
+        run()
