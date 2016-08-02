@@ -51,7 +51,8 @@ a:hover
 }
 .nav .back
 {
-  margin: 0.5em;
+  padding: 0.5em;
+  height: 2em;
   vertical-align: middle;
   transition: all 0.3s ease-in-out;
   display: inline-block;
@@ -83,6 +84,10 @@ a:hover
 .footer .cell
 {
   margin: 0 3em;
+}
+.footer .cell:first-child
+{
+  margin-left: 0 !important;
 }
 
 /* =============== Albums =============== */
@@ -213,6 +218,12 @@ a:hover
   vertical-align: top;
   margin: 0 1em;
 }
+.gallery .detail:first-child{
+  margin-left: 0 !important;
+}
+.gallery .detail:last-child{
+  margin-right: 0 !important;
+}
 .gallery .detail *{
   color: #222;
 }
@@ -282,7 +293,7 @@ a:hover
   {
     width: 50%;
   }
-  .nav
+  .nav, .footer
   {
     padding: 1.5em 2em;
   }
@@ -308,5 +319,9 @@ a:hover
   .photo.cover
   {
     width: 100%;
+  }
+  .footer .cell{
+    display: block;
+    margin-left: 0;
   }
 }

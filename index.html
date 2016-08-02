@@ -11,27 +11,27 @@
 </head>
 <body>
   <div class="nav" id="nav">
-    <div v-if="!album" class="headers">
+    <div @click="collapse" v-if="viewmode" class="back">
+      <
+    </div>
+    <div v-if="!viewmode" class="headers">
       <div class="header">${title}</div>
       <div class="sub header">${des}</div>
     </div>
-    <div v-if="album" class="headers">
-      <div class="header">${album.name.toLowerCase()}</div>
-      <div class="sub header">${album.des || (album.amount + ' photos')}</div>
+    <div v-if="viewmode" class="headers">
+      <div class="header">${current.name.toLowerCase()}</div>
+      <div class="sub header">${current.des || (current.amount + ' photos')}</div>
     </div>
-    <div v-if="album" class="pages">
-      <div class="current">${current_page}</div>
+    <div v-if="viewmode" class="pages">
+      <div class="current">${current.page || 1}</div>
       <div class="divider">/</div>
-      <div class="total">${album.amount}</div>
-    </div>
-    <div @click="collapse" v-if="album" class="back">
-      <
+      <div class="total">${current.amount}</div>
     </div>
   </div>
 
   <div id="gallery" class="gallery hidden">
     <div class="horizontal scroller">
-      <div v-for="photo in photos" class="detail">
+      <div v-for="photo in current?current.photos:[]" class="detail">
         <div class="photo full" :style="{background: photo.color, width: photo.width * photo_height() / photo.height, height: photo_height()}">
           <img class="image" :src="photo.path"
                v-full-photo style="opacity:0;transition: opacity 0.3s ease-in;">
@@ -46,7 +46,7 @@
   </div>
 
   <div id="albums" class="horizontal albums">
-    <div v-if="gallery_view" class="block title">albums</div>
+    <div v-if="viewmode" class="block title">albums</div>
     <div v-for="album in albums" @click="expand(album)" class="square photo cover" :style="{background:album.color}">
       <img class="image" :src="album.cover" v-square-image style="opacity:0;transition: opacity 0.3s ease-in;">
       <div class="overlay">

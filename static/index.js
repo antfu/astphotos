@@ -26,12 +26,7 @@ Vue.directive('full-photo',{
 });
 var vue_inst_nav = new Vue({
   el: '#nav',
-  data: {
-    title: "Astphoto",
-    des: "A static photo gallery generator",
-    album: undefined,
-    current_page: 1
-  },
+  data: full_data,
   methods:
   {
     collapse: gallery_collapse
@@ -39,13 +34,10 @@ var vue_inst_nav = new Vue({
 });
 var vue_inst_albums = new Vue({
   el: '#albums',
-  data: {
-    albums: [],
-    gallery_view: false
-  },
+  data: full_data,
   methods: {
     expand: function (album) {
-      if ($('#gallery').hasClass('hidden') || vue_inst_gallery.$data.photos != album.photos)
+      if (full_data.viewmode == 0 || full_data.current != album)
         gallery_expend(album);
       else
         gallery_collapse();
@@ -54,9 +46,7 @@ var vue_inst_albums = new Vue({
 });
 var vue_inst_gallery = new Vue({
   el: '#gallery',
-  data: {
-    photos: []
-  },
+  data: full_data,
   methods: {
     photo_height: get_gallery_photo_height
   }
@@ -64,9 +54,9 @@ var vue_inst_gallery = new Vue({
 
 $.getJSON('/static/struct.json',function(data){
   full_data = data;
-  vue_inst_nav.$data.title = data.title;
-  vue_inst_nav.$data.des = data.des;
-  vue_inst_albums.$data.albums = data.albums;
+  vue_inst_nav.$data = full_data;
+  vue_inst_albums.$data = full_data;
+  vue_inst_gallery.$data = full_data;
 })
 
 function get_gallery_photo_height() {
@@ -80,16 +70,13 @@ function get_gallery_photo_height() {
 }
 
 function gallery_expend(album) {
-  vue_inst_gallery.$data = album;
-  vue_inst_nav.$data.album = album;
-  vue_inst_albums.$data.gallery_view = true;
+  Vue.set(full_data,'current',album);
+  Vue.set(full_data,'viewmode',1);
   $('#gallery').removeClass('hidden');
   resize_gallery();
 }
 function gallery_collapse() {
-  vue_inst_nav.$data.album_name = undefined;
-  vue_inst_nav.$data.album = undefined;
-  vue_inst_albums.$data.gallery_view = false;
+  Vue.set(full_data,'viewmode',0);
   $('#gallery').addClass('hidden');
   resize_gallery();
 }
@@ -105,7 +92,6 @@ function resize_updete() {
   gallery_photo_resized = true;
   $('.photo.cover.square').height($('.photo.cover.square').width());
   gallery_collapse();
-  vue_inst_gallery.$data = {};
 }
 
 function get_gallery_photo_y_offset() {

@@ -59,12 +59,15 @@ def generate_struct_tree(save = True):
     struct_tree = infodict()
     struct_tree.update_json(os.path.join(src_dir,'_site.json'))
     struct_tree.albums = []
+
+    album_id = 0
     for album_path in os.listdir(src_dir):
         # Skip if it's not a dir
         if not os.path.isdir(os.path.join(src_dir,album_path)):
             continue
 
         album = infodict()
+        album.id = album_id
         album.display_info = configs.display_info
         album.update_json(os.path.join(src_dir,album_path,'_album.json'))
         if not album.name:
@@ -73,9 +76,10 @@ def generate_struct_tree(save = True):
             album.photographer = configs.default_photographer
 
         album.photos = []
-
+        photo_id = 0
         for photo_path in glob.glob(os.path.join(src_dir,album_path,'*.'+src_file_type)):
             photo = infodict()
+            photo.id = photo_id
             # Update info from the image's EXIF tags
             if configs.extract_exif:
                 photo.update(get_exif(photo_path))
@@ -85,6 +89,7 @@ def generate_struct_tree(save = True):
             if configs.use_filename_as_default_title and not photo.title:
                 photo.title = clear_ext(os.path.basename(photo_path))
             album.photos.append(photo)
+            photo_id += 1
 
         if album.cover:
             album.cover = os.path.join(src_dir,album_path,album.cover).replace('\\','/')
@@ -101,6 +106,7 @@ def generate_struct_tree(save = True):
                 album.color = choiced_cover.color
             album.amount = len(album.photos)
             struct_tree.albums.append(album)
+            album_id += 1
 
     if save:
         save_json(os.path.join('static',configs.sturct_output_filename) ,struct_tree)
@@ -196,3 +202,8 @@ def change_ext(filepath,ext):
 
 def clear_ext(filepath):
     return '.'.join(filepath.split('.')[:-1])
+
+
+if __name__ == '__main__':
+    if input('Sure? [y/n]') == 'y':
+        generate_struct_tree()
