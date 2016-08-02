@@ -21,11 +21,24 @@ class infodict(dict):
 
 
 configs = infodict(
-    src_dir = 'static\\img',
+    src_dir = 'static/img',
     src_file_type = 'jpg',
     default_photographer = 'anthony.f',
     sturct_output_filename = 'struct.json',
+
+    # If there is not title infomation in JSON file or EXIF tags,
+    # use the file name as the title of the photo
     use_filename_as_default_title = False,
+
+    # TODO
+    # The order of gallery photos,
+    # the value can be one of ['name','date','shuffle']
+    photo_orderby = 'name',
+
+    # TODO
+    # True:  Ascending
+    # False: Descending
+    photo_order_ascending = True,
 
     # Extract the photo infomation from the EXIF tags
     # Such as Aperture, ExposureTime, TookenDateTime, etc.
@@ -33,10 +46,12 @@ configs = infodict(
     # in format [title|desc]
     extract_exif = True,
 
+    # TODO
     # Extract the photo's location info from EXIF
     # (default: False)
     exif_location = False,
 
+    # TODO
     # Extract the photo's title and desc from XPTags (Windows only)
     # In Windows, you can simpliy edit it in the photo file's Properties
     exif_windows_xptags = False,
@@ -49,12 +64,16 @@ configs = infodict(
 
     # Display the info in gallery view, such as title, desc, etc.
     # Can be overrided in "_album.json" and "[photo_name].json"
-    display_info = False
+    display_info = True
 )
+
+log = print
 
 def generate_struct_tree(save = True):
     src_dir = configs.src_dir
     src_file_type = configs.src_file_type
+
+    log('Structure tree generator started at',src_dir)
 
     struct_tree = infodict()
     struct_tree.update_json(os.path.join(src_dir,'_site.json'))
@@ -75,9 +94,13 @@ def generate_struct_tree(save = True):
         if not album.photographer and configs.default_photographer:
             album.photographer = configs.default_photographer
 
+        log('  Ablum:', album.name)
+
         album.photos = []
         photo_id = 0
         for photo_path in glob.glob(os.path.join(src_dir,album_path,'*.'+src_file_type)):
+            log('    ', os.path.basename(photo_path))
+
             photo = infodict()
             photo.id = photo_id
             # Update info from the image's EXIF tags
@@ -108,8 +131,14 @@ def generate_struct_tree(save = True):
             struct_tree.albums.append(album)
             album_id += 1
 
+    log()
+    log('Generate finished')
     if save:
-        save_json(os.path.join('static',configs.sturct_output_filename) ,struct_tree)
+        json_path = os.path.join('static',configs.sturct_output_filename)
+        log('Saving json file at', json_path)
+        save_json(json_path ,struct_tree)
+
+    log('=== Task finished ===')
 
 # === Utils === #
 def get_tags(img_path):

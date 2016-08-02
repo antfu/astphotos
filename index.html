@@ -31,14 +31,14 @@
 
   <div id="gallery" class="gallery hidden">
     <div class="horizontal scroller">
-      <div v-for="photo in current?current.photos:[]" class="detail">
+      <div v-for="photo in current?current.photos:[]" track-by="id" class="detail">
         <div class="photo full" :style="{background: photo.color, width: photo.width * photo_height() / photo.height, height: photo_height()}">
           <img class="image" :src="photo.path"
                v-full-photo style="opacity:0;transition: opacity 0.3s ease-in;">
         </div>
         <div v-if="display_info" class="info">
           <div v-if="photo.title" class="title">${photo.title}</div>
-          <div v-if="photo.des"class="des">${photo.des}</div>
+          <div v-if="photo.des" class="des">${photo.des}</div>
           <div v-if="photo.photographer" class="photographer"><span class="label">photographer:</span> ${photo.photographer}</div>
         </div>
       </div>
@@ -47,7 +47,7 @@
 
   <div id="albums" class="horizontal albums">
     <div v-if="viewmode" class="block title">albums</div>
-    <div v-for="album in albums" @click="expand(album)" class="square photo cover" :style="{background:album.color}">
+    <div v-for="album in albums" track-by="id" @click="expand(album)" class="square photo cover" :style="{background:album.color}">
       <img class="image" :src="album.cover" v-square-image style="opacity:0;transition: opacity 0.3s ease-in;">
       <div class="overlay">
         <div class="info">
