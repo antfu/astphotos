@@ -89,6 +89,11 @@ var vue_inst_modal = new Vue({
   methods: {
     close: function () {
       Vue.set(full_data,'viewmode',1);
+    },
+    next: function (direction) {
+      var target = full_data.current.modal + direction;
+      if (target >= 0 && target < full_data.current.amount)
+        Vue.set(full_data.current,'modal',target);
     }
   }
 });

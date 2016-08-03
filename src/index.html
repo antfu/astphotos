@@ -7,7 +7,6 @@
   <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
   <link rel="stylesheet" href="static/style.css">
   <link rel="stylesheet" href="static/vue-animate.min.css">
-  <!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
   <script type="text/javascript" src="static/jquery-3.1.0.min.js"></script>
   <script type="text/javascript" src="static/vue.min.js"></script>
   <script type="text/javascript" src="static/vue-animated-list.js"></script>
@@ -27,8 +26,8 @@
       <div class="divider">/</div>
       <div class="total">${current.amount}</div>
     </div>
-    <div @click="collapse" v-if="viewmode" class="back">
-      <div>X</div>
+    <div @click="collapse" v-if="viewmode" class="icon button back">
+      <i class="mi">clear</i>
     </div>
   </div>
 
@@ -77,8 +76,29 @@
   </div>
 
   <div id="modal" class="modal" :class="{'hidden':viewmode!=2}">
-    <div v-if="viewmode==2" class="inner" @click="close">
+    <div v-if="viewmode==2" class="inner">
       <img v-modal-image="current.modal" class="image">
+      <div class="left nav-zone" @click="next(-1)">
+        <div class="center">
+          <div class="icon button"><i class="mi">navigate_before</i></div>
+        </div>
+      </div>
+      <div class="right nav-zone" @click="next(1)">
+        <div class="center">
+          <div class="icon button"><i class="mi">navigate_next</i></div>
+        </div>
+      </div>
+      <div class="close">
+        <!--<div v-if="current.photos[current.modal].title" style="display:inline-block">
+          ${current.photos[current.modal].title}
+        </div>-->
+        <div class="pages">
+          <div class="current">${current.modal+1}</div>
+          <div class="divider">/</div>
+          <div class="total">${current.amount}</div>
+        </div>
+        <div class="icon button invert" @click="close"><i class="mi">clear</i></div>
+      </div>
     </div>
   </div>
 </body>
