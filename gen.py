@@ -96,7 +96,7 @@ def run():
     log('*** Generator Start ***')
 
     log('- Copying static files...')
-    copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
+    copy_static()
     log('- Copying completed')
 
     log('- Generating Structure tree...')
@@ -109,11 +109,22 @@ def run():
     log('- Saving completed')
 
     log('- Rendering template file...')
-    render(pjoin(cfg.src_dir,'index.html'),pjoin(cfg.out_dir,'index.html'))
+    render_index()
     log('- Rendering completed')
 
     log('*** Task Completed ***')
 
+
+def copy_static():
+    copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
+
+def render_index():
+    render(pjoin(cfg.src_dir,'index.html'),pjoin(cfg.out_dir,'index.html'))
+
+def generate_and_save():
+    struct_tree = generate_struct_tree()
+    json_path = pjoin(cfg.out_dir,cfg.static_dir,cfg.sturct_filename)
+    save_json(json_path ,struct_tree)
 
 def generate_struct_tree():
     img_src_dir = os.path.join(cfg.src_dir,cfg.img_dir)
@@ -242,31 +253,42 @@ def copydir(src,dst):
     for f in glob.glob(os.path.join(src,'*.*')):
         filename = os.path.basename(f)
         dst_path = os.path.join(dst,filename)
-        shutil.copy(f,dst_path)
+        # if the files modify time is the same, do not copy
+        if os.path.getmtime(f) != os.path.getmtime(dst_path):
+            log('  Copying',filename)
+            # use 'copy2' to keep file metadate
+            shutil.copy2(f,dst_path)
 
 def render(src,dst,**kwargs):
+    # open file
     f = codecs_open(src,'r','utf-8')
     s = f.read()
     f.close()
+    # render html file using jinja2
     j = jinja2.Template(s)
     s = j.render(**kwargs)
+    # save file
     f = codecs_open(dst,'w','utf-8')
     f.write(s)
     f.close()
 
 def im_resize(img):
     size = img.size
+    # deceide the photo is vertical or horizontal and choose the target size
     if size[0] >= size[1]:
         t_size = cfg.photo_resize_horizontal_max_size
     else:
         t_size = cfg.photo_resize_vertical_max_size
+    # if there is no size limit
     if not t_size:
         return img
     if t_size[0] == 0 and t_size[1] == 0:
         return img
+    # if the photo size is smaller than target size
     if t_size[0] > size[0] and t_size[1] > size[1]:
         return img
 
+    # target width and height (keep the aspect ratio)
     t_width = size[0]
     t_height = size[1]
     if t_size[0] != 0 and t_width > t_size[0]:
@@ -278,11 +300,13 @@ def im_resize(img):
         t_height = t_size[1]
         t_width = t_width * t_height / old_height
 
+    # resize
     resized_img = img.resize((int(t_width),int(t_height)))
-
     return resized_img
 
+
 # === Utils === #
+
 def get_tags(img_path):
     # Open image file for reading (binary mode)
     f = codecs_open(img_path, 'rb')

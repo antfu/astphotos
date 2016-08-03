@@ -9,23 +9,32 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.websocket
+import gen
 
 class index_handler(tornado.web.RequestHandler):
     def get(self):
+        static = self.get_argument("static", None)
+        photo  = self.get_argument("photo", None)
+        _all   = self.get_argument("all", None)
+        print(static != None,photo != None,_all != None)
+        if _all != None or static != None:
+            print('Copying static')
+            gen.copy_static()
+            gen.render_index()
+        if _all != None or photo != None:
+            print('Generating struct')
+            gen.generate_and_save()
         self.render('index.html')
 
 def run():
-    if not os.path.exists('logs'):
-        os.makedirs('logs')
-    args = sys.argv
-    args.append("--log_file_prefix=logs/web.log")
+    print('Start')
     tornado.options.parse_command_line()
     app = tornado.web.Application(
         handlers=[
             (r'/?',index_handler)
         ],
-        template_path='',
-        static_path='static',
+        template_path='out/',
+        static_path='out/static',
         debug=True
     )
     http_server = tornado.httpserver.HTTPServer(app)
