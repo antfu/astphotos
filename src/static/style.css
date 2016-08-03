@@ -1,3 +1,4 @@
+/* =============== Commons =============== */
 html, body, div
 {
   font-family: monospace, 'Hiragino Sans GB', 'Microsoft Yahei', '微软雅黑', MingLiU, Arial, sans-serif;
@@ -22,6 +23,7 @@ a:hover
   opacity: 1;
 }
 
+/* =============== Nav and Footer =============== */
 .nav
 {
   position: relative;
@@ -289,6 +291,40 @@ a:hover
   width: 100%;
 }
 
+/* =============== Modal =============== */
+.modal
+{
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 1;
+  background: rgba(0,0,0,0.8);
+  transition: all 0.25s ease-in-out;
+}
+.modal .inner
+{
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+.modal.hidden
+{
+  pointer-events: none;
+}
+.modal .image
+{
+  position: absolute;
+}
+.modal .image.vertical
+{
+  height: 100%;
+}
+.modal .image.horizontal
+{
+  width: 100%;
+}
 .hidden
 {
   opacity: 0 !important;
@@ -362,5 +398,6 @@ a:hover
   }
   .nav .pages{
     display: block;
+    margin-left: 0;
   }
 }

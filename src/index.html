@@ -7,7 +7,7 @@
   <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
   <link rel="stylesheet" href="static/style.css">
   <link rel="stylesheet" href="static/vue-animate.min.css">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
   <script type="text/javascript" src="static/jquery-3.1.0.min.js"></script>
   <script type="text/javascript" src="static/vue.min.js"></script>
   <script type="text/javascript" src="static/vue-animated-list.js"></script>
@@ -34,8 +34,8 @@
 
   <div id="gallery" class="gallery hidden">
     <div class="horizontal scroller">
-      <div v-for="photo in current?current.photos:[]" track-by="id" class="detail">
-        <div class="photo full" v-horizontal-scrollable-photo
+      <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail">
+        <div class="photo full" @click="open_modal(photo)" v-horizontal-scrollable-photo
             :style="{background: photo.color, width: photo.width * photo_height() / photo.height, height: photo_height()}">
           <img class="image" :src="photo.path"
                v-full-photo style="opacity:0;transition: opacity 0.3s ease-in;">
@@ -53,7 +53,7 @@
   </div>
 
   <div id="albums" class="horizontal albums">
-    <div v-if="viewmode" class="block title">albums</div>
+    <div v-if="viewmode" transition="fade" class="block title">albums</div>
     <div v-for="album in albums" track-by="id" @click="expand(album)" class="square photo cover" :style="{background:album.color}">
       <img class="image" :src="album.cover" v-square-image style="opacity:0;transition: opacity 0.3s ease-in;">
       <div class="overlay">
@@ -74,6 +74,12 @@
   <div id="footer" class="footer">
     <a class="cell" href="https://antnf.com">&anthony</a>
     <a class="cell" href="https://creativecommons.org/licenses/by-nc-nd/4.0">CC BY-NC-ND</a>
+  </div>
+
+  <div id="modal" class="modal" :class="{'hidden':viewmode!=2}">
+    <div v-if="viewmode==2" class="inner" @click="close">
+      <img v-modal-image="current.modal" class="image">
+    </div>
   </div>
 </body>
 <script type="text/javascript" src="static/index.js"></script>

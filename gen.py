@@ -184,12 +184,16 @@ def generate_struct_tree():
             # Update info from the same-name json file if it exists
             photo.update_json(change_ext(photo_path,'json'))
             photo.path = photo_href_path.replace('\\','/')
+            # Use filename as title
             if cfg.use_filename_as_default_title and not photo.title:
                 name = clear_ext(os.path.basename(photo_path))
+                # But not the filename startswith '_'
                 if not name.startswith('_'):
                     photo.title = clear_ext(os.path.basename(photo_path))
+            # Set default photographer
             if not photo.photographer and cfg.default_photographer:
                 photo.photographer = cfg.default_photographer
+            # if configed not to display exposure and aperture, delete them
             if not cfg.exif_exposure:
                 del(photo.aperture)
                 del(photo.exposure)
@@ -346,6 +350,12 @@ def get_exif(img_path):
     im = Image.open(img_path)
     result.width = im.size[0]
     result.height = im.size[1]
+    if result.width >= result.height:
+        # Horizontal
+        result.type = 0
+    else:
+        # Vertical
+        result.type = 1
 
     # Calc average color
     if cfg.calc_image_average_color:
