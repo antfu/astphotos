@@ -47,6 +47,9 @@ Vue.directive('modal-image', function (id) {
   }
   pic.attr('src',modal_data.path);
 });
+Vue.directive('scroll',function(){
+    scroll.el().scroll(scroll.update);
+});
 var vue_inst_nav = new Vue({
   el: '#nav',
   data: full_data,
@@ -80,6 +83,9 @@ var vue_inst_gallery = new Vue({
           Vue.set(full_data,'viewmode',2);
         }
       })
+    },
+    window_width: function () {
+      return $(window).width();
     }
   }
 });
@@ -152,6 +158,8 @@ function resize_gallery() {
   var g = $('#gallery');
   if (g.hasClass('hidden'))
     g.height(0);
+  else if (scroll.mode())
+    g.height('auto');
   else
     g.height(g.find('.detail').height() || get_gallery_photo_height());
 }
@@ -162,13 +170,19 @@ function resize_update() {
   gallery_collapse();
 }
 
-var $scroller = $('.horizontal.scroller');
 var scroll = {
+  el: function () { return $('#scroller'); },
+  mode: function () { return full_data.current.gallery_mode || 0; },
   scrolling: false,
-  current: $scroller.scrollLeft,
+  current: function(){
+    scroll.el().scrollLeft.apply(this, arguments);
+  },
   offsets: function () {
     var result = [];
-    $('.gallery .photo').each(function(i,e){result.push($(e).offset().left)});
+    if (scroll.mode())
+      $('.gallery .photo').each(function(i,e){result.push($(e).offset().top)});
+    else
+      $('.gallery .photo').each(function(i,e){result.push($(e).offset().left)});
     return result;
   },
   scroll: function (direction) {
@@ -182,15 +196,16 @@ var scroll = {
     scroll.to(target_index);
   },
   to: function (index) {
+    if (scroll.mode()) return;
     var offsets = scroll.offsets();
     if (index < 0 || index >= offsets.length)
       return;
 
-    var target = offsets[index] + $scroller.scrollLeft();
+    var target = offsets[index] + scroll.el().scrollLeft();
     var distance = Math.abs(offsets[index]);
 
     scroll.scrolling = true;
-    $scroller.animate({
+    scroll.el().animate({
       scrollLeft: target,
     }, distance / 2, function() {
       scroll.scrolling = false;
@@ -198,14 +213,23 @@ var scroll = {
   },
   reset: function () {
     scroll.scrolling = true;
-    $scroller.animate({
-       scrollLeft: 0,
-    }, $scroller.scrollLeft() / 2, function() {
-      // Animation complete.
-      scroll.scrolling = false;
-    });
+    if (scroll.mode()) {
+      scroll.el().animate({
+         scrollTop: 0,
+      }, scroll.el().scrollTop() / 2, function() {
+        scroll.scrolling = false;
+      });
+    }
+    else {
+      scroll.el().animate({
+         scrollLeft: 0,
+      }, scroll.el().scrollLeft() / 2, function() {
+        scroll.scrolling = false;
+      });
+    }
   },
   nesrest: function () {
+    if (scroll.mode()) return 0;
     var offsets = scroll.offsets();
     var min_value;
     var min_index = 0;
@@ -222,6 +246,8 @@ var scroll = {
     Vue.set(full_data.current,'page',scroll.nesrest()+1);
   },
   scrollwheel: function (e) {
+    if (scroll.mode()) return;
+
     if (scroll.scrolling) {
       e.preventDefault();
       return;
@@ -232,13 +258,13 @@ var scroll = {
       return;
     else if (delta < 0)
     {
-      if ($scroller.scrollLeft() >= ($scroller[0].scrollWidth - $scroller.width()))
+      if (scroll.el().scrollLeft() >= (scroll.el()[0].scrollWidth - scroll.el().width()))
         return
       direction = 1;
     }
     else
     {
-      if ($scroller.scrollLeft() <= 0)
+      if (scroll.el().scrollLeft() <= 0)
         return;
       direction = -1;
     }
@@ -246,8 +272,6 @@ var scroll = {
     e.preventDefault();
   }
 }
-
-$scroller.scroll(scroll.update);
 $(window).resize(resize_update);
 // Disable contextmenu
 $('body').contextmenu(function(e) {

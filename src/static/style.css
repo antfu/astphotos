@@ -170,19 +170,19 @@ a:hover
 }
 
 /* =============== Albums =============== */
-.albums.horizontal
+.albums
 {
   margin: 0;
   width: 100%;
   overflow-y: hidden;
   position: relative;
 }
-.albums.horizontal .photo
+.albums .photo
 {
   display: inline-block;
   cursor: pointer;
 }
-.albums.horizontal .hover.arrow
+.albums .hover.arrow
 {
   width: 5%;
   position: absolute;
@@ -209,6 +209,33 @@ a:hover
 }
 
 /* =============== Overlay =============== */
+.cover
+{
+  transition: all 0.3s ease-in;
+}
+.cover .inner-border
+{
+  transition: all 0.2s ease-in;
+  box-shadow: 0 0 0 2px #fff inset;
+  position: absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  opacity:0;
+}
+.cover.focus .inner-border
+{
+  opacity:1;
+}
+.cover.secondary
+{
+  opacity: 0.2;
+}
+.cover.secondary:hover
+{
+  opacity: 1;
+}
 .overlay
 {
   position: absolute;
@@ -299,20 +326,24 @@ a:hover
 {
   padding-bottom: 0;
 }
-.gallery .detail{
+.gallery .detail *{
+  color: #222;
+}
+.gallery .vertical .detail{
+  width: 100%;
+  position: relative;
+}
+.gallery .horizontal .detail{
   padding: 0;
   display: inline-block;
   vertical-align: top;
   margin: 0 1em;
 }
-.gallery .detail:first-child{
+.gallery .horizontal .detail:first-child{
   margin-left: 0 !important;
 }
-.gallery .detail:last-child{
+.gallery .horizontal .detail:last-child{
   margin-right: 0 !important;
-}
-.gallery .detail *{
-  color: #222;
 }
 .gallery .detail .info, .gallery .detail .comments {
   padding: 0.5em 1em;
@@ -336,7 +367,10 @@ a:hover
 .gallery .detail .info .label{
   color: rgba(0,0,0,1);
 }
-.gallery .photo{
+.gallery .vertical .detail, .gallery .vertical .detail .image{
+  width: 100%;
+}
+.gallery .horizontal .photo{
   margin: 0;
   height: 40em;
   padding: 0;
@@ -441,7 +475,7 @@ a:hover
   {
     width: 25%;
   }
-  .gallery .photo{
+  .gallery .horizontal .photo{
     height: 30em;
   }
 }
@@ -456,10 +490,10 @@ a:hover
   {
     padding: 1.5em;
   }
-  .gallery .detail{
+  .gallery .horizontal .detail{
     margin: 0 0.5em;
   }
-  .gallery .photo{
+  .gallery .horizontal .photo{
     height: 25em;
   }
 }
@@ -478,10 +512,10 @@ a:hover
   {
     padding: 1.3em;
   }
-  .gallery .detail{
+  .gallery .horizontal .detail{
     margin: 0 0.2em;
   }
-  .gallery .photo{
+  .gallery .horizontal .photo{
     height: 20em;
   }
   .nav .pages{

@@ -41,6 +41,7 @@ configs = infodict(
     photo_resize_horizontal_max_size = (3000,0),
     photo_resize_vertical_max_size = (0,3000),
 
+
     default_photographer = 'anthony.f',
 
     # If there is not title infomation in JSON file or EXIF tags,
@@ -84,7 +85,12 @@ configs = infodict(
 
     # Display the info in gallery view, such as title, desc, etc.
     # Can be overrided in "_album.json" and "[photo_name].json"
-    display_info = True
+    display_info = True,
+
+    # Gallery photos display mode
+    # 0 for horizontal mode
+    # 1 for vertical mode
+    gallery_mode = 0,
 )
 
 # Shorthand alias
@@ -159,6 +165,7 @@ def generate_struct_tree():
         album = infodict()
         album.id = album_id
         album.display_info = cfg.display_info
+        album.gallery_mode = cfg.gallery_mode
         album.update_json(pjoin(album_path,'_album.json'))
         if not album.name:
             album.name = album_name

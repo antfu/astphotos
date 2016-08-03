@@ -32,10 +32,12 @@
   </div>
 
   <div id="gallery" class="gallery hidden">
-    <div class="horizontal scroller">
+    <div v-if="current" id="scroller" v-scroller class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
       <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail">
         <div class="photo full" @click="open_modal(photo)" v-horizontal-scrollable-photo
-            :style="{background: photo.color, width: photo.width * photo_height() / photo.height, height: photo_height()}">
+            :style="{background: photo.color,
+                     width:  current.gallery_mode==0 ? (photo.width * photo_height() / photo.height) : window_width(),
+                     height: current.gallery_mode==0 ? photo_height() : undefined}">
           <img class="image" :src="photo.path"
                v-full-photo style="opacity:0;transition: opacity 0.3s ease-in;">
         </div>
@@ -51,9 +53,10 @@
     </div>
   </div>
 
-  <div id="albums" class="horizontal albums">
+  <div id="albums" class="albums">
     <div v-if="viewmode" transition="fade" class="block title">albums</div>
-    <div v-for="album in albums" track-by="id" @click="expand(album)" class="square photo cover" :style="{background:album.color}">
+    <div v-for="album in albums" track-by="id" @click="expand(album)" class="square photo cover"
+        :style="{background:album.color}" :class="{secondary:viewmode && current != album}">
       <img class="image" :src="album.cover" v-square-image style="opacity:0;transition: opacity 0.3s ease-in;">
       <div class="overlay">
         <div class="info">
@@ -67,6 +70,7 @@
           <p v-if="album.comments">${album.comments} comments</p>
         </div>
       </div>
+      <!--<div class="inner-border"></div>-->
     </div>
   </div>
 
