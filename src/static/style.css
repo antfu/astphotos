@@ -52,7 +52,7 @@ html, body, div
 body
 {
   margin: 0;
-  background: rgba(0,0,0,0.015);
+  background: #fff;
 }
 
 a
@@ -108,6 +108,17 @@ a:hover
 .pages *
 {
   display: inline-block;
+  vertical-align: center;
+}
+.pages i
+{
+  transition: all 0.2s ease-in-out;
+  font-size: 1.3em;
+  opacity: 0.6;
+}
+.pages i:hover
+{
+  opacity: 1;
 }
 .block.title
 {
@@ -117,10 +128,19 @@ a:hover
 }
 
 /* =============== Nav and Footer =============== */
+.nav-space
+{
+  height: 5em;
+}
 .nav
 {
-  position: relative;
-  padding: 2em 3em 3em 3em;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  background: rgba(255,255,255,0.95);
+  padding: 1em 3em 1em 3em;
   transition: all 0.3s ease-in-out;
 }
 .nav *
@@ -143,8 +163,8 @@ a:hover
 .nav .back
 {
   position: absolute;
-  top: 1.5em;
-  right: 1em;
+  top: 1em;
+  right: 1.5em;
 }
 .nav .pages
 {
@@ -393,6 +413,7 @@ a:hover
   bottom: 0;
   right: 0;
   opacity: 1;
+  z-index: 100;
   background: rgba(0,0,0,0.9);
   transition: all 0.25s ease-in-out;
 }
@@ -504,7 +525,7 @@ a:hover
   {
     width: 50%;
   }
-  .nav, .footer
+  .footer
   {
     padding: 1.5em 2em;
   }
@@ -521,6 +542,10 @@ a:hover
   .nav .pages{
     display: block;
     margin-left: 0;
+  }
+  .nav-space
+  {
+    height: 6em;
   }
 }
 

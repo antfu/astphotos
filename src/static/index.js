@@ -55,7 +55,16 @@ var vue_inst_nav = new Vue({
   data: full_data,
   methods:
   {
-    collapse: gallery_collapse
+    collapse: gallery_collapse,
+    scroll: function functionName(i) {
+      scroll.scroll(i);
+    },
+    scrolltop: function () {
+      // Body scrollTop
+      $('body').animate({
+         scrollTop: 0,
+      }, $('body').scrollTop() / 2, function() {});
+    }
   }
 });
 var vue_inst_albums = new Vue({
@@ -127,7 +136,7 @@ var gallery_photo_height = 0;
 function get_gallery_photo_height() {
   if (!gallery_photo_resized)
     return gallery_photo_height;
-  var temp = $('<div class="gallery" class="opacity:0"><div class="photo"></div></div>').appendTo('body');
+  var temp = $('<div class="gallery" class="opacity:0"><div class="horizontal"><div class="photo"></div></div></div>').appendTo('body');
   gallery_photo_height = temp.find('.photo').height() + 50;
   gallery_photo_resized = false;
   temp.remove();
@@ -143,7 +152,7 @@ function gallery_expend(album) {
   // Reset body scrollTop
   $('body').animate({
      scrollTop: 0,
-  }, $('body').scrollTop(), function() {});
+  }, $('body').scrollTop() / 1.5, function() {});
   resize_gallery();
   update_title();
 }
@@ -172,7 +181,11 @@ function resize_update() {
 
 var scroll = {
   el: function () { return $('#scroller'); },
-  mode: function () { return full_data.current.gallery_mode || 0; },
+  mode: function () {
+    if (full_data.current)
+      return full_data.current.gallery_mode || 0;
+    return 0
+  },
   scrolling: false,
   current: function(){
     scroll.el().scrollLeft.apply(this, arguments);
@@ -180,14 +193,12 @@ var scroll = {
   offsets: function () {
     var result = [];
     if (scroll.mode())
-      $('.gallery .photo').each(function(i,e){result.push($(e).offset().top)});
+      $('.gallery .photo').each(function(i,e){result.push($(e).offset().top - $('body').scrollTop())});
     else
       $('.gallery .photo').each(function(i,e){result.push($(e).offset().left)});
     return result;
   },
   scroll: function (direction) {
-    if (scroll.scrolling)
-      return;
     var offsets = scroll.offsets();
     var target_index = scroll.nesrest() + direction;
     if (target_index < 0 || target_index >= offsets.length)
@@ -196,20 +207,35 @@ var scroll = {
     scroll.to(target_index);
   },
   to: function (index) {
-    if (scroll.mode()) return;
-    var offsets = scroll.offsets();
-    if (index < 0 || index >= offsets.length)
-      return;
+    if (scroll.mode())
+    {
+      var offsets = scroll.offsets();
+      if (index < 0 || index >= $('.gallery .photo').length)
+        return;
 
-    var target = offsets[index] + scroll.el().scrollLeft();
-    var distance = Math.abs(offsets[index]);
+      var target = $($('.gallery .photo')[index]).offset().top;
+      var distance = Math.abs(target - $(window).scrollTop());
 
-    scroll.scrolling = true;
-    scroll.el().animate({
-      scrollLeft: target,
-    }, distance / 2, function() {
-      scroll.scrolling = false;
-    });
+      $('body').animate({
+        scrollTop: target,
+      }, distance / 2);
+    }
+    else
+    {
+      var offsets = scroll.offsets();
+      if (index < 0 || index >= offsets.length)
+        return;
+
+      var target = offsets[index] + scroll.el().scrollLeft();
+      var distance = Math.abs(offsets[index]);
+
+      scroll.scrolling = true;
+      scroll.el().animate({
+        scrollLeft: target,
+      }, distance / 2, function() {
+        scroll.scrolling = false;
+      });
+    }
   },
   reset: function () {
     scroll.scrolling = true;
@@ -229,7 +255,6 @@ var scroll = {
     }
   },
   nesrest: function () {
-    if (scroll.mode()) return 0;
     var offsets = scroll.offsets();
     var min_value;
     var min_index = 0;
@@ -272,6 +297,29 @@ var scroll = {
     e.preventDefault();
   }
 }
+
+var lastScrollTop = 0;
+$(window).scroll(function() {
+
+  if ($(window).scrollTop() > 500)
+    $('#scrolltop_btn').removeClass('hidden');
+  else
+    $('#scrolltop_btn').addClass('hidden');
+
+  var st = $(this).scrollTop();
+  if (st < lastScrollTop){
+    // upscroll
+    $('#nav').removeClass('hidden');
+  } else {
+    // downscroll
+    if ($(window).scrollTop() > 300 )
+      $('#nav').addClass('hidden');
+  }
+  lastScrollTop = st;
+
+  if (scroll.mode())
+    scroll.update();
+})
 $(window).resize(resize_update);
 // Disable contextmenu
 $('body').contextmenu(function(e) {

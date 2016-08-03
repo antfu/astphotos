@@ -22,14 +22,23 @@
       <div class="sub header">${current.des || (current.amount + ' photos')}</div>
     </div>
     <div v-if="viewmode" class="pages">
+      <i class="mi" @click="scroll(-1)">navigate_before</i>
       <div class="current">${current.page || 1}</div>
       <div class="divider">/</div>
       <div class="total">${current.amount}</div>
+      <i class="mi" @click="scroll(1)">navigate_next</i>
     </div>
-    <div @click="collapse" v-if="viewmode" class="icon button back">
-      <i class="mi">clear</i>
+
+    <div class="back">
+      <div @click="scrolltop" id="scrolltop_btn" class="icon button hidden">
+        <i class="mi">vertical_align_top</i>
+      </div>
+      <div @click="collapse" v-if="viewmode" class="icon button">
+        <i class="mi">clear</i>
+      </div>
     </div>
   </div>
+  <div class="nav-space"></div>
 
   <div id="gallery" class="gallery hidden">
     <div v-if="current" id="scroller" v-scroller class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
