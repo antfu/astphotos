@@ -16,7 +16,6 @@ class index_handler(tornado.web.RequestHandler):
         static = self.get_argument("static", None)
         photo  = self.get_argument("photo", None)
         _all   = self.get_argument("all", None)
-        print(static != None,photo != None,_all != None)
         if _all != None or static != None:
             print('Copying static')
             gen.copy_static()

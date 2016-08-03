@@ -24,6 +24,12 @@ Vue.directive('full-photo',{
     };
   }
 });
+Vue.directive('horizontal-scrollable-photo',{
+  bind:function(){
+    var pic = $(this.el);
+    pic.bind('mousewheel DOMMouseScroll',scroll.scrollwheel);
+  }
+});
 var vue_inst_nav = new Vue({
   el: '#nav',
   data: full_data,
@@ -80,9 +86,14 @@ function get_gallery_photo_height() {
 
 function gallery_expend(album) {
   Vue.set(full_data,'current',album);
+  Vue.set(full_data.current,'page',1);
   Vue.set(full_data,'viewmode',1);
   $('#gallery').removeClass('hidden');
-  gallery_scroll_reset();
+  scroll.reset();
+  // Reset body scrollTop
+  $('body').animate({
+     scrollTop: 0,
+  }, $('body').scrollTop(), function() {});
   resize_gallery();
   update_title();
 }
@@ -100,86 +111,99 @@ function resize_gallery() {
   else
     g.height(g.find('.detail').height() || get_gallery_photo_height());
 }
-function resize_updete() {
+function resize_update() {
   gallery_photo_resized = true;
   $('.photo.cover.square').height($('.photo.cover.square').width());
   gallery_collapse();
 }
 
-function get_gallery_photo_y_offset() {
-  var result = [];
-  $('.gallery .photo').each(function(i,e){result.push($(e).offset().left)});
-  return result;
-}
-
 var $scroller = $('.horizontal.scroller');
-var scrolling = false;
-function gallery_scroll(direction) {
-  if (scrolling)
-    return;
-
-  var current = $scroller.scrollLeft();
-  var offsets = get_gallery_photo_y_offset();
-
-  var min_value;
-  var min_index = 0;
-  for (var i = 0; i < offsets.length; i++) {
-    var value = Math.abs(offsets[i]);
-    if (min_value === undefined || min_value > value){
-      min_index = i;
-      min_value = value;
-    }
-  }
-
-  var target_index = min_index + direction;
-  var target = offsets[target_index] + current;
-  var distance = Math.abs(offsets[target_index]);
-
-  if (target_index < 0 || target_index >= offsets.length)
-    return;
-
-  scrolling = true;
-  $scroller.animate({
-     scrollLeft: target,
-  }, distance / 2, function() {
-    // Animation complete.
-    scrolling = false;
-  });
-}
-function gallery_scroll_reset() {
-  scrolling = true;
-  $scroller.animate({
-     scrollLeft: 0,
-  }, $scroller.scrollLeft() / 2, function() {
-    // Animation complete.
-    scrolling = false;
-  });
-}
-function horizontal_scroll(e) {
-  if (scrolling) {
-    e.preventDefault();
-    return;
-  }
-  e = window.event || e;
-  var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-  if (delta == 0)
-    return;
-  else if (delta < 0)
-  {
-    if ($scroller.scrollLeft() >= ($scroller[0].scrollWidth - $scroller.width()))
-      return
-    direction = 1;
-  }
-  else
-  {
-    if ($scroller.scrollLeft() <= 0)
+var scroll = {
+  scrolling: false,
+  current: $scroller.scrollLeft,
+  offsets: function () {
+    var result = [];
+    $('.gallery .photo').each(function(i,e){result.push($(e).offset().left)});
+    return result;
+  },
+  scroll: function (direction) {
+    if (scroll.scrolling)
       return;
-    direction = -1;
-  }
+    var offsets = scroll.offsets();
+    var target_index = scroll.nesrest() + direction;
+    if (target_index < 0 || target_index >= offsets.length)
+      return;
 
-  gallery_scroll(direction);
-  e.preventDefault();
+    scroll.to(target_index);
+  },
+  to: function (index) {
+    var offsets = scroll.offsets();
+    if (index < 0 || index >= offsets.length)
+      return;
+
+    var target = offsets[index] + $scroller.scrollLeft();
+    var distance = Math.abs(offsets[index]);
+
+    scroll.scrolling = true;
+    $scroller.animate({
+      scrollLeft: target,
+    }, distance / 2, function() {
+      scroll.scrolling = false;
+    });
+  },
+  reset: function () {
+    scroll.scrolling = true;
+    $scroller.animate({
+       scrollLeft: 0,
+    }, $scroller.scrollLeft() / 2, function() {
+      // Animation complete.
+      scroll.scrolling = false;
+    });
+  },
+  nesrest: function () {
+    var offsets = scroll.offsets();
+    var min_value;
+    var min_index = 0;
+    for (var i = 0; i < offsets.length; i++) {
+      var value = Math.abs(offsets[i]);
+      if (min_value === undefined || min_value > value){
+        min_index = i;
+        min_value = value;
+      }
+    }
+    return min_index;
+  },
+  update: function () {
+    Vue.set(full_data.current,'page',scroll.nesrest()+1);
+  },
+  scrollwheel: function (e) {
+    if (scroll.scrolling) {
+      e.preventDefault();
+      return;
+    }
+    e = window.event || e;
+    var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+    if (delta == 0)
+      return;
+    else if (delta < 0)
+    {
+      if ($scroller.scrollLeft() >= ($scroller[0].scrollWidth - $scroller.width()))
+        return
+      direction = 1;
+    }
+    else
+    {
+      if ($scroller.scrollLeft() <= 0)
+        return;
+      direction = -1;
+    }
+    scroll.scroll(direction);
+    e.preventDefault();
+  }
 }
-$scroller.bind('mousewheel DOMMouseScroll',horizontal_scroll);
-$(window).resize(resize_updete);
-$(resize_updete);
+
+$scroller.scroll(scroll.update);
+//$scroller.bind('mousewheel DOMMouseScroll',horizontal_scroll);
+$(window).resize(resize_update);
+$(resize_update);
+setTimeout(resize_update,500);

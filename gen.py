@@ -92,6 +92,9 @@ log = print
 pjoin = os.path.join
 cfg = configs
 
+if not os.path.exists(cfg.out_dir):
+    os.mkdir(cfg.out_dir)
+
 def run():
     log('*** Generator Start ***')
 

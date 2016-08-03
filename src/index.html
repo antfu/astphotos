@@ -14,9 +14,6 @@
 </head>
 <body>
   <div class="nav" id="nav">
-    <div @click="collapse" v-if="viewmode" class="back">
-      <div><</div>
-    </div>
     <div v-if="!viewmode" class="headers">
       <div class="header">${title}</div>
       <div class="sub header">${des}</div>
@@ -30,12 +27,16 @@
       <div class="divider">/</div>
       <div class="total">${current.amount}</div>
     </div>
+    <div @click="collapse" v-if="viewmode" class="back">
+      <div>X</div>
+    </div>
   </div>
 
   <div id="gallery" class="gallery hidden">
     <div class="horizontal scroller">
       <div v-for="photo in current?current.photos:[]" track-by="id" class="detail">
-        <div class="photo full" :style="{background: photo.color, width: photo.width * photo_height() / photo.height, height: photo_height()}">
+        <div class="photo full" v-horizontal-scrollable-photo
+            :style="{background: photo.color, width: photo.width * photo_height() / photo.height, height: photo_height()}">
           <img class="image" :src="photo.path"
                v-full-photo style="opacity:0;transition: opacity 0.3s ease-in;">
         </div>
