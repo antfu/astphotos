@@ -67,8 +67,6 @@ configs = dict(
 
     # Extract the photo infomation from the EXIF tags
     # Such as Aperture, ExposureTime, TookenDateTime, etc.
-    # For title and desc you should modify the "ImageDescription",
-    # in format [title|desc]
     extract_exif = True,
 
     # Display exposure and aperture info

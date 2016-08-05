@@ -44,9 +44,9 @@
   <div class="nav-space"></div>
 
   <div id="gallery" class="gallery hidden">
-    <div v-if="current" id="scroller" v-scroller class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
+    <div v-if="current" id="scroller" class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
       <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail">
-        <div class="photo full" @click="open_modal(photo)" v-horizontal-scrollable-photo
+        <div class="photo full" @click="open_modal(photo)" v-scrollable
             :style="{background: photo.color,
                      width:  current.gallery_mode==0 ? (photo.width * photo_height() / photo.height) : window_width(),
                      height: current.gallery_mode==0 ? photo_height() : undefined}">

@@ -108,6 +108,7 @@ def generate_struct_tree():
 
         album.photos = []
         photo_id = 0
+        # Search for photos
         for photo_path in glob.glob(pjoin(album_path,'*.'+src_file_type)):
             photo_filename = os.path.basename(photo_path)
             photo_out_path = pjoin(album_out_path,photo_filename)
@@ -124,14 +125,19 @@ def generate_struct_tree():
             photo.update_json(change_ext(photo_path,'json'))
             photo.path = photo_href_path.replace('\\','/')
             # Use filename as title
-            if cfg.use_filename_as_default_title and not photo.title:
+            if (album.use_filename_as_default_title or cfg.use_filename_as_default_title) and not photo.title:
                 name = clear_ext(os.path.basename(photo_path))
                 # But not the filename startswith '_'
                 if not name.startswith('_'):
                     photo.title = clear_ext(os.path.basename(photo_path))
+            # If title contains '$', separate into title & des
+            if photo.title and '$' in photo.title and not photo.des:
+                temp = photo.title.split('$')
+                photo.title = temp[0]
+                photo.des = temp[1]
             # Set default photographer
-            if not photo.photographer and album.default_photographer:
-                photo.photographer = album.default_photographer
+            if not photo.photographer and album.photographer:
+                photo.photographer = album.photographer
             # if configed not to display exposure and aperture, delete them
             if not cfg.exif_exposure:
                 del(photo.aperture)
@@ -183,7 +189,7 @@ def generate_struct_tree():
             photo_order_descending = album.photo_order_descending or cfg.photo_order_descending
             if photo_orderby:
                 log('  Sorting photo by',photo_orderby)
-                if photo_orderby == 'filename':
+                if   photo_orderby == 'filename':
                     album.photos = sorted(album.photos,key=lambda x: (x.path or ''))
                 elif photo_orderby == 'title':
                     album.photos = sorted(album.photos,key=lambda x: (x.title or ''))
@@ -208,10 +214,7 @@ def generate_struct_tree():
     return struct_tree
 
 def codecs_open(filename,open_type,encode=None):
-    return codecs.open(
-        filename.encode(sys.getfilesystemencoding()),
-        open_type,
-        encode)
+    return codecs.open(filename,open_type,encode)
 
 def copydir(src,dst):
     if not os.path.exists(dst):
@@ -337,13 +340,7 @@ def get_exif(img_path):
 
     title = tags.get('Image ImageDescription',None)
     if title:
-        title = title.printable
-        if '|' in title:
-            temp = t.split('|')
-            result.title = temp[0]
-            result.des = temSp[1]
-        else:
-            result.title = title
+        result.title = title.printable
 
     return result
 

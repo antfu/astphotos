@@ -2,17 +2,15 @@ Vue.config.debug = true;
 Vue.config.delimiters = ['${', '}'];
 var full_data = {};
 
-Vue.directive('square-image',{
-  bind:function(){
-    var pic = $(this.el);
-    this.el.onload = function(){
-      if (pic.height() > pic.width())
-        pic.css('width','100%');
-      else
-        pic.css('height','100%');
-      pic.css('opacity',1);
-    };
-  }
+Vue.directive('square-image',function(){
+  var pic = $(this.el);
+  this.el.onload = function(){
+    if (pic.height() > pic.width())
+      pic.css('width','100%');
+    else
+      pic.css('height','100%');
+    pic.css('opacity',1);
+  };
 });
 Vue.directive('full-photo',{
   bind:function(){
@@ -22,11 +20,9 @@ Vue.directive('full-photo',{
     };
   }
 });
-Vue.directive('horizontal-scrollable-photo',{
-  bind:function(){
-    var pic = $(this.el);
-    pic.bind('mousewheel DOMMouseScroll',scroll.scrollwheel);
-  }
+Vue.directive('scrollable', function(){
+  var el = $(this.el);
+  el.bind('mousewheel DOMMouseScroll', scroll.scrollwheel);
 });
 Vue.directive('modal-image', function (id) {
   var pic = $(this.el).removeClass('horizontal vertical');
@@ -109,16 +105,6 @@ var vue_inst_modal = new Vue({
     }
   }
 });
-
-$.getJSON('/static/struct.json',function(data){
-  full_data = data;
-  vue_inst_nav.$data = full_data;
-  vue_inst_albums.$data = full_data;
-  vue_inst_gallery.$data = full_data;
-  vue_inst_modal.$data = full_data;
-  update_title();
-  resize_update();
-})
 
 function update_title() {
   if (full_data.viewmode == 0)
@@ -260,12 +246,13 @@ var scroll = {
     }
   },
   reset: function () {
-    scroll.scrolling = true;
     var key = scroll.key();
     var el = scroll.vertical() ? $('body') : scroll.el();
+    if (!el[key]()) return;
     var target_obj = {};
-    target_obj[key]= 0;
-    el.animate(target_obj, el[key]() / 2, function() {
+    target_obj[key] = 0;
+    scroll.scrolling = true;
+    el.animate(target_obj, (el[key]() || 0) / 2, function() {
       scroll.scrolling = false;
     });
   },
@@ -328,7 +315,6 @@ var scroll = {
 
 var lastScrollTop = 0;
 $(window).scroll(function() {
-
   if ($(window).scrollTop() > 500)
     $('#scrolltop_btn').removeClass('hidden');
   else
@@ -353,4 +339,13 @@ $(window).resize(resize_update);
 $('body').contextmenu(function(e) {
   e.preventDefault();
 });
-$(resize_update);
+
+$.getJSON('/static/struct.json',function(data){
+  full_data = data;
+  vue_inst_nav.$data = full_data;
+  vue_inst_albums.$data = full_data;
+  vue_inst_gallery.$data = full_data;
+  vue_inst_modal.$data = full_data;
+  update_title();
+  resize_update();
+})
