@@ -64,7 +64,7 @@
   </div>
 
   <div id="albums" class="albums">
-    <div v-if="viewmode" transition="fade" class="block title">albums</div>
+    <div v-if="viewmode" transition="fade" class="block title">{{cfg.lanuages.albums}}</div>
     <div v-for="album in albums" track-by="id" @click="expand(album)" class="square photo cover"
         :style="{background:album.color}" :class="{secondary:viewmode && current != album}">
       <img class="image" :src="album.cover" v-square-image style="opacity:0;transition: opacity 0.3s ease-in;">
@@ -77,7 +77,7 @@
           <p v-if="album.photographer"><span class="label">{{cfg.lanuages.photographer}}:</span> ${album.photographer}</p>
           <p v-if="album.location"><span class="label">{{cfg.lanuages.location}}:</span> ${album.location}</p>
           <div v-if="album.comments" class="dash"></div>
-          <p v-if="album.comments">${album.comments} comments</p>
+          <p v-if="album.comments">${album.comments}{{cfg.lanuages.comments}}</p>
         </div>
       </div>
       <!--<div class="inner-border"></div>-->

@@ -159,6 +159,9 @@ function gallery_expend(album) {
 function gallery_collapse() {
   Vue.set(full_data,'viewmode',0);
   $('#gallery').addClass('hidden');
+  $('body').animate({
+     scrollTop: 0,
+  }, $('body').scrollTop() / 1.5, function() {});
   resize_gallery();
   update_title();
 }
