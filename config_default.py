@@ -20,6 +20,23 @@ configs = dict(
         material_icons = '/static/material-icons.css'
     ),
 
+    # The lanuages display in webpage
+    # for example (Chinese):
+    #lanuages = dict(
+    #    photographer = '拍摄者',
+    #    location = '地点',
+    #    albums = '相册',
+    #    photos = '张照片',
+    #    comments = '条留言'
+    #)
+    lanuages = dict(
+        photographer = 'photographer',
+        location = 'location',
+        albums = 'albums',
+        photos = ' photos',
+        comments = ' comments'
+    ),
+
     src_dir = 'src',
     out_dir = 'out',
 

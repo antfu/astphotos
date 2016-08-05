@@ -200,7 +200,7 @@ def copydir(src,dst):
         filename = os.path.basename(f)
         dst_path = os.path.join(dst,filename)
         # if the files modify time is the same, do not copy
-        if os.path.exists(dst_path) and os.path.getmtime(f) != os.path.getmtime(dst_path):
+        if not os.path.exists(dst_path) or os.path.getmtime(f) != os.path.getmtime(dst_path):
             log('  Copying',filename)
             # use 'copy2' to keep file metadate
             shutil.copy2(f,dst_path)

@@ -20,22 +20,22 @@
     </div>
     <div v-if="viewmode" class="headers">
       <div class="header">${current.name.toLowerCase()}</div>
-      <div class="sub header">${current.des || (current.amount + ' photos')}</div>
+      <div class="sub header">${current.des || (current.amount + '{{cfg.lanuages.photos}}')}</div>
     </div>
     <div v-if="viewmode" class="pages">
-      <i class="mi" @click="scroll(-1)">navigate_before</i>
+      <i class="material-icons" @click="scroll(-1)">navigate_before</i>
       <div class="current">${current.page || 1}</div>
       <div class="divider">/</div>
       <div class="total">${current.amount}</div>
-      <i class="mi" @click="scroll(1)">navigate_next</i>
+      <i class="material-icons" @click="scroll(1)">navigate_next</i>
     </div>
 
     <div class="back">
       <div @click="scrolltop" id="scrolltop_btn" class="icon button hidden">
-        <i class="mi">vertical_align_top</i>
+        <i class="material-icons">vertical_align_top</i>
       </div>
       <div @click="collapse" v-if="viewmode" class="icon button">
-        <i class="mi">clear</i>
+        <i class="material-icons">clear</i>
       </div>
     </div>
   </div>
@@ -54,7 +54,7 @@
         <div v-if="current.display_info" class="info">
           <div v-if="photo.aperture" class="sub meta">${photo.aperture}</div>
           <div v-if="photo.exposure" class="sub meta">${photo.exposure}</div>
-          <div v-if="photo.title" class="title">${photo.title}</div>
+          <div class="title">${photo.title || '　'}</div>
           <div v-if="photo.des" class="des">${photo.des}</div>
           <div v-if="photo.photographer" class="meta"><span class="label">&</span>${photo.photographer}</div>
           <div v-if="photo.location" class="meta"><span class="label">@</span>${photo.location}</div>
@@ -73,9 +73,9 @@
           <div class="name">${album.name}</div>
           <p v-if="album.des" class="des">${album.des}</p>
           <div class="dash"></div>
-          <p class="amount">${album.amount} photos</p>
-          <p v-if="album.photographer"><span class="label">photographer:</span> ${album.photographer}</p>
-          <p v-if="album.location"><span class="label">location:</span> ${album.location}</p>
+          <p class="amount">${album.amount}{{cfg.lanuages.photos}}</p>
+          <p v-if="album.photographer"><span class="label">{{cfg.lanuages.photographer}}:</span> ${album.photographer}</p>
+          <p v-if="album.location"><span class="label">{{cfg.lanuages.location}}:</span> ${album.location}</p>
           <div v-if="album.comments" class="dash"></div>
           <p v-if="album.comments">${album.comments} comments</p>
         </div>
@@ -94,24 +94,21 @@
       <img v-modal-image="current.modal" class="image">
       <div class="left nav-zone" @click="next(-1)">
         <div class="center">
-          <div class="icon button"><i class="mi">navigate_before</i></div>
+          <div class="icon button"><i class="material-icons">navigate_before</i></div>
         </div>
       </div>
       <div class="right nav-zone" @click="next(1)">
         <div class="center">
-          <div class="icon button"><i class="mi">navigate_next</i></div>
+          <div class="icon button"><i class="material-icons">navigate_next</i></div>
         </div>
       </div>
       <div class="close">
-        <!--<div v-if="current.photos[current.modal].title" style="display:inline-block">
-          ${current.photos[current.modal].title}
-        </div>-->
         <div class="pages">
           <div class="current">${current.modal+1}</div>
           <div class="divider">/</div>
           <div class="total">${current.amount}</div>
         </div>
-        <div class="icon button invert" @click="close"><i class="mi">clear</i></div>
+        <div class="icon button invert" @click="close"><i class="material-icons">clear</i></div>
       </div>
     </div>
   </div>

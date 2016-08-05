@@ -11,8 +11,8 @@ from config import configs
 __author__ = 'Anthony Fu'
 
 import os
-if not os.path.exists('configs_override.py'):
-    f = open('configs_override.py','w')
+if not os.path.exists('config_override.py'):
+    f = open('config_override.py','w')
     f.write('configs = dict(\n\n)')
     f.close()
 
