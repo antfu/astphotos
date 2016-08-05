@@ -177,10 +177,18 @@ function resize_gallery() {
 }
 
 function body_scroll_to(to, on_complete) {
+  var vertical = scroll.vertical();
+  if (vertical)
+    scroll.scrolling = true;
   to = to || 0;
   $('body').animate({
      scrollTop: to,
-  }, Math.abs($('body').scrollTop()-to) / 1.5, on_complete);
+  }, Math.abs($('body').scrollTop()-to) / 1.5, function() {
+    if (vertical)
+      scroll.scrolling = false;
+    if (on_complete)
+      on_complete();
+  });
 }
 
 function resize_update() {
@@ -197,6 +205,12 @@ var scroll = {
     if (full_data.current)
       return full_data.current.gallery_mode || 0;
     return 0
+  },
+  key: function() {
+    if (scroll.vertical())
+      return 'scrollTop';
+    else
+      return 'scrollLeft';
   },
   scrolling: false,
   current: function(){
@@ -216,16 +230,16 @@ var scroll = {
     if (target_index < 0 || target_index >= offsets.length)
       return;
 
-    scroll.to(target_index);
+    scroll.to(target_index,direction);
   },
-  to: function (index) {
+  to: function (index,direction) {
     if (scroll.vertical())
     {
-      var offsets = scroll.offsets();
       if (index < 0 || index >= $('.gallery .photo').length)
         return;
       var target = $($('.gallery .photo')[index]).offset().top;
-
+      if (direction == -1 && !$('#nav').hasClass('hidden'))
+        target -= $('#nav').outerHeight();
       body_scroll_to(target);
     }
     else
@@ -247,20 +261,13 @@ var scroll = {
   },
   reset: function () {
     scroll.scrolling = true;
-    if (scroll.vertical()) {
-      scroll.el().animate({
-         scrollTop: 0,
-      }, scroll.el().scrollTop() / 2, function() {
-        scroll.scrolling = false;
-      });
-    }
-    else {
-      scroll.el().animate({
-         scrollLeft: 0,
-      }, scroll.el().scrollLeft() / 2, function() {
-        scroll.scrolling = false;
-      });
-    }
+    var key = scroll.key();
+    var el = scroll.vertical() ? $('body') : scroll.el();
+    var target_obj = {};
+    target_obj[key]= 0;
+    el.animate(target_obj, el[key]() / 2, function() {
+      scroll.scrolling = false;
+    });
   },
   nesrest: function () {
     var offsets = scroll.offsets();
@@ -279,30 +286,43 @@ var scroll = {
     Vue.set(full_data.current,'page',scroll.nesrest()+1);
   },
   scrollwheel: function (e) {
-    if (scroll.vertical()) return;
-
     if (scroll.scrolling) {
       e.preventDefault();
       return;
     }
     e = window.event || e;
     var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-    if (delta == 0)
-      return;
-    else if (delta < 0)
+    if (scroll.vertical())
     {
-      if (scroll.el().scrollLeft() >= (scroll.el()[0].scrollWidth - scroll.el().width()))
-        return
-      direction = 1;
+      if (delta == 0)
+        return;
+      else if (delta < 0)
+        direction = 1;
+      else
+        direction = -1;
+      if (scroll.nesrest() < $('.gallery .photo').length -1)
+        e.preventDefault();
+      scroll.scroll(direction);
     }
     else
     {
-      if (scroll.el().scrollLeft() <= 0)
+      if (delta == 0)
         return;
-      direction = -1;
+      else if (delta < 0)
+      {
+        if (scroll.el().scrollLeft() >= (scroll.el()[0].scrollWidth - scroll.el().width()))
+          return
+        direction = 1;
+      }
+      else
+      {
+        if (scroll.el().scrollLeft() <= 0)
+          return;
+        direction = -1;
+      }
+      e.preventDefault();
+      scroll.scroll(direction);
     }
-    scroll.scroll(direction);
-    e.preventDefault();
   }
 }
 

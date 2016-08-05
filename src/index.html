@@ -25,11 +25,11 @@
       <div class="sub header">${current.des || (current.amount + '{{cfg.lanuages.photos}}')}</div>
     </div>
     <div v-if="viewmode" transition="fade" class="pages">
-      <i class="material-icons" @click="scroll(-1)">navigate_before</i>
+      <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(-1)">navigate_before</i>
       <div class="current">${current.page || 1}</div>
       <div class="divider">/</div>
       <div class="total">${current.amount}</div>
-      <i class="material-icons" @click="scroll(1)">navigate_next</i>
+      <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(1)">navigate_next</i>
     </div>
 
     <div class="back">
