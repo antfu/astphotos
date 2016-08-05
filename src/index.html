@@ -6,11 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel='shortcut icon' type='image/x-icon' href='{{cfg.static_files_path.favicon}}' />
   <link rel="stylesheet" href="static/style.css">
-  <link rel="stylesheet" href="static/vue-animate.min.css">
   <link rel="stylesheet" href="{{cfg.static_files_path.material_icons}}">
   <script type="text/javascript" src="{{cfg.static_files_path.jquery_js}}"></script>
   <script type="text/javascript" src="{{cfg.static_files_path.vue_js}}"></script>
   <script type="text/javascript" src="static/vue-animated-list.js"></script>
+  <link rel="stylesheet" href="static/semantic-transition.css">
+  <script type="text/javascript" src="static/semantic-transition.js"></script>
+  <script type="text/javascript" src="static/vue-transition.js"></script>
 </head>
 <body>
   <div class="nav" id="nav">
@@ -22,7 +24,7 @@
       <div class="header">${current.name.toLowerCase()}</div>
       <div class="sub header">${current.des || (current.amount + '{{cfg.lanuages.photos}}')}</div>
     </div>
-    <div v-if="viewmode" class="pages">
+    <div v-if="viewmode" transition="fade" class="pages">
       <i class="material-icons" @click="scroll(-1)">navigate_before</i>
       <div class="current">${current.page || 1}</div>
       <div class="divider">/</div>
@@ -34,7 +36,7 @@
       <div @click="scrolltop" id="scrolltop_btn" class="icon button hidden">
         <i class="material-icons">vertical_align_top</i>
       </div>
-      <div @click="collapse" v-if="viewmode" class="icon button">
+      <div @click="collapse" v-if="viewmode" transition="fade" class="icon button">
         <i class="material-icons">clear</i>
       </div>
     </div>
@@ -64,7 +66,7 @@
   </div>
 
   <div id="albums" class="albums">
-    <div v-if="viewmode" class="block title">{{cfg.lanuages.albums}}</div>
+    <div v-if="viewmode" transition="fade-down" class="block title">{{cfg.lanuages.albums}}</div>
     <div v-for="album in albums" track-by="id" @click="expand(album)" class="square photo cover"
         :style="{background:album.color}" :class="{secondary:viewmode && current != album}">
       <img class="image" :src="album.cover" v-square-image>

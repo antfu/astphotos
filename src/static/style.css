@@ -31,6 +31,7 @@ a:hover
 .hidden
 {
   opacity: 0 !important;
+  pointer-events: none;
 }
 
 .icon.button
@@ -46,9 +47,17 @@ a:hover
 {
   background: rgba(255,255,255,0.1);
 }
+.icon.button.invert:active
+{
+  background: rgba(255,255,255,0.2);
+}
 .icon.button:hover
 {
   background: rgba(0,0,0,0.1);
+}
+.icon.button:active
+{
+  background: rgba(0,0,0,0.2);
 }
 .icon.button i
 {
@@ -93,6 +102,7 @@ a:hover
 .nav-space
 {
   height: 5em;
+  transition: all 0.3s ease-in-out;
 }
 .nav
 {
@@ -305,7 +315,7 @@ a:hover
 /* =============== Gallery =============== */
 .gallery
 {
-  transition: all 0.4s ease-in-out;
+  transition: all 0.3s ease-in-out;
   padding-bottom: 2em;
   margin: 0;
 }
@@ -390,10 +400,6 @@ a:hover
   width: 100%;
   position: relative;
 }
-.modal.hidden
-{
-  pointer-events: none;
-}
 .modal i
 {
   text-shadow: 0px 0px 5px rgba(150, 150, 150, 1);
@@ -425,7 +431,7 @@ a:hover
   opacity: 0;
   width: 3em;
   height: 100%;
-  transition: all 0.4s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 .modal .nav-zone:hover
 {
@@ -516,7 +522,7 @@ a:hover
   }
   .nav-space
   {
-    height: 6em;
+    height: 4em;
   }
 }
 

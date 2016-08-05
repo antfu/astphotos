@@ -139,7 +139,12 @@ function get_gallery_photo_height() {
   temp.remove();
   return gallery_photo_height;
 }
-
+function immediate_and_timeout(func,timeout) {
+  func();
+  if (timeout == undefined)
+    timeout = 100;
+  return setTimeout(func,timeout);
+}
 function gallery_expend(album) {
   body_scroll_to(0);
   Vue.set(full_data,'current',album);
@@ -162,30 +167,33 @@ function resize_gallery() {
   var g = $('#gallery');
   if (g.hasClass('hidden'))
     g.height(0);
-  else if (scroll.mode())
+  else if (scroll.vertical())
     g.height('auto');
   else
     g.height(g.find('.detail').height() || get_gallery_photo_height());
+  immediate_and_timeout(function () {
+    $('.nav-space').height($('#nav').outerHeight());
+  },500);
 }
+
 function body_scroll_to(to, on_complete) {
   to = to || 0;
   $('body').animate({
      scrollTop: to,
-  }, $('body').scrollTop() / 1.5, on_complete);
+  }, Math.abs($('body').scrollTop()-to) / 1.5, on_complete);
 }
 
 function resize_update() {
   gallery_photo_resized = true;
   gallery_collapse();
-  $('.photo.cover.square').height($('.photo.cover.square').width());
-  setTimeout(function() {
+  immediate_and_timeout(function() {
     $('.photo.cover.square').height($('.photo.cover.square').width());
   }, 500);
 }
 
 var scroll = {
   el: function () { return $('#scroller'); },
-  mode: function () {
+  vertical: function () {
     if (full_data.current)
       return full_data.current.gallery_mode || 0;
     return 0
@@ -196,7 +204,7 @@ var scroll = {
   },
   offsets: function () {
     var result = [];
-    if (scroll.mode())
+    if (scroll.vertical())
       $('.gallery .photo').each(function(i,e){result.push($(e).offset().top - $('body').scrollTop())});
     else
       $('.gallery .photo').each(function(i,e){result.push($(e).offset().left)});
@@ -211,18 +219,14 @@ var scroll = {
     scroll.to(target_index);
   },
   to: function (index) {
-    if (scroll.mode())
+    if (scroll.vertical())
     {
       var offsets = scroll.offsets();
       if (index < 0 || index >= $('.gallery .photo').length)
         return;
-
       var target = $($('.gallery .photo')[index]).offset().top;
-      var distance = Math.abs(target - $(window).scrollTop());
 
-      $('body').animate({
-        scrollTop: target,
-      }, distance / 2);
+      body_scroll_to(target);
     }
     else
     {
@@ -243,7 +247,7 @@ var scroll = {
   },
   reset: function () {
     scroll.scrolling = true;
-    if (scroll.mode()) {
+    if (scroll.vertical()) {
       scroll.el().animate({
          scrollTop: 0,
       }, scroll.el().scrollTop() / 2, function() {
@@ -275,7 +279,7 @@ var scroll = {
     Vue.set(full_data.current,'page',scroll.nesrest()+1);
   },
   scrollwheel: function (e) {
-    if (scroll.mode()) return;
+    if (scroll.vertical()) return;
 
     if (scroll.scrolling) {
       e.preventDefault();
@@ -321,7 +325,7 @@ $(window).scroll(function() {
   }
   lastScrollTop = st;
 
-  if (scroll.mode())
+  if (scroll.vertical())
     scroll.update();
 })
 $(window).resize(resize_update);
