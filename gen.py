@@ -8,7 +8,8 @@ import datetime
 import exifread
 import shutil
 import jinja2
-from   PIL import Image # PIL using Pillow (PIL fork)
+from   PIL    import Image # PIL using Pillow (PIL fork)
+from   config import configs as cfg
 
 class infodict(dict):
     def update_json(self,jsonpath):
@@ -25,78 +26,9 @@ class infodict(dict):
         if key in self.keys():
             del(self[key])
 
-
-configs = infodict(
-    src_dir = 'src',
-    out_dir = 'out',
-
-    static_dir = 'static',
-    img_dir = 'img',
-    sturct_filename = 'struct.json',
-    src_file_type = 'jpg',
-
-    use_out = False,
-    lazy_copy = True,
-    photo_resize = True,
-    photo_resize_horizontal_max_size = (3000,0),
-    photo_resize_vertical_max_size = (0,3000),
-
-
-    default_photographer = 'anthony.f',
-
-    # If there is not title infomation in JSON file or EXIF tags,
-    # use the file name as the title of the photo
-    use_filename_as_default_title = True,
-
-    # TODO
-    # The order of gallery photos,
-    # the value can be one of ['name','date','shuffle']
-    photo_orderby = 'name',
-
-    # TODO
-    # True:  Ascending
-    # False: Descending
-    photo_order_ascending = True,
-
-    # Extract the photo infomation from the EXIF tags
-    # Such as Aperture, ExposureTime, TookenDateTime, etc.
-    # For title and desc you should modify the "ImageDescription",
-    # in format [title|desc]
-    extract_exif = True,
-
-    # Display exposure and aperture info
-    exif_exposure = True,
-
-    # TODO
-    # Extract the photo's location info from EXIF
-    # (default: False)
-    exif_location = False,
-
-    # TODO
-    # Extract the photo's title and desc from XPTags (Windows only)
-    # In Windows, you can simpliy edit it in the photo file's Properties
-    exif_windows_xptags = False,
-
-    # Read and calc the average color of the photo,
-    # this feature can bring a better user-experience in website,
-    # but may cost more time while generating structure tree
-    # (default: True)
-    calc_image_average_color = False,
-
-    # Display the info in gallery view, such as title, desc, etc.
-    # Can be overrided in "_album.json" and "[photo_name].json"
-    display_info = True,
-
-    # Gallery photos display mode
-    # 0 for horizontal mode
-    # 1 for vertical mode
-    gallery_mode = 0,
-)
-
 # Shorthand alias
 log = print
 pjoin = os.path.join
-cfg = configs
 
 if not os.path.exists(cfg.out_dir):
     os.mkdir(cfg.out_dir)
@@ -128,7 +60,7 @@ def copy_static():
     copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
 
 def render_index():
-    render(pjoin(cfg.src_dir,'index.html'),pjoin(cfg.out_dir,'index.html'))
+    render(pjoin(cfg.src_dir,'index.html'),pjoin(cfg.out_dir,'index.html'),cfg=cfg)
 
 def generate_and_save():
     struct_tree = generate_struct_tree()
@@ -268,7 +200,7 @@ def copydir(src,dst):
         filename = os.path.basename(f)
         dst_path = os.path.join(dst,filename)
         # if the files modify time is the same, do not copy
-        if os.path.getmtime(f) != os.path.getmtime(dst_path):
+        if os.path.exists(dst_path) and os.path.getmtime(f) != os.path.getmtime(dst_path):
             log('  Copying',filename)
             # use 'copy2' to keep file metadate
             shutil.copy2(f,dst_path)
