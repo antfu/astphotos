@@ -15,6 +15,7 @@ configs = dict(
     #    material_icons = 'https://fonts.googleapis.com/icon?family=Material+Icons'
     #),
     static_files_path = dict(
+        favicon = '/static/favicon.ico',
         jquery_js = '/static/jquery-3.1.0.min.js',
         vue_js = '/static/vue.min.js',
         material_icons = '/static/material-icons.css'
@@ -45,27 +46,24 @@ configs = dict(
     sturct_filename = 'struct.json',
     src_file_type = 'jpg',
 
-    use_out = True,
     lazy_copy = True,
     photo_resize = True,
     photo_resize_horizontal_max_size = (3000,0),
     photo_resize_vertical_max_size = (0,3000),
-
-    default_photographer = None,
+    photo_resize_keep_exif = False,
 
     # If there is not title infomation in JSON file or EXIF tags,
     # use the file name as the title of the photo
     use_filename_as_default_title = True,
 
-    # TODO
     # The order of gallery photos,
-    # the value can be one of ['name','date','shuffle']
-    photo_orderby = 'name',
+    # the value can be one of ['filename','title','time','shuffle','custom']
+    # for 'custom' option: you should set 'index' value in photo's json file
+    photo_orderby = 'filename',
 
-    # TODO
-    # True:  Ascending
-    # False: Descending
-    photo_order_ascending = True,
+    # False:  Ascending
+    # True: Descending
+    photo_order_descending = False,
 
     # Extract the photo infomation from the EXIF tags
     # Such as Aperture, ExposureTime, TookenDateTime, etc.

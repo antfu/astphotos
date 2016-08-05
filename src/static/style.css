@@ -189,6 +189,11 @@ a:hover
   max-height: 100%;
   margin: 0;
 }
+[v-full-photo], [v-square-image]
+{
+  opacity:0;
+  transition: opacity 0.3s ease-in;
+}
 
 /* =============== Overlay =============== */
 .cover
@@ -500,6 +505,10 @@ a:hover
   }
   .gallery .horizontal .photo{
     height: 20em;
+  }
+  .nav
+  {
+    padding: 0.7em 1.5em;
   }
   .nav .pages{
     display: block;

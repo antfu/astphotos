@@ -101,8 +101,8 @@ def generate_struct_tree():
         album.update_json(pjoin(album_path,'_album.json'))
         if not album.name:
             album.name = album_name
-        if not album.photographer and cfg.default_photographer:
-            album.photographer = cfg.default_photographer
+        if not album.photographer and struct_tree.default_photographer:
+            album.photographer = struct_tree.default_photographer
 
         log('  Ablum:', remove_unicode(album.name))
 
@@ -130,8 +130,8 @@ def generate_struct_tree():
                 if not name.startswith('_'):
                     photo.title = clear_ext(os.path.basename(photo_path))
             # Set default photographer
-            if not photo.photographer and cfg.default_photographer:
-                photo.photographer = cfg.default_photographer
+            if not photo.photographer and album.default_photographer:
+                photo.photographer = album.default_photographer
             # if configed not to display exposure and aperture, delete them
             if not cfg.exif_exposure:
                 del(photo.aperture)
@@ -178,6 +178,26 @@ def generate_struct_tree():
                 choiced_cover = (random.choice(album.photos))
                 album.cover = choiced_cover.path
                 album.color = choiced_cover.color
+            # Photo orderby (can be override in album json file)
+            photo_orderby = album.photo_orderby or cfg.photo_orderby
+            photo_order_descending = album.photo_order_descending or cfg.photo_order_descending
+            if photo_orderby:
+                log('  Sorting photo by',photo_orderby)
+                if photo_orderby == 'filename':
+                    album.photos = sorted(album.photos,key=lambda x: (x.path or ''))
+                elif photo_orderby == 'title':
+                    album.photos = sorted(album.photos,key=lambda x: (x.title or ''))
+                elif photo_orderby == 'time':
+                    album.photos = sorted(album.photos,key=lambda x: (x.datetime or ''))
+                elif photo_orderby == 'shuffle':
+                    random.shuffle(album.photos)
+                elif photo_orderby == 'custom':
+                    album.photos = sorted(album.photos,key=lambda x: (x.index or -1))
+                else:
+                    log('  !Warning: invaild photo_orderby',photo_orderby)
+            # Descending
+            if photo_order_descending:
+                album.photos = album.photos[::-1]
             album.amount = len(album.photos)
             struct_tree.albums.append(album)
             log('  Cover :',os.path.basename(album.cover))

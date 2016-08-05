@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
+  <link rel='shortcut icon' type='image/x-icon' href='{{cfg.static_files_path.favicon}}' />
   <link rel="stylesheet" href="static/style.css">
   <link rel="stylesheet" href="static/vue-animate.min.css">
   <link rel="stylesheet" href="{{cfg.static_files_path.material_icons}}">
@@ -48,26 +48,26 @@
             :style="{background: photo.color,
                      width:  current.gallery_mode==0 ? (photo.width * photo_height() / photo.height) : window_width(),
                      height: current.gallery_mode==0 ? photo_height() : undefined}">
-          <img class="image" :src="photo.path"
-               v-full-photo style="opacity:0;transition: opacity 0.3s ease-in;">
+          <img class="image" :src="photo.path" v-full-photo>
         </div>
         <div v-if="current.display_info" class="info">
           <div v-if="photo.aperture" class="sub meta">${photo.aperture}</div>
           <div v-if="photo.exposure" class="sub meta">${photo.exposure}</div>
-          <div class="title">${photo.title || '　'}</div>
+          <div v-if="photo.title" class="title">${photo.title || '　'}</div>
           <div v-if="photo.des" class="des">${photo.des}</div>
           <div v-if="photo.photographer" class="meta"><span class="label">&</span>${photo.photographer}</div>
           <div v-if="photo.location" class="meta"><span class="label">@</span>${photo.location}</div>
+          <div v-if="!photo.title" class="title">　</div>
         </div>
       </div>
     </div>
   </div>
 
   <div id="albums" class="albums">
-    <div v-if="viewmode" transition="fade" class="block title">{{cfg.lanuages.albums}}</div>
+    <div v-if="viewmode" class="block title">{{cfg.lanuages.albums}}</div>
     <div v-for="album in albums" track-by="id" @click="expand(album)" class="square photo cover"
         :style="{background:album.color}" :class="{secondary:viewmode && current != album}">
-      <img class="image" :src="album.cover" v-square-image style="opacity:0;transition: opacity 0.3s ease-in;">
+      <img class="image" :src="album.cover" v-square-image>
       <div class="overlay">
         <div class="info">
           <div class="name">${album.name}</div>
