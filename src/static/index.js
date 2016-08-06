@@ -33,8 +33,20 @@ Vue.directive('modal-image', function (id) {
   }
   pic.attr('src',modal_data.path);
 });
-Vue.directive('scroll',function(){
-    scroll.el().scroll(scroll.update);
+Vue.transition('height-toggle', {
+  css: false,
+  enter: function (el, done) {
+    $(el).slideToggle('slow', done);
+  },
+  enterCancelled: function (el) {
+    $(el).stop()
+  },
+  leave: function (el, done) {
+    $(el).slideToggle('fast', done);
+  },
+  leaveCancelled: function (el) {
+    $(el).stop()
+  }
 });
 var vue_inst_nav = new Vue({
   el: '#nav',
@@ -42,10 +54,10 @@ var vue_inst_nav = new Vue({
   methods:
   {
     collapse: gallery_collapse,
-    scroll: function functionName(i) {
+    scroll: function(i) {
       scroll.scroll(i);
     },
-    scrolltop: function () {
+    scrolltop: function() {
       body_scroll_to(0);
     }
   }
@@ -97,7 +109,7 @@ var vue_inst_modal = new Vue({
 });
 
 function update_title() {
-  if (full_data.viewmode == 0)
+  if (!full_data.viewmode)
     document.title = full_data.title;
   else if (full_data.current) {
     document.title = full_data.current.name + ' - ' +full_data.title;
@@ -128,25 +140,18 @@ function gallery_expend(album) {
   Vue.set(full_data,'viewmode',1);
   $('#gallery').removeClass('hidden');
   scroll.reset();
-  resize_gallery();
+  resize_nav();
   update_title();
 }
 function gallery_collapse() {
   body_scroll_to(0);
   Vue.set(full_data,'viewmode',0);
   $('#gallery').addClass('hidden');
-  resize_gallery();
+  resize_nav();
   update_title();
 }
 
-function resize_gallery() {
-  var g = $('#gallery');
-  if (g.hasClass('hidden'))
-    g.height(0);
-  else if (scroll.vertical())
-    g.height('auto');
-  else
-    g.height(get_gallery_photo_height());
+function resize_nav() {
   immediate_and_timeout(function () {
     $('.nav-space').height($('#nav').outerHeight());
   },100);
@@ -169,7 +174,6 @@ function body_scroll_to(to, on_complete) {
 
 function resize_update() {
   gallery_photo_resized = true;
-  gallery_collapse();
 }
 
 var scroll = {
@@ -231,6 +235,7 @@ var scroll = {
         scrollLeft: target,
       }, distance / 2, function() {
         scroll.scrolling = false;
+        scroll.update();
       });
     }
   },
@@ -298,6 +303,7 @@ var scroll = {
       }
       e.preventDefault();
       scroll.scroll(direction);
+      body_scroll_to(0);
     }
   }
 }
@@ -337,4 +343,7 @@ $.getJSON('/static/struct.json',function(data){
   vue_inst_modal.$data = full_data;
   update_title();
   resize_update();
-})
+}).fail(function() {
+  $('#warning').show();
+  document.title = "Warning - Astphotos";
+});

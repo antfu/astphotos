@@ -111,7 +111,7 @@ a:hover
   top: 0;
   right: 0;
   z-index: 10;
-  background: rgba(255,255,255,0.95);
+  background: rgba(255,255,255,0.90);
   padding: 1em 3em 1em 3em;
   transition: all 0.3s ease-in-out;
 }
@@ -477,6 +477,36 @@ a:hover
 .modal .right.nav-zone
 {
   right: 0;
+}
+
+
+#warning
+{
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 1;
+  z-index: 100;
+  background: #fff;
+  color: #444;
+  height: 100%;
+  transition: all 0.25s ease-in-out;
+}
+.vertical-centered
+{
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  color: #444;
+  vertical-align: middle;
+}
+#warning p
+{
+  font-size: 0.7em;
+  margin-top: -0.3em;
 }
 
 /* =============== Media Query =============== */

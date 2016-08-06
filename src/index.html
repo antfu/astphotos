@@ -24,11 +24,13 @@
       <div class="header">${current.name.toLowerCase()}</div>
       <div class="sub header">${current.des || (current.amount + '{{cfg.lanuages.photos}}')}</div>
       <div class="pages">
-        <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(-1)">navigate_before</i>
         <div class="current">${current.page || 1}</div>
         <div class="divider">/</div>
         <div class="total">${current.amount}</div>
+        <!--
+        <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(-1)">navigate_before</i>
         <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(1)">navigate_next</i>
+        -->
       </div>
     </div>
 
@@ -44,9 +46,9 @@
   <div class="nav-space"></div>
 
   <div id="gallery" class="gallery hidden">
-    <div v-if="current" id="scroller" class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
-      <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail">
-        <div class="photo full" @click="open_modal(photo)" v-scrollable
+    <div v-if="viewmode" transition="height-toggle" id="scroller" style="display:none;" class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
+      <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail" v-scrollable>
+        <div class="photo full" @click="open_modal(photo)"
             :style="{background: photo.color,
                      width:  current.gallery_mode==0 ? (photo.width * photo_height() / photo.height) : window_width(),
                      height: current.gallery_mode==0 ? photo_height() : undefined}">
@@ -114,6 +116,13 @@
       </div>
     </div>
   </div>
+
+  <div id="warning" style="display:none;">
+    <div class="vertical-centered">
+      <i class="material-icons">warning</i>
+      <p>Unable to load structure file,<br>please check your configures and regenerate again.</p>
+    </div>
+  </di>
 </body>
 <script type="text/javascript" src="static/index.js"></script>
 </html>
