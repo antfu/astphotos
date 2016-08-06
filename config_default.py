@@ -51,8 +51,8 @@ configs = dict(
     # Delete images those are not exist in src image folder
     delete_nonsrc_images = True,
     photo_resize = True,
-    photo_resize_horizontal_max_size = (3000,0),
-    photo_resize_vertical_max_size = (0,3000),
+    photo_resize_horizontal_max_size = (2000,0),
+    photo_resize_vertical_max_size = (0,2000),
     photo_resize_keep_exif = False,
 
     # If there is not title infomation in JSON file or EXIF tags,
@@ -64,10 +64,13 @@ configs = dict(
     # (default: '$')
     photo_title_spliter = '$',
 
+    # The spliter of photo index
+    photo_title_index_spliter = '&',
+
     # The order of gallery photos,
     # the value can be one of ['filename','title','time','shuffle','custom']
     # for 'custom' option: you should set 'index' value in photo's json file
-    photo_orderby = 'filename',
+    photo_orderby = 'time',
 
     # False:  Ascending
     # True: Descending

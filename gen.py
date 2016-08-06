@@ -105,7 +105,7 @@ def generate_struct_tree():
         album.update_json(pjoin(album_path,'_album.json'))
         if not album.name:
             album.name = album_name
-        if not album.photographer and root.default_photographer:
+        if album.photographer == None and root.default_photographer:
             album.photographer = root.default_photographer
 
         log('  Ablum:', remove_unicode(album.name))
@@ -146,6 +146,12 @@ def generate_struct_tree():
                     photo.photographer = temp[2]
                 if len(temp) > 3 and not photo.location:
                     photo.location = temp[3]
+            # Get index from title
+            if photo.title and cfg.photo_title_index_spliter in photo.title:
+                temp = photo.title.split(cfg.photo_title_index_spliter)
+                if photo.index == None:
+                    photo.index = float(temp[0])
+                photo.title = temp[1]
             # Set default photographer
             if not photo.photographer and album.photographer:
                 photo.photographer = album.photographer

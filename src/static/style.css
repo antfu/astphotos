@@ -115,6 +115,14 @@ a:hover
   padding: 1em 3em 1em 3em;
   transition: all 0.3s ease-in-out;
 }
+.nav.hidden
+{
+  pointer-events: all !important;
+}
+.nav.hidden:hover
+{
+  opacity: 1 !important;
+}
 .nav *
 {
   color: #222;

@@ -138,7 +138,6 @@ function immediate_and_timeout(func,timeout) {
   return setTimeout(func,timeout);
 }
 function gallery_expend(album) {
-  body_scroll_to(0);
   Vue.set(full_data,'current',album);
   Vue.set(full_data.current,'page',1);
   Vue.set(full_data,'viewmode',1);
@@ -146,13 +145,14 @@ function gallery_expend(album) {
   scroll.reset();
   resize_nav();
   update_title();
+  body_scroll_to(0);
 }
 function gallery_collapse() {
-  body_scroll_to(0);
   Vue.set(full_data,'viewmode',0);
   $('#gallery').addClass('hidden');
   resize_nav();
   update_title();
+  body_scroll_to(0);
 }
 
 function resize_nav() {
