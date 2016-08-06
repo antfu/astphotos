@@ -64,6 +64,7 @@ def copy_static():
     copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
 
 def render_index():
+    cfg.gentime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     render(pjoin(cfg.src_dir,'index.html'),pjoin(cfg.out_dir,'index.html'),cfg=cfg)
 
 def generate_and_save():
@@ -200,8 +201,8 @@ def generate_struct_tree():
         log('  ' + '-' * 20)
         album.cover = album.cover or ('_cover.'+src_file_type)
         if not os.path.exists(pjoin(album_out_path,album.cover)):
-            del(album.cover)
             log('  [!]Warning: cover [',album.cover,'] not exist.')
+            del(album.cover)
 
         if album.cover:
             album.cover = pjoin(cfg.static_dir,cfg.img_dir,album_name,album.cover).replace('\\','/')
