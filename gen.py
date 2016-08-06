@@ -50,7 +50,7 @@ def run():
 
     json_path = pjoin(cfg.out_dir,cfg.static_dir,cfg.sturct_filename)
     log('- Saving struct json file...')
-    save_json(json_path ,struct_tree)
+    save_json(json_path ,struct_tree,'var full_data = ')
     log('- Saving completed')
 
     log('- Rendering template file...')
@@ -69,7 +69,7 @@ def render_index():
 def generate_and_save():
     struct_tree = generate_struct_tree()
     json_path = pjoin(cfg.out_dir,cfg.static_dir,cfg.sturct_filename)
-    save_json(json_path ,struct_tree)
+    save_json(json_path ,struct_tree,'var full_data = ')
 
 def generate_struct_tree():
     time_start = datetime.datetime.now()
@@ -384,9 +384,12 @@ def open_json(filepath):
     f.close()
     return json.loads(s)
 
-def save_json(filepath,obj):
+def save_json(filepath,obj,prefix):
     f = codecs_open(filepath, 'w', 'utf-8')
-    f.write(json.dumps(obj))
+    t = json.dumps(obj)
+    if prefix:
+        t = prefix + t
+    f.write(t)
     f.close()
 
 def change_ext(filepath,ext):

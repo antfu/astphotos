@@ -5,14 +5,15 @@
   <title></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel='shortcut icon' type='image/x-icon' href='{{cfg.static_files_path.favicon}}' />
-  <link rel="stylesheet" href="static/style.css">
+  <link rel="stylesheet" href="{{cfg.static_dir}}/style.css">
   <link rel="stylesheet" href="{{cfg.static_files_path.material_icons}}">
+  <link rel="stylesheet" href="{{cfg.static_dir}}/semantic-transition.css">
   <script type="text/javascript" src="{{cfg.static_files_path.jquery_js}}"></script>
   <script type="text/javascript" src="{{cfg.static_files_path.vue_js}}"></script>
-  <script type="text/javascript" src="static/vue-animated-list.js"></script>
-  <link rel="stylesheet" href="static/semantic-transition.css">
-  <script type="text/javascript" src="static/semantic-transition.js"></script>
-  <script type="text/javascript" src="static/vue-transition.js"></script>
+  <script type="text/javascript" src="{{cfg.static_dir}}/vue-animated-list.js"></script>
+  <script type="text/javascript" src="{{cfg.static_dir}}/semantic-transition.js"></script>
+  <script type="text/javascript" src="{{cfg.static_dir}}/vue-transition.js"></script>
+  <script type="text/javascript" src="{{cfg.static_dir}}/{{cfg.sturct_filename}}"></script>
 </head>
 <body>
   <div class="nav" id="nav">

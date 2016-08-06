@@ -1,7 +1,5 @@
 Vue.config.debug = true;
 Vue.config.delimiters = ['${', '}'];
-var full_data = {};
-
 Vue.directive('full-photo',{
   bind:function(){
     var pic = $(this.el);
@@ -341,7 +339,13 @@ $('body').contextmenu(function(e) {
   e.preventDefault();
 });
 
-$.getJSON('/static/struct.json',function(data){
+$(function() {
+  update_title();
+  resize_update();
+  resize_nav();
+})
+/*
+$.getJSON('static/struct.json',function(data){
   full_data = data;
   vue_inst_nav.$data = full_data;
   vue_inst_albums.$data = full_data;
@@ -354,4 +358,4 @@ $.getJSON('/static/struct.json',function(data){
 }).fail(function() {
   $('#warning').show();
   document.title = "Warning - Astphotos";
-});
+});*/

@@ -15,10 +15,10 @@ configs = dict(
     #    material_icons = 'https://fonts.googleapis.com/icon?family=Material+Icons'
     #),
     static_files_path = dict(
-        favicon = '/static/favicon.ico',
-        jquery_js = '/static/jquery-3.1.0.min.js',
-        vue_js = '/static/vue.min.js',
-        material_icons = '/static/material-icons.css'
+        favicon = 'static/favicon.ico',
+        jquery_js = 'static/jquery-3.1.0.min.js',
+        vue_js = 'static/vue.min.js',
+        material_icons = 'static/material-icons.css'
     ),
 
     # The lanuages display in webpage
