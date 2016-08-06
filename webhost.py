@@ -32,8 +32,8 @@ def run():
         handlers=[
             (r'/?',index_handler)
         ],
-        template_path='out/',
-        static_path='out/static',
+        template_path=gen.cfg.out_dir,
+        static_path=gen.cfg.out_dir+'/'+gen.cfg.static_dir,
         debug=True
     )
     http_server = tornado.httpserver.HTTPServer(app)

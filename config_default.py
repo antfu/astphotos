@@ -46,6 +46,13 @@ configs = dict(
     sturct_filename = 'struct.json',
     src_file_type = 'jpg',
 
+
+    # If there is not title infomation in JSON file or EXIF tags,
+    # use the file name as the title of the photo
+    use_filename_as_default_title = True,
+    filename_title_ignore_start = '_',
+    default_cover_filename = '_cover',
+
     # Do not copy to out if target_file already exists (same modify date)
     lazy_copy = True,
     # Delete images those are not exist in src image folder
@@ -56,10 +63,6 @@ configs = dict(
     photo_resize_keep_exif = False,
 
     rename_photo_by_md5 = True,
-
-    # If there is not title infomation in JSON file or EXIF tags,
-    # use the file name as the title of the photo
-    use_filename_as_default_title = True,
 
     # The spliter of photo title,
     # to split title into [title & des & photographer & location]

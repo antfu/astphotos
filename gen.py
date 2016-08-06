@@ -145,7 +145,7 @@ def generate_struct_tree():
             if (album.use_filename_as_default_title or cfg.use_filename_as_default_title) and not photo.title:
                 name = clear_ext(photo_filename)
                 # But not the filename startswith '_'
-                if not name.startswith('_'):
+                if not name.startswith(cfg.filename_title_ignore_start):
                     photo.title = clear_ext(photo_filename)
             # If title contains '$', separate into
             # title & des & photographer & location
@@ -196,7 +196,7 @@ def generate_struct_tree():
 
             # Check wather it's cover
             if (album.cover and album.cover.lower() == photo_filename.lower()) \
-              or (photo_filename.lower() == ("_cover."+src_file_type)):
+              or (photo_filename.lower() == (cfg.default_cover_filename+'.'+src_file_type)):
                 album.cover = photo_href_path
                 album.color = photo.color
 
