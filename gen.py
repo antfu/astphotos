@@ -27,7 +27,11 @@ class infodict(dict):
             del(self[key])
 
 # Shorthand alias
-log = print
+def log(*s,**kws):
+    try:
+        print(*s,**kws)
+    except:
+        print('[---Unable to Print---]')
 pjoin = os.path.join
 
 if not os.path.exists(cfg.out_dir):
@@ -130,11 +134,18 @@ def generate_struct_tree():
                 # But not the filename startswith '_'
                 if not name.startswith('_'):
                     photo.title = clear_ext(os.path.basename(photo_path))
-            # If title contains '$', separate into title & des
-            if photo.title and '$' in photo.title and not photo.des:
+            # If title contains '$', separate into
+            # title & des & photographer & location
+            if photo.title and '$' in photo.title:
                 temp = photo.title.split('$')
-                photo.title = temp[0]
-                photo.des = temp[1]
+                if len(temp) > 0:
+                    photo.title = temp[0]
+                if len(temp) > 1 and not photo.des:
+                    photo.des = temp[1]
+                if len(temp) > 2 and not photo.photographer:
+                    photo.photographer = temp[2]
+                if len(temp) > 3 and not photo.location:
+                    photo.location = temp[3]
             # Set default photographer
             if not photo.photographer and album.photographer:
                 photo.photographer = album.photographer
@@ -163,11 +174,19 @@ def generate_struct_tree():
             album.photos.append(photo)
             photo_id += 1
 
+        if cfg.delete_nonsrc_images:
+            srcs = [os.path.basename(x).lower() for x in glob.glob(pjoin(album_path,'*.'+src_file_type))]
+            outs = [os.path.basename(x).lower() for x in glob.glob(pjoin(album_out_path,'*.'+src_file_type))]
+            for o in outs:
+                if not o in srcs:
+                    log('  [!]Removing',o)
+                    os.remove(pjoin(album_out_path,o))
+
         log('  ' + '-' * 20)
         album.cover = album.cover or ('_cover.'+src_file_type)
         if not os.path.exists(pjoin(album_out_path,album.cover)):
             del(album.cover)
-            log('  !Warning: cover [',album.cover,'] not exist.')
+            log('  [!]Warning: cover [',album.cover,'] not exist.')
 
         if album.cover:
             album.cover = pjoin(cfg.static_dir,cfg.img_dir,album_name,album.cover).replace('\\','/')
@@ -354,7 +373,6 @@ def hex_to_rgb(value):
 
 def rgb_to_hex(rgb):
     return '#%02x%02x%02x' % rgb
-
 
 def open_json(filepath):
     f = codecs_open(filepath,'r','utf-8')

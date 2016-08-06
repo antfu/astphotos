@@ -378,6 +378,7 @@ a:hover
 .gallery .detail .info .meta{
   font-size: 0.6em;
   color: rgba(0,0,0,0.4);
+  display: inline-block;
 }
 .gallery .detail .info .sub.meta{
   opacity: 0.7;

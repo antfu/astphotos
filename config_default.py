@@ -24,15 +24,15 @@ configs = dict(
     # The lanuages display in webpage
     # for example (Chinese):
     #lanuages = dict(
-    #    photographer = '拍摄者',
-    #    location = '地点',
+    #    photographer = '拍摄者: ',
+    #    location = '地点: ',
     #    albums = '相册',
     #    photos = '张照片',
     #    comments = '条留言'
     #)
     lanuages = dict(
-        photographer = 'photographer',
-        location = 'location',
+        photographer = 'photographer: ',
+        location = 'location: ',
         albums = 'albums',
         photos = ' photos',
         comments = ' comments'
@@ -46,7 +46,10 @@ configs = dict(
     sturct_filename = 'struct.json',
     src_file_type = 'jpg',
 
+    # Do not copy to out if target_file already exists (same modify date)
     lazy_copy = True,
+    # Delete images those are not exist in src image folder
+    delete_nonsrc_images = True,
     photo_resize = True,
     photo_resize_horizontal_max_size = (3000,0),
     photo_resize_vertical_max_size = (0,3000),

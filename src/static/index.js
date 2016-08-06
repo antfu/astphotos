@@ -246,7 +246,7 @@ var scroll = {
     var target_obj = {};
     target_obj[key] = 0;
     scroll.scrolling = true;
-    el.animate(target_obj, (el[key]() || 0) / 2, function() {
+    el.animate(target_obj, (el[key]() || 0) / 6, function() {
       scroll.scrolling = false;
     });
   },
@@ -343,6 +343,7 @@ $.getJSON('/static/struct.json',function(data){
   vue_inst_modal.$data = full_data;
   update_title();
   resize_update();
+  resize_nav();
 }).fail(function() {
   $('#warning').show();
   document.title = "Warning - Astphotos";

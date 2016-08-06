@@ -33,7 +33,6 @@
         -->
       </div>
     </div>
-
     <div class="back">
       <div @click="scrolltop" id="scrolltop_btn" class="icon button hidden">
         <i class="material-icons">vertical_align_top</i>
@@ -78,8 +77,8 @@
           <p v-if="album.des" class="des">${album.des}</p>
           <div class="dash"></div>
           <p class="amount">${album.amount}{{cfg.lanuages.photos}}</p>
-          <p v-if="album.photographer"><span class="label">{{cfg.lanuages.photographer}}:</span> ${album.photographer}</p>
-          <p v-if="album.location"><span class="label">{{cfg.lanuages.location}}:</span> ${album.location}</p>
+          <p v-if="album.photographer"><span class="label">{{cfg.lanuages.photographer}}</span>${album.photographer}</p>
+          <p v-if="album.location"><span class="label">{{cfg.lanuages.location}}</span>${album.location}</p>
           <div v-if="album.comments" class="dash"></div>
           <p v-if="album.comments">${album.comments}{{cfg.lanuages.comments}}</p>
         </div>
