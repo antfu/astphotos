@@ -55,6 +55,8 @@ configs = dict(
     photo_resize_vertical_max_size = (0,2000),
     photo_resize_keep_exif = False,
 
+    rename_photo_by_md5 = True,
+
     # If there is not title infomation in JSON file or EXIF tags,
     # use the file name as the title of the photo
     use_filename_as_default_title = True,

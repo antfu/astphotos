@@ -8,8 +8,9 @@ import datetime
 import exifread
 import shutil
 import jinja2
-from   PIL    import Image # PIL using Pillow (PIL fork)
-from   config import configs as cfg
+import hashlib
+from   PIL     import Image # PIL using Pillow (PIL fork)
+from   config  import configs as cfg
 
 class infodict(dict):
     def update_json(self,jsonpath):
@@ -27,11 +28,8 @@ class infodict(dict):
             del(self[key])
 
 # Shorthand alias
-def log(*s,**kws):
-    try:
-        print(*s,**kws)
-    except:
-        print('[---Unable to Print---]')
+def log(*args,**kws):
+    print(*[remove_unicode(str(x)) for x in args],**kws)
 pjoin = os.path.join
 
 if not os.path.exists(cfg.out_dir):
@@ -111,32 +109,44 @@ def generate_struct_tree():
         if album.photographer == None and root.default_photographer:
             album.photographer = root.default_photographer
 
-        log('  Ablum:', remove_unicode(album.name))
+        log('  Ablum:', album.name)
 
         album.photos = []
         photo_id = 0
+
+        photo_names = []
         # Search for photos
         for photo_path in glob.glob(pjoin(album_path,'*.'+src_file_type)):
             photo_filename = os.path.basename(photo_path)
-            photo_out_path = pjoin(album_out_path,photo_filename)
-            photo_href_path = pjoin(cfg.static_dir,cfg.img_dir,album_name,photo_filename)
 
-            log('    ', remove_unicode(photo_filename), end='')
+            # Generate output filename
+            if cfg.rename_photo_by_md5:
+                photo_out_filename = md5(photo_path) + '.' + src_file_type
+            else:
+                photo_out_filename = photo_filename
+            photo_out_path = pjoin(album_out_path,photo_out_filename)
+            photo_href_path = pjoin(cfg.static_dir,cfg.img_dir,album_name,photo_out_filename).replace('\\','/')
+
+            photo_instance = Image.open(photo_path)
+
+            log('    ', clear_ext(photo_filename), end='')
 
             photo = infodict()
             photo.id = photo_id
+            # Update basic photo infos
+            photo.update(get_photo_info(photo_instance))
             # Update info from the image's EXIF tags
             if cfg.extract_exif:
                 photo.update(get_exif(photo_path))
             # Update info from the same-name json file if it exists
             photo.update_json(change_ext(photo_path,'json'))
-            photo.path = photo_href_path.replace('\\','/')
+            photo.path = photo_href_path
             # Use filename as title
             if (album.use_filename_as_default_title or cfg.use_filename_as_default_title) and not photo.title:
-                name = clear_ext(os.path.basename(photo_path))
+                name = clear_ext(photo_filename)
                 # But not the filename startswith '_'
                 if not name.startswith('_'):
-                    photo.title = clear_ext(os.path.basename(photo_path))
+                    photo.title = clear_ext(photo_filename)
             # If title contains '$', separate into
             # title & des & photographer & location
             if photo.title and cfg.photo_title_spliter in photo.title:
@@ -177,21 +187,26 @@ def generate_struct_tree():
                 # Resize and Save
                 if cfg.photo_resize:
                     log('  [Resizing]', end='')
-                    im = Image.open(photo_path)
-                    rim = im_resize(im)
+                    rim = im_resize(photo_instance)
                     rim.save(photo_out_path)
-                    im.close()
                 # Just copy
                 else:
                     log('  [Copying]', end='')
                     shutil.copy(photo_path,photo_out_path)
 
+            # Check wather it's cover
+            if (album.cover and album.cover.lower() == photo_filename.lower()) \
+              or (photo_filename.lower() == ("_cover."+src_file_type)):
+                album.cover = photo_href_path
+                album.color = photo.color
+
             log()
             album.photos.append(photo)
+            photo_names.append(photo_out_filename.lower())
             photo_id += 1
 
         if cfg.delete_nonsrc_images:
-            srcs = [os.path.basename(x).lower() for x in glob.glob(pjoin(album_path,'*.'+src_file_type))]
+            srcs = photo_names
             outs = [os.path.basename(x).lower() for x in glob.glob(pjoin(album_out_path,'*.'+src_file_type))]
             for o in outs:
                 if not o in srcs:
@@ -199,20 +214,6 @@ def generate_struct_tree():
                     os.remove(pjoin(album_out_path,o))
 
         log('  ' + '-' * 20)
-        album.cover = album.cover or ('_cover.'+src_file_type)
-        if not os.path.exists(pjoin(album_out_path,album.cover)):
-            log('  [!]Warning: cover [',album.cover,'] not exist.')
-            del(album.cover)
-
-        if album.cover:
-            album.cover = pjoin(cfg.static_dir,cfg.img_dir,album_name,album.cover).replace('\\','/')
-            # Take the color of cover if need
-            if cfg.calc_image_average_color and album.photos:
-                for p in album.photos:
-                    if p.path == album.cover:
-                        album.color = album.color
-                        break
-
         if album.photos:
             if not album.cover:
                 # Random choice a photo as cover
@@ -248,7 +249,7 @@ def generate_struct_tree():
 
     time_end = datetime.datetime.now()
     time_spent = time_end - time_start
-    log('{} albums, {} photos, {}s cost'.format(len(root.albums),sum([len(a.photos) for a in root.albums]),time_spent.seconds))
+    log('  {} albums, {} photos, {}s cost'.format(len(root.albums),sum([len(a.photos) for a in root.albums]),time_spent.seconds))
     return root
 
 def codecs_open(filename,open_type,encode=None):
@@ -346,8 +347,22 @@ def get_exif(img_path):
     if dt:
         result.datetime = datetime.datetime.strptime(dt.printable,'%Y:%m:%d %H:%M:%S').isoformat()
 
+    title = tags.get('Image ImageDescription',None)
+    if title:
+        result.title = title.printable
+
+    return result
+
+def md5(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+def get_photo_info(im):
+    result = infodict()
     # PIL, Get image size and color
-    im = Image.open(img_path)
     result.width = im.size[0]
     result.height = im.size[1]
     if result.width >= result.height:
@@ -360,16 +375,12 @@ def get_exif(img_path):
     # Calc average color
     if cfg.calc_image_average_color:
         result.color = rgb_to_hex(im.resize((1,1)).getpixel((0,0))).upper()
-    im.close()
-
-    title = tags.get('Image ImageDescription',None)
-    if title:
-        result.title = title.printable
 
     return result
 
 def remove_unicode(string):
-    return string.encode('ascii','ignore').decode('utf-8')
+    return ''.join([i if ord(i) < 128 else '?' for i in string])
+    #return string.encode('ascii','ignore').decode('utf-8')
 
 def hex_to_rgb(value):
     value = value.lstrip('#')

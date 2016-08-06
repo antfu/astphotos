@@ -1,3 +1,8 @@
+'use strict';
+
+if (full_data)
+  $('#warning').remove();
+
 Vue.config.debug = true;
 Vue.config.delimiters = ['${', '}'];
 Vue.directive('full-photo',{
@@ -277,6 +282,7 @@ var scroll = {
     }
     e = window.event || e;
     var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+    var direction = 0;
     if (scroll.vertical())
     {
       if (delta == 0)
@@ -343,19 +349,4 @@ $(function() {
   update_title();
   resize_update();
   resize_nav();
-})
-/*
-$.getJSON('static/struct.json',function(data){
-  full_data = data;
-  vue_inst_nav.$data = full_data;
-  vue_inst_albums.$data = full_data;
-  vue_inst_gallery.$data = full_data;
-  vue_inst_modal.$data = full_data;
-  vue_inst_footer.$data = full_data;
-  update_title();
-  resize_update();
-  resize_nav();
-}).fail(function() {
-  $('#warning').show();
-  document.title = "Warning - Astphotos";
-});*/
+});

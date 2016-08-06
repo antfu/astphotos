@@ -1,0 +1,3 @@
+exifread
+jinja2
+pillow
