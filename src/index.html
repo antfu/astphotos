@@ -23,13 +23,13 @@
     <div v-if="viewmode" class="headers">
       <div class="header">${current.name.toLowerCase()}</div>
       <div class="sub header">${current.des || (current.amount + '{{cfg.lanuages.photos}}')}</div>
-    </div>
-    <div v-if="viewmode" transition="fade" class="pages">
-      <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(-1)">navigate_before</i>
-      <div class="current">${current.page || 1}</div>
-      <div class="divider">/</div>
-      <div class="total">${current.amount}</div>
-      <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(1)">navigate_next</i>
+      <div class="pages">
+        <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(-1)">navigate_before</i>
+        <div class="current">${current.page || 1}</div>
+        <div class="divider">/</div>
+        <div class="total">${current.amount}</div>
+        <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(1)">navigate_next</i>
+      </div>
     </div>
 
     <div class="back">
@@ -65,11 +65,11 @@
     </div>
   </div>
 
-  <div id="albums" class="albums">
+  <div id="albums" class="albums" :style="{'margin-top': viewmode ? '1em' : 0 }">
     <div v-if="viewmode" transition="fade-down" class="block title">{{cfg.lanuages.albums}}</div>
     <div v-for="album in albums" track-by="id" @click="expand(album)" class="square photo cover"
         :style="{background:album.color}" :class="{secondary:viewmode && current != album}">
-      <img class="image" :src="album.cover" v-square-image>
+      <div class="back-image" :style="{'background-image': 'url(\'' + album.cover + '\')'}"></div>
       <div class="overlay">
         <div class="info">
           <div class="name">${album.name}</div>

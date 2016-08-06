@@ -2,16 +2,6 @@ Vue.config.debug = true;
 Vue.config.delimiters = ['${', '}'];
 var full_data = {};
 
-Vue.directive('square-image',function(){
-  var pic = $(this.el);
-  this.el.onload = function(){
-    if (pic.height() > pic.width())
-      pic.css('width','100%');
-    else
-      pic.css('height','100%');
-    pic.css('opacity',1);
-  };
-});
 Vue.directive('full-photo',{
   bind:function(){
     var pic = $(this.el);
@@ -120,7 +110,7 @@ function get_gallery_photo_height() {
   if (!gallery_photo_resized)
     return gallery_photo_height;
   var temp = $('<div class="gallery" class="opacity:0"><div class="horizontal"><div class="photo"></div></div></div>').appendTo('body');
-  gallery_photo_height = temp.find('.photo').height() + 50;
+  gallery_photo_height = temp.find('.photo').height() + 60;
   gallery_photo_resized = false;
   temp.remove();
   return gallery_photo_height;
@@ -156,10 +146,10 @@ function resize_gallery() {
   else if (scroll.vertical())
     g.height('auto');
   else
-    g.height(g.find('.detail').height() || get_gallery_photo_height());
+    g.height(get_gallery_photo_height());
   immediate_and_timeout(function () {
     $('.nav-space').height($('#nav').outerHeight());
-  },500);
+  },100);
 }
 
 function body_scroll_to(to, on_complete) {
@@ -180,9 +170,6 @@ function body_scroll_to(to, on_complete) {
 function resize_update() {
   gallery_photo_resized = true;
   gallery_collapse();
-  immediate_and_timeout(function() {
-    $('.photo.cover.square').height($('.photo.cover.square').width());
-  }, 500);
 }
 
 var scroll = {
@@ -226,6 +213,8 @@ var scroll = {
       var target = $($('.gallery .photo')[index]).offset().top;
       if (direction == -1 && !$('#nav').hasClass('hidden'))
         target -= $('#nav').outerHeight();
+      if (index == 0)
+        target = 0;
       body_scroll_to(target);
     }
     else

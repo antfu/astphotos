@@ -66,10 +66,8 @@ a:hover
 }
 .pages
 {
-  margin-left: 2em;
-  display: inline-block;
   transition: all 0.3s ease-in-out;
-  vertical-align: center;
+  line-height: 1.3em;
   margin-bottom: 0.1em;
 }
 .pages .total
@@ -93,7 +91,9 @@ a:hover
 }
 .block.title
 {
-  margin: 1em 2em;
+  position: absolute;
+  top: -2em;
+  left: 2em;
   color: #222;
   font-weight: bold;
 }
@@ -166,7 +166,7 @@ a:hover
 {
   margin: 0;
   width: 100%;
-  overflow-y: hidden;
+  overflow: visible;
   position: relative;
 }
 .albums .photo
@@ -209,6 +209,28 @@ a:hover
 .cover
 {
   transition: all 0.3s ease-in;
+}
+.photo.cover.square
+{
+  position: relative;
+}
+.photo.cover.square .back-image
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-position: center center;
+}
+.photo.cover.square:before{
+	content: "";
+	display: block;
+	padding-top: 100%; 	/* Make height same as width */
 }
 .cover .inner-border
 {
@@ -351,7 +373,7 @@ a:hover
   font-size: 0.7em;
   color: rgba(0,0,0,0.5);
   margin-top: -0.2em;
-  margin-bottom: 0.7em;
+  margin-bottom: 0.5em;
 }
 .gallery .detail .info .meta{
   font-size: 0.6em;
@@ -517,10 +539,6 @@ a:hover
   .nav
   {
     padding: 0.7em 1.5em;
-  }
-  .nav .pages{
-    display: block;
-    margin-left: 0;
   }
   .nav-space
   {
