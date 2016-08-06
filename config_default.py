@@ -59,6 +59,11 @@ configs = dict(
     # use the file name as the title of the photo
     use_filename_as_default_title = True,
 
+    # The spliter of photo title,
+    # to split title into [title & des & photographer & location]
+    # (default: '$')
+    photo_title_spliter = '$',
+
     # The order of gallery photos,
     # the value can be one of ['filename','title','time','shuffle','custom']
     # for 'custom' option: you should set 'index' value in photo's json file

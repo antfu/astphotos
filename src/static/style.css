@@ -373,12 +373,20 @@ a:hover
   font-size: 0.7em;
   color: rgba(0,0,0,0.5);
   margin-top: -0.2em;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.2em;
 }
 .gallery .detail .info .meta{
   font-size: 0.6em;
-  color: rgba(0,0,0,0.4);
+  color: rgba(0,0,0,0.5);
   display: inline-block;
+  margin-right: 0.5em;
+  vertical-align: top;
+}
+.gallery .detail .info .meta span:not(.label){
+  color: rgba(0,0,0,0.5);
+}
+.gallery .detail .info .meta a:hover{
+  border-bottom: 1px solid #222;
 }
 .gallery .detail .info .sub.meta{
   opacity: 0.7;
@@ -387,7 +395,7 @@ a:hover
   margin-left: 0.5em;
 }
 .gallery .detail .info .label{
-  color: rgba(0,0,0,1);
+  color: rgba(0,0,0,0.9);
 }
 .gallery .vertical .detail, .gallery .vertical .detail .image{
   width: 100%;

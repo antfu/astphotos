@@ -62,6 +62,10 @@ var vue_inst_nav = new Vue({
     }
   }
 });
+var vue_inst_footer = new Vue({
+  el: '#footer',
+  data: full_data
+});
 var vue_inst_albums = new Vue({
   el: '#albums',
   data: full_data,
@@ -341,6 +345,7 @@ $.getJSON('/static/struct.json',function(data){
   vue_inst_albums.$data = full_data;
   vue_inst_gallery.$data = full_data;
   vue_inst_modal.$data = full_data;
+  vue_inst_footer.$data = full_data;
   update_title();
   resize_update();
   resize_nav();

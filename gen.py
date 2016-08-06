@@ -82,9 +82,9 @@ def generate_struct_tree():
 
     src_file_type = cfg.src_file_type
 
-    struct_tree = infodict()
-    struct_tree.update_json(os.path.join(img_src_dir,'_site.json'))
-    struct_tree.albums = []
+    root = infodict()
+    root.update_json(os.path.join(img_src_dir,'_site.json'))
+    root.albums = []
 
     album_id = 0
     for album_name in os.listdir(img_src_dir):
@@ -105,8 +105,8 @@ def generate_struct_tree():
         album.update_json(pjoin(album_path,'_album.json'))
         if not album.name:
             album.name = album_name
-        if not album.photographer and struct_tree.default_photographer:
-            album.photographer = struct_tree.default_photographer
+        if not album.photographer and root.default_photographer:
+            album.photographer = root.default_photographer
 
         log('  Ablum:', remove_unicode(album.name))
 
@@ -136,8 +136,8 @@ def generate_struct_tree():
                     photo.title = clear_ext(os.path.basename(photo_path))
             # If title contains '$', separate into
             # title & des & photographer & location
-            if photo.title and '$' in photo.title:
-                temp = photo.title.split('$')
+            if photo.title and cfg.photo_title_spliter in photo.title:
+                temp = photo.title.split(cfg.photo_title_spliter)
                 if len(temp) > 0:
                     photo.title = temp[0]
                 if len(temp) > 1 and not photo.des:
@@ -149,6 +149,13 @@ def generate_struct_tree():
             # Set default photographer
             if not photo.photographer and album.photographer:
                 photo.photographer = album.photographer
+            # Get photographer link by searching album and root configures
+            if album.photographer_links and isinstance(album.photographer_links,dict) \
+             and photo.photographer in album.photographer_links.keys():
+               photo.photographer_link = album.photographer_links[photo.photographer]
+            if root.photographer_links and isinstance(root.photographer_links,dict) \
+             and photo.photographer in root.photographer_links.keys():
+               photo.photographer_link = root.photographer_links[photo.photographer]
             # if configed not to display exposure and aperture, delete them
             if not cfg.exif_exposure:
                 del(photo.aperture)
@@ -224,13 +231,13 @@ def generate_struct_tree():
             if photo_order_descending:
                 album.photos = album.photos[::-1]
             album.amount = len(album.photos)
-            struct_tree.albums.append(album)
+            root.albums.append(album)
             log('  Cover :',os.path.basename(album.cover))
             log('  Amount:',album.amount)
             log()
             album_id += 1
 
-    return struct_tree
+    return root
 
 def codecs_open(filename,open_type,encode=None):
     return codecs.open(filename,open_type,encode)

@@ -58,8 +58,15 @@
           <div v-if="photo.exposure" class="sub meta">${photo.exposure}</div>
           <div v-if="photo.title" class="title">${photo.title || '　'}</div>
           <div v-if="photo.des" class="des">${photo.des}</div>
-          <div v-if="photo.photographer" class="meta"><span class="label">&</span>${photo.photographer}</div>
-          <div v-if="photo.location" class="meta"><span class="label">@</span>${photo.location}</div>
+          <div v-if="photo.photographer" class="meta"><span class="label">by </span>
+            <span v-if="!photo.photographer_link">
+            ${photo.photographer}
+            </span>
+            <a v-if="photo.photographer_link" target="_blank" :href="photo.photographer_link">
+            ${photo.photographer}
+            </a>
+          </div>
+          <div v-if="photo.location" class="meta"><span class="label">at </span>${photo.location}</div>
           <div v-if="!photo.title" class="title">　</div>
         </div>
       </div>
@@ -88,7 +95,7 @@
   </div>
 
   <div id="footer" class="footer">
-    <a class="cell" href="https://antnf.com">&anthony</a>
+    <a class="cell" :href="me_link" target="_blank">&${me}</a>
     <a class="cell" href="https://creativecommons.org/licenses/by-nc-nd/4.0">CC BY-NC-ND</a>
   </div>
 
