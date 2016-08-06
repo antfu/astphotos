@@ -140,6 +140,8 @@ function immediate_and_timeout(func,timeout) {
 function gallery_expend(album) {
   Vue.set(full_data,'current',album);
   Vue.set(full_data.current,'page',1);
+  if (full_data.viewmode == 1)
+    $('body').scrollTop(0);
   Vue.set(full_data,'viewmode',1);
   $('#gallery').removeClass('hidden');
   scroll.reset();

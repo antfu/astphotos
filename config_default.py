@@ -95,9 +95,9 @@ configs = dict(
 
     # Read and calc the average color of the photo,
     # this feature can bring a better user-experience in website,
-    # but may cost more time while generating structure tree
+    # but may cost extra time while generating structure tree
     # (default: True)
-    calc_image_average_color = False,
+    calc_image_average_color = True,
 
     # Display the info in gallery view, such as title, desc, etc.
     # Can be overrided in "_album.json" and "[photo_name].json"

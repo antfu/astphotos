@@ -72,6 +72,8 @@ def generate_and_save():
     save_json(json_path ,struct_tree)
 
 def generate_struct_tree():
+    time_start = datetime.datetime.now()
+
     img_src_dir = os.path.join(cfg.src_dir,cfg.img_dir)
     img_out_dir = os.path.join(cfg.out_dir,cfg.static_dir,cfg.img_dir)
 
@@ -243,6 +245,9 @@ def generate_struct_tree():
             log()
             album_id += 1
 
+    time_end = datetime.datetime.now()
+    time_spent = time_end - time_start
+    log('{} albums, {} photos, {}s cost'.format(len(root.albums),sum([len(a.photos) for a in root.albums]),time_spent.seconds))
     return root
 
 def codecs_open(filename,open_type,encode=None):
@@ -353,21 +358,7 @@ def get_exif(img_path):
 
     # Calc average color
     if cfg.calc_image_average_color:
-        resize_width = 10
-        resize_height = 10
-        s_im = im.resize((resize_width,resize_height))
-        r,g,b = (0,0,0)
-        for x in range(resize_width):
-            for y in range(resize_height):
-                tr,tg,tb = s_im.getpixel((x,y))
-                r += tr
-                g += tg
-                b += tb
-        r /= resize_width * resize_height
-        g /= resize_width * resize_height
-        b /= resize_width * resize_height
-        result.color = rgb_to_hex((int(r),int(g),int(b))).upper()
-
+        result.color = rgb_to_hex(im.resize((1,1)).getpixel((0,0))).upper()
     im.close()
 
     title = tags.get('Image ImageDescription',None)
