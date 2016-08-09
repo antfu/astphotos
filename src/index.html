@@ -76,6 +76,7 @@ Generate Time: {{cfg.gentime}}
             </a>
           </div>
           <div v-if="photo.location" class="meta"><span class="label">at </span>${photo.location}</div>
+          <div v-if="photo.datetime" class="meta">${dateformat(photo.datetime)}</div>
           <div v-if="!photo.title" class="title">　</div>
         </div>
       </div>

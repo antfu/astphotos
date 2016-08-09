@@ -5,6 +5,7 @@ import glob
 import codecs
 import random
 import datetime
+import configparser
 import exifread
 import shutil
 import jinja2
@@ -389,6 +390,13 @@ def hex_to_rgb(value):
 
 def rgb_to_hex(rgb):
     return '#%02x%02x%02x' % rgb
+
+def open_ini(filepath):
+    ini_str = '[root]\n' + codecs_open(filepath,'r','utf-8').read()
+    ini_fp = StringIO.StringIO(ini_str)
+    config = ConfigParser.RawConfigParser()
+    config.readfp(ini_fp)
+    return config['root']
 
 def open_json(filepath):
     f = codecs_open(filepath,'r','utf-8')

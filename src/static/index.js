@@ -3,6 +3,7 @@
 if (full_data)
   $('#warning').remove();
 
+/* =============== Vue Directive ===============*/
 Vue.config.debug = true;
 Vue.config.delimiters = ['${', '}'];
 Vue.directive('full-photo',{
@@ -51,6 +52,8 @@ Vue.transition('height-toggle', {
     $(el).stop()
   }
 });
+
+/* =============== Vue Objects ===============*/
 var vue_inst_nav = new Vue({
   el: '#nav',
   data: full_data,
@@ -97,7 +100,8 @@ var vue_inst_gallery = new Vue({
     },
     window_width: function () {
       return $(window).width();
-    }
+    },
+    dateformat: dateformat
   }
 });
 var vue_inst_modal = new Vue({
@@ -114,6 +118,24 @@ var vue_inst_modal = new Vue({
     }
   }
 });
+
+/* =============== Functions ===============*/
+function dateformat(datestr)
+{
+  var monthNames = [
+    "January", "February", "March",
+    "April", "May", "June", "July",
+    "August", "September", "October",
+    "November", "December"
+  ];
+
+  var date = new Date(datestr);
+  var day = date.getDate();
+  var monthIndex = date.getMonth();
+  var year = date.getFullYear();
+
+  return monthNames[monthIndex] + ' ' + year;
+}
 
 function update_title() {
   if (!full_data.viewmode)
@@ -159,7 +181,6 @@ function gallery_collapse() {
   update_title();
   body_scroll_to(0);
 }
-
 function resize_nav() {
   immediate_and_timeout(function () {
     $('.nav-space').height($('#nav').outerHeight());
