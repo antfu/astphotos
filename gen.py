@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import os
 import sys
 import json
@@ -8,8 +11,10 @@ import datetime
 import configparser
 import exifread
 import shutil
-import jinja2
 import hashlib
+import jinja2
+from   jinja2  import FileSystemLoader
+from   jinja2.environment import Environment
 from   PIL     import Image # PIL using Pillow (PIL fork)
 from   config  import configs as cfg
 
@@ -61,10 +66,11 @@ def run():
 
 def copy_static():
     copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
+    copydir(pjoin(cfg.src_dir,cfg.themes_dir,cfg.theme,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
 
 def render_index():
     cfg.gentime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    render(pjoin(cfg.src_dir,'index.html'),pjoin(cfg.out_dir,'index.html'),cfg=cfg)
+    render(pjoin(cfg.out_dir,'index.html'),cfg=cfg)
 
 def generate_and_save():
     struct_tree = generate_struct_tree()
@@ -268,14 +274,9 @@ def copydir(src,dst):
             # use 'copy2' to keep file metadate
             shutil.copy2(f,dst_path)
 
-def render(src,dst,**kwargs):
-    # open file
-    f = codecs_open(src,'r','utf-8')
-    s = f.read()
-    f.close()
-    # render html file using jinja2
-    j = jinja2.Template(s)
-    s = j.render(**kwargs)
+def render(dst,**kwargs):
+    j2_env = Environment(loader=FileSystemLoader(cfg.src_dir))
+    s = j2_env.get_template(cfg.themes_dir+'/'+cfg.theme+'/index.html').render(**kwargs)
     # save file
     f = codecs_open(dst,'w','utf-8')
     f.write(s)

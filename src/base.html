@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!--
+===================== Astphotos =====================
+| A static one-page photo gallery website generator |
+| Github: https://github.com/AnthonyFu117/astphotos |
+| Author: Anthony Fu                                |
+| Theme: {% block theme_name %}Default{% endblock %}     |
+===================== Astphotos =====================
+Generate Time: {{cfg.gentime}}
+-->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel='shortcut icon' type='image/x-icon' href='{{cfg.static_files_path.favicon}}' />
+  <link rel="stylesheet" href="{{cfg.static_dir}}/style.css">
+  <link rel="stylesheet" href="{{cfg.static_files_path.material_icons}}">
+  <link rel="stylesheet" href="{{cfg.static_dir}}/semantic-transition.css">
+  <script type="text/javascript" src="{{cfg.static_files_path.jquery_js}}"></script>
+  <script type="text/javascript" src="{{cfg.static_files_path.vue_js}}"></script>
+  <script type="text/javascript" src="{{cfg.static_dir}}/vue-animated-list.js"></script>
+  <script type="text/javascript" src="{{cfg.static_dir}}/semantic-transition.js"></script>
+  <script type="text/javascript" src="{{cfg.static_dir}}/vue-transition.js"></script>
+  <script type="text/javascript" src="{{cfg.static_dir}}/{{cfg.sturct_filename}}"></script>
+  {% block head %}{% endblock %}
+</head>
+
+{% block body %}{% endblock %}
+
+{% block tail %}{% endblock %}
+</html>

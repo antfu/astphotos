@@ -39,12 +39,14 @@ configs = dict(
     ),
 
     src_dir = 'src',
-    out_dir = 'out',
+    out_dir = 'complied',
+    theme = 'default',
 
     static_dir = 'static',
     img_dir = 'img',
     sturct_filename = 'struct.json',
     src_file_type = 'jpg',
+    themes_dir = 'themes',
 
 
     # If there is not title infomation in JSON file or EXIF tags,
