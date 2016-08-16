@@ -6,6 +6,7 @@ Default configurations.
 '''
 
 configs = dict(
+    debug = False,
     # The static files(css/js) path,
     # you can change them into CDNs
     # for example (using CDNjs.com):

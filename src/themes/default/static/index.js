@@ -1,11 +1,6 @@
 'use strict';
 
-if (full_data)
-  $('#warning').remove();
-
 /* =============== Vue Directive ===============*/
-Vue.config.debug = true;
-Vue.config.delimiters = ['${', '}'];
 Vue.directive('full-photo',{
   bind:function(){
     var pic = $(this.el);
@@ -54,42 +49,22 @@ Vue.transition('height-toggle', {
 });
 
 /* =============== Vue Objects ===============*/
-var vue_inst_nav = new Vue({
-  el: '#nav',
-  data: full_data,
-  methods:
-  {
-    collapse: gallery_collapse,
+
+var vue_mix = {
+  methods: {
     scroll: function(i) {
       scroll.scroll(i);
     },
     scrolltop: function() {
       body_scroll_to(0);
-    }
-  }
-});
-var vue_inst_footer = new Vue({
-  el: '#footer',
-  data: full_data
-});
-var vue_inst_albums = new Vue({
-  el: '#albums',
-  data: full_data,
-  methods: {
-    expand: function (album) {
+    },
+    expand: function(album) {
       if (full_data.viewmode == 0 || full_data.current != album)
         gallery_expend(album);
       else
         gallery_collapse();
-    }
-  }
-});
-var vue_inst_gallery = new Vue({
-  el: '#gallery',
-  data: full_data,
-  methods: {
-    photo_height: get_gallery_photo_height,
-    open_modal: function (photo) {
+    },
+    open_modal: function(photo) {
       $.each(full_data.current.photos,function (i,e) {
         if (e == photo)
         {
@@ -98,26 +73,22 @@ var vue_inst_gallery = new Vue({
         }
       })
     },
-    window_width: function () {
+    window_width: function() {
       return $(window).width();
     },
-    dateformat: dateformat
-  }
-});
-var vue_inst_modal = new Vue({
-  el: '#modal',
-  data: full_data,
-  methods: {
-    close: function () {
+    close: function() {
       Vue.set(full_data,'viewmode',1);
     },
-    next: function (direction) {
+    next: function(direction) {
       var target = full_data.current.modal + direction;
       if (target >= 0 && target < full_data.current.amount)
         Vue.set(full_data.current,'modal',target);
-    }
+    },
+    collapse: gallery_collapse,
+    photo_height: get_gallery_photo_height,
+    dateformat: dateformat
   }
-});
+}
 
 /* =============== Functions ===============*/
 function dateformat(datestr)
@@ -359,12 +330,11 @@ $(window).scroll(function() {
 
   if (scroll.vertical())
     scroll.update();
-})
-$(window).resize(resize_update);
-// Disable contextmenu
-$('body').contextmenu(function(e) {
-  e.preventDefault();
 });
+$(window).resize(resize_update);
+
+// Disable contextmenu
+if (!DEBUG) $('body').contextmenu(function(e) { e.preventDefault(); });
 
 $(function() {
   update_title();

@@ -317,11 +317,11 @@ def im_resize(img):
 
 # === Utils === #
 
-def get_tags(img_path):
+def get_tags(img_path,details=False):
     # Open image file for reading (binary mode)
     f = codecs_open(img_path, 'rb')
     # Return Exif tags
-    tags = exifread.process_file(f, details=False)
+    tags = exifread.process_file(f, details=details)
     f.close()
     return tags
 

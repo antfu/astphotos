@@ -23,10 +23,14 @@ Generate Time: {{cfg.gentime}}
   <script type="text/javascript" src="{{cfg.static_dir}}/semantic-transition.js"></script>
   <script type="text/javascript" src="{{cfg.static_dir}}/vue-transition.js"></script>
   <script type="text/javascript" src="{{cfg.static_dir}}/{{cfg.sturct_filename}}"></script>
+  <script>var DEBUG = {{'true' if cfg.debug else 'false'}};</script>
   {% block head %}{% endblock %}
 </head>
 
+<body id="root">
 {% block body %}{% endblock %}
+</body>
 
 {% block tail %}{% endblock %}
+<script type="text/javascript" src="{{cfg.static_dir}}/instance.js"></script>
 </html>
