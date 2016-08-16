@@ -13,10 +13,11 @@ import exifread
 import shutil
 import hashlib
 import jinja2
-from   jinja2  import FileSystemLoader
+from   termcolor import colored, cprint
+from   jinja2    import FileSystemLoader
 from   jinja2.environment import Environment
-from   PIL     import Image # PIL using Pillow (PIL fork)
-from   config  import configs as cfg
+from   PIL       import Image # PIL using Pillow (PIL fork)
+from   config    import configs as cfg
 
 class infodict(dict):
     def update_json(self,jsonpath):
@@ -34,34 +35,35 @@ class infodict(dict):
             del(self[key])
 
 # Shorthand alias
-def log(*args,**kws):
-    print(*[remove_unicode(str(x)) for x in args],**kws)
+def log(*args,color=None,back=None,attrs=None,**kws):
+    cprint(' '.join([str(x) for x in args]),color,back,attrs=attrs,**kws)
+    #print(*[remove_unicode(str(x)) for x in args],**kws)
 pjoin = os.path.join
 
 if not os.path.exists(cfg.out_dir):
     os.mkdir(cfg.out_dir)
 
 def run():
-    log('*** Generator Start ***')
+    log('*** Generator Start ***', color='cyan')
 
-    log('- Copying static files...')
+    log('- Copying static files...', color='cyan')
     copy_static()
-    log('- Copying completed')
+    log('- Copying completed', color='cyan')
 
-    log('- Generating Structure tree...')
+    log('- Generating Structure tree...', color='cyan')
     struct_tree = generate_struct_tree()
-    log('- Generating completed')
+    log('- Generating completed', color='cyan')
 
     json_path = pjoin(cfg.out_dir,cfg.static_dir,cfg.sturct_filename)
-    log('- Saving struct json file...')
+    log('- Saving struct json file...', color='cyan')
     save_json(json_path ,struct_tree,'var full_data = ')
-    log('- Saving completed')
+    log('- Saving completed', color='cyan')
 
-    log('- Rendering template file...')
+    log('- Rendering template file...', color='cyan')
     render_index()
-    log('- Rendering completed')
+    log('- Rendering completed', color='cyan')
 
-    log('*** Task Completed ***')
+    log('*** Task Completed ***', color='cyan')
 
 
 def copy_static():
@@ -80,7 +82,7 @@ def generate_and_save():
 def generate_struct_tree():
     time_start = datetime.datetime.now()
 
-    img_src_dir = os.path.join(cfg.src_dir,cfg.img_dir)
+    img_src_dir = cfg.img_dir
     img_out_dir = os.path.join(cfg.out_dir,cfg.static_dir,cfg.img_dir)
 
     if not os.path.exists(os.path.join(cfg.out_dir,cfg.static_dir)):
@@ -94,6 +96,7 @@ def generate_struct_tree():
     root.update_json(os.path.join(img_src_dir,'_site.json'))
     root.albums = []
 
+    log()
     album_id = 0
     for album_name in os.listdir(img_src_dir):
         album_path = pjoin(img_src_dir,album_name)
@@ -116,7 +119,8 @@ def generate_struct_tree():
         if album.photographer == None and root.default_photographer:
             album.photographer = root.default_photographer
 
-        log('  Ablum:', album.name)
+        log('  ', end='')
+        log('  ', album.name, '  ', color='grey', back='on_yellow')
 
         album.photos = []
         photo_id = 0
@@ -135,8 +139,6 @@ def generate_struct_tree():
             photo_href_path = pjoin(cfg.static_dir,cfg.img_dir,album_name,photo_out_filename).replace('\\','/')
 
             photo_instance = Image.open(photo_path)
-
-            log('    ', clear_ext(photo_filename), end='')
 
             photo = infodict()
             photo.id = photo_id
@@ -187,18 +189,20 @@ def generate_struct_tree():
                 del(photo.aperture)
                 del(photo.exposure)
 
+            log('  ' + (photo.title or clear_ext(photo_filename)) + '... ', end='')
+
             # Lazy copy
             if cfg.lazy_copy and os.path.exists(photo_out_path):
-                log('  [Skip]', end='')
+                log('Skip', end='')
             else:
                 # Resize and Save
                 if cfg.photo_resize:
-                    log('  [Resizing]', end='')
+                    log('Resizing', end='')
                     rim = im_resize(photo_instance)
                     rim.save(photo_out_path)
                 # Just copy
                 else:
-                    log('  [Copying]', end='')
+                    log('Copying', end='')
                     shutil.copy(photo_path,photo_out_path)
 
             # Check wather it's cover
@@ -217,10 +221,9 @@ def generate_struct_tree():
             outs = [os.path.basename(x).lower() for x in glob.glob(pjoin(album_out_path,'*.'+src_file_type))]
             for o in outs:
                 if not o in srcs:
-                    log('  [!]Removing',o)
+                    log('  [!]Removing', o, color='red')
                     os.remove(pjoin(album_out_path,o))
 
-        log('  ' + '-' * 20)
         if album.photos:
             if not album.cover:
                 # Random choice a photo as cover
@@ -231,7 +234,7 @@ def generate_struct_tree():
             photo_orderby = album.photo_orderby or cfg.photo_orderby
             photo_order_descending = album.photo_order_descending or cfg.photo_order_descending
             if photo_orderby:
-                log('  Sorting photo by',photo_orderby)
+                log('  [', photo_orderby, ']', color='green')
                 if   photo_orderby == 'filename':
                     album.photos = sorted(album.photos,key=lambda x: (x.path or ''))
                 elif photo_orderby == 'title':
@@ -243,20 +246,21 @@ def generate_struct_tree():
                 elif photo_orderby == 'custom':
                     album.photos = sorted(album.photos,key=lambda x: (x.index or -1))
                 else:
-                    log('  !Warning: invaild photo_orderby',photo_orderby)
+                    log('  !Warning: invaild photo_orderby', photo_orderby, color="on_red")
             # Descending
             if photo_order_descending:
                 album.photos = album.photos[::-1]
             album.amount = len(album.photos)
             root.albums.append(album)
-            log('  Cover :',os.path.basename(album.cover))
-            log('  Amount:',album.amount)
+            #log('  Cover :', os.path.basename(album.cover), color='green')
+            log('  Amount:', album.amount, color='green')
             log()
             album_id += 1
 
     time_end = datetime.datetime.now()
     time_spent = time_end - time_start
-    log('  {} albums, {} photos, {}s cost'.format(len(root.albums),sum([len(a.photos) for a in root.albums]),time_spent.seconds))
+    log(' {} albums, {} photos, {}s cost '.format(len(root.albums),sum([len(a.photos) for a in root.albums]),time_spent.seconds),color='white',back='on_magenta')
+    log()
     return root
 
 def codecs_open(filename,open_type,encode=None):

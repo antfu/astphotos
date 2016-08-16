@@ -39,7 +39,7 @@ configs = dict(
         comments = ' comments'
     ),
 
-    src_dir = 'src',
+    src_dir = 'templates',
     out_dir = 'complied',
     theme = 'default',
 
