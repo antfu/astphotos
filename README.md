@@ -1,5 +1,5 @@
 # AstPhotos
-A static one-page photo gallery website generator
+A static single-page photo gallery website generator
 
 ***The README file is still under construction...***
 
@@ -31,3 +31,9 @@ A static one-page photo gallery website generator
 }
 ```
 - Regenerate the website
+
+## Todo
+- [ ] Template/theme support
+- [ ] CLI support
+- [ ] Js Modulize
+- [ ] Use EXIF-Thumbail to calc default color
