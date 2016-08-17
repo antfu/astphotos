@@ -101,6 +101,7 @@ def generate_struct_tree():
     for album_name in os.listdir(img_src_dir):
         album_path = pjoin(img_src_dir,album_name)
         album_out_path = pjoin(img_out_dir,album_name)
+        album_href_path = pjoin(cfg.static_dir,cfg.img_dir,album_name).replace('\\','/')
 
         # Skip if it's not a dir
         if not os.path.isdir(album_path):
@@ -113,6 +114,7 @@ def generate_struct_tree():
         album.id = album_id
         album.display_info = cfg.display_info
         album.gallery_mode = cfg.gallery_mode
+        album.href_path = album_href_path
         album.update_json(pjoin(album_path,'_album.json'))
         if not album.name:
             album.name = album_name
@@ -136,7 +138,8 @@ def generate_struct_tree():
             else:
                 photo_out_filename = photo_filename
             photo_out_path = pjoin(album_out_path,photo_out_filename)
-            photo_href_path = pjoin(cfg.static_dir,cfg.img_dir,album_name,photo_out_filename).replace('\\','/')
+            photo_href_path = photo_out_filename
+            #photo_href_path = pjoin(cfg.static_dir,cfg.img_dir,album_name,photo_out_filename).replace('\\','/')
 
             photo_instance = Image.open(photo_path)
 
@@ -174,17 +177,20 @@ def generate_struct_tree():
                 if photo.index == None:
                     photo.index = float(temp[0])
                 photo.title = temp[1]
+
             # Set default photographer
-            if not photo.photographer and album.photographer:
-                photo.photographer = album.photographer
+            #  if not photo.photographer and album.photographer:
+            #      photo.photographer = album.photographer
+
             # Get photographer link by searching album and root configures
-            if album.photographer_links and isinstance(album.photographer_links,dict) \
-             and photo.photographer in album.photographer_links.keys():
-               photo.photographer_link = album.photographer_links[photo.photographer]
-            if root.photographer_links and isinstance(root.photographer_links,dict) \
-             and photo.photographer in root.photographer_links.keys():
-               photo.photographer_link = root.photographer_links[photo.photographer]
+            #  if album.photographer_links and isinstance(album.photographer_links,dict) \
+            #   and photo.photographer in album.photographer_links.keys():
+            #     photo.photographer_link = album.photographer_links[photo.photographer]
+            #  if root.photographer_links and isinstance(root.photographer_links,dict) \
+            #   and photo.photographer in root.photographer_links.keys():
+            #     photo.photographer_link = root.photographer_links[photo.photographer]
             # if configed not to display exposure and aperture, delete them
+
             if not cfg.exif_exposure:
                 del(photo.aperture)
                 del(photo.exposure)
@@ -380,7 +386,7 @@ def get_photo_info(im):
 
     # Calc average color
     if cfg.calc_image_average_color:
-        result.color = rgb_to_hex(get_average_color(im))
+        result.color = rgb_to_hex(get_average_color(im, cfg.calc_image_samples))
 
     return result
 

@@ -3,9 +3,20 @@
 if (full_data)
   $('#warning').remove();
 
+/* =============== Data Process ===============*/
+$.each(full_data.albums,function(_,album){
+  var album_href_path = album.href_path;
+  $.each(album.photos,function(_,photo){
+    photo.path = album_href_path + '/' + photo.path;
+  });
+  album.cover = album_href_path + '/' + album.cover;
+});
+
+/* =============== Vue Config ===============*/
 Vue.config.debug = DEBUG;
 Vue.config.delimiters = ['${', '}'];
 
+/* =============== Vue Directive ===============*/
 Vue.transition('height-toggle', {
   css: false,
   enter: function (el, done) {
@@ -45,7 +56,7 @@ Vue.directive('photo',{
   }
 });
 
-
+/* =============== Vue Instance ===============*/
 var vue_mix = vue_mix || {}
 var vue_instance = new Vue({
   el: '#root',
