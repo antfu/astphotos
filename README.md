@@ -4,9 +4,11 @@ A static single-page photo gallery website generator
 ***The README file is still under construction...***
 
 ## Get started
-* Put your photos/images under `/src/img/[album_name]`
-2. Run `python gen.py`
-3. You have got the static webpage under `/out`! Put them in your static website host and enjoy it!
+1. `gen.py init Astphoto` *( you can replace "Astphoto" to the name you like )*
+1. `gen.py create album "My Family"`
+1. Copy your photos/images to `img/my_family/`
+1. `gen.py gen`
+1. You will get the complied static files under `complied/`! You can put them into your static website host and enjoy it!
 
 ## Configure
 - Edit `config_overridde.py` file base on `config_default.py`
