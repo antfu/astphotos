@@ -111,8 +111,11 @@ a:hover
   top: 0;
   right: 0;
   z-index: 10;
+}
+.nav, .footer
+{
+  padding: 0.7em 3em 1em 3em;
   background: rgba(255,255,255,0.90);
-  padding: 1em 3em 1em 3em;
   transition: all 0.3s ease-in-out;
 }
 .nav.hidden
@@ -139,6 +142,8 @@ a:hover
 .nav .sub.header
 {
   opacity: 0.5;
+  font-size: 0.8em;
+  margin-top: -0.2em;
 }
 .nav .back
 {
@@ -149,13 +154,10 @@ a:hover
 .nav .pages
 {
   vertical-align: bottom;
+  font-size: 0.7em;
+  margin-top: 0.5em;
 }
 
-.footer
-{
-  padding: 2em 3em 3em 3em;
-  transition: all 0.3s ease-in-out;
-}
 .footer *
 {
   color: #222;
@@ -200,17 +202,14 @@ a:hover
   margin: 0;
   margin-bottom: -4px;
   overflow: hidden;
+  transition: all 0.3s ease-in;
 }
 .photo.full .image
 {
   /*max-width: 100%;*/
   max-height: 100%;
   margin: 0;
-}
-[v-full-photo], [v-square-image]
-{
-  opacity:0;
-  transition: opacity 0.3s ease-in;
+  transition: all 0.3s ease-in;
 }
 
 /* =============== Overlay =============== */
@@ -583,9 +582,9 @@ a:hover
   .gallery .horizontal .photo{
     height: 20em;
   }
-  .nav
+  .nav, .footer
   {
-    padding: 0.7em 1.5em;
+    padding: 0.7em 1.5em 1em 1.5em;
   }
   .nav-space
   {

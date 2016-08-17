@@ -4,6 +4,7 @@
 Vue.directive('full-photo',{
   bind:function(){
     var pic = $(this.el);
+    pic.css('opacity',0);
     this.el.onload = function(){
       pic.css('opacity',1);
     };
@@ -14,8 +15,9 @@ Vue.directive('scrollable', function(){
   el.bind('mousewheel DOMMouseScroll', scroll.scrollwheel);
 });
 Vue.directive('modal-image', function (id) {
+  var vm = this.vm;
   var pic = $(this.el).removeClass('horizontal vertical');
-  var modal_data = full_data.current.photos[id];
+  var modal_data = vm.$data.current.photos[id];
   var screen_aspect = $(window).width() / $(window).height();
   var image_aspect = modal_data.width / modal_data.height;
   if (screen_aspect <= image_aspect)
@@ -32,21 +34,6 @@ Vue.directive('modal-image', function (id) {
   }
   pic.attr('src',modal_data.path);
 });
-Vue.transition('height-toggle', {
-  css: false,
-  enter: function (el, done) {
-    $(el).slideToggle('slow', done);
-  },
-  enterCancelled: function (el) {
-    $(el).stop()
-  },
-  leave: function (el, done) {
-    $(el).slideToggle('fast', done);
-  },
-  leaveCancelled: function (el) {
-    $(el).stop()
-  }
-});
 
 /* =============== Vue Objects ===============*/
 
@@ -58,64 +45,26 @@ var vue_mix = {
     scrolltop: function() {
       body_scroll_to(0);
     },
-    expand: function(album) {
-      if (full_data.viewmode == 0 || full_data.current != album)
-        gallery_expend(album);
-      else
-        gallery_collapse();
-    },
-    open_modal: function(photo) {
-      $.each(full_data.current.photos,function (i,e) {
-        if (e == photo)
-        {
-          Vue.set(full_data.current,'modal',i);
-          Vue.set(full_data,'viewmode',2);
-        }
-      })
-    },
     window_width: function() {
       return $(window).width();
     },
-    close: function() {
-      Vue.set(full_data,'viewmode',1);
-    },
-    next: function(direction) {
-      var target = full_data.current.modal + direction;
-      if (target >= 0 && target < full_data.current.amount)
-        Vue.set(full_data.current,'modal',target);
-    },
-    collapse: gallery_collapse,
     photo_height: get_gallery_photo_height,
-    dateformat: dateformat
   }
 }
+
+/* =============== Events ===============*/
+var on_gallery_expand = function(album) {
+  scroll.reset();
+  resize_nav();
+  body_scroll_to(0);
+}
+var on_gallery_collapse = function() {
+  resize_nav();
+  body_scroll_to(0);
+}
+
 
 /* =============== Functions ===============*/
-function dateformat(datestr)
-{
-  var monthNames = [
-    "January", "February", "March",
-    "April", "May", "June", "July",
-    "August", "September", "October",
-    "November", "December"
-  ];
-
-  var date = new Date(datestr);
-  var day = date.getDate();
-  var monthIndex = date.getMonth();
-  var year = date.getFullYear();
-
-  return monthNames[monthIndex] + ' ' + year;
-}
-
-function update_title() {
-  if (!full_data.viewmode)
-    document.title = full_data.title;
-  else if (full_data.current) {
-    document.title = full_data.current.name + ' - ' +full_data.title;
-  }
-}
-
 var gallery_photo_resized = true;
 var gallery_photo_height = 0;
 function get_gallery_photo_height() {
@@ -132,25 +81,6 @@ function immediate_and_timeout(func,timeout) {
   if (timeout == undefined)
     timeout = 100;
   return setTimeout(func,timeout);
-}
-function gallery_expend(album) {
-  Vue.set(full_data,'current',album);
-  Vue.set(full_data.current,'page',1);
-  if (full_data.viewmode == 1)
-    $('body').scrollTop(0);
-  Vue.set(full_data,'viewmode',1);
-  $('#gallery').removeClass('hidden');
-  scroll.reset();
-  resize_nav();
-  update_title();
-  body_scroll_to(0);
-}
-function gallery_collapse() {
-  Vue.set(full_data,'viewmode',0);
-  $('#gallery').addClass('hidden');
-  resize_nav();
-  update_title();
-  body_scroll_to(0);
 }
 function resize_nav() {
   immediate_and_timeout(function () {
@@ -337,7 +267,6 @@ $(window).resize(resize_update);
 if (!DEBUG) $('body').contextmenu(function(e) { e.preventDefault(); });
 
 $(function() {
-  update_title();
   resize_update();
   resize_nav();
 });
