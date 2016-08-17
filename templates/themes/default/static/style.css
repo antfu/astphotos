@@ -352,6 +352,9 @@ a:hover
 {
   padding-bottom: 0;
 }
+.gallery .detail {
+  transition: all 0.3s ease-in;
+}
 .gallery .detail *{
   color: #222;
 }

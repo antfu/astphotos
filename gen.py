@@ -380,9 +380,20 @@ def get_photo_info(im):
 
     # Calc average color
     if cfg.calc_image_average_color:
-        result.color = rgb_to_hex(im.resize((1,1)).getpixel((0,0))).upper()
+        result.color = rgb_to_hex(get_average_color(im))
 
     return result
+
+def get_average_color(im, sample = 100):
+    r,g,b = (0,0,0)
+    w = im.size[0] - 1
+    h = im.size[1] - 1
+    for _ in range(sample):
+        tr, tg, tb = im.getpixel((random.randint(0,w),random.randint(0,h)))
+        r += tr
+        g += tg
+        b += tb
+    return (int(r/sample),int(g/sample),int(b/sample))
 
 def remove_unicode(string):
     return ''.join([i if ord(i) < 128 else '?' for i in string])
