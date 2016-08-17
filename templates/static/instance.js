@@ -36,26 +36,26 @@ Vue.transition('height-toggle', {
 Vue.directive('background-photo',{
   update: function(url) {
     var el = $(this.el);
-    var loader = $('<div class="vue-loader"><c/><c/><c/></div>').prependTo(el.parents().eq(0));
+    var loader = el.parents().find('.loader').removeClass('hidden');
     el.css('transition','opacity 0.5s ease-in').css('opacity',0);
     var img = $('<img>', {
       src: url
     }).hide().on('load',function() {
       $(this).remove();
       el.css('background-image', 'url("'+url+'")').css('opacity',1);
-      loader.fadeOut(500,function(){ loader.remove(); });
+      loader.addClass('hidden');
     }).appendTo(el);
   }
 });
 Vue.directive('photo',{
   update: function(url) {
     var el = $(this.el);
-    var loader = $('<div class="vue-loader"><c/><c/><c/></div>').prependTo(el.parents().eq(0));
+    var loader = el.parents().find('.loader').removeClass('hidden');
     el.attr('src',url);
     el.css('transition','opacity 0.5s ease-in').css('opacity',0);
     el.on('load', function(){
       el.css('opacity',1);
-      loader.fadeOut(500,function(){ loader.remove(); });
+      loader.addClass('hidden');
     });
   }
 });

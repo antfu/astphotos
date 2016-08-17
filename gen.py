@@ -67,6 +67,8 @@ def run():
 
 
 def copy_static():
+    if not os.path.exists(cfg.src_dir):
+        os.mkdir(cfg.src_dir)
     copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
     copydir(pjoin(cfg.src_dir,cfg.themes_dir,cfg.theme,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
 
