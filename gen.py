@@ -19,6 +19,9 @@ from   jinja2.environment import Environment
 from   PIL       import Image # PIL using Pillow (PIL fork)
 from   config    import configs as cfg
 
+if os.name == 'nt':
+    os.system("@chcp 65001")
+
 class infodict(dict):
     def update_json(self,jsonpath):
         if os.path.exists(jsonpath):
@@ -43,7 +46,7 @@ pjoin = os.path.join
 if not os.path.exists(cfg.out_dir):
     os.mkdir(cfg.out_dir)
 
-def run():
+def gen():
     log('*** Generator Start ***', color='cyan')
 
     log('- Copying static files...', color='cyan')
@@ -442,7 +445,26 @@ def change_ext(filepath,ext):
 def clear_ext(filepath):
     return '.'.join(filepath.split('.')[:-1])
 
+def clear_directory(path = None):
+    if not path:
+        path = cfg.out_dir
+    shutil.rmtree(path)
+
+def clear_complied():
+    path = cfg.out_dir
+    if input('Deleting ' + path + ', are you sure? [y/n]') == 'y':
+        clear_directory(path)
 
 if __name__ == '__main__':
-    #if input('Sure? [y/n]') == 'y':
-    run()
+    import sys
+
+    argv = sys.argv
+    if len(argv) < 2 or argv[1] == 'gen':
+        gen()
+    elif argv[1] == 'clear':
+        path = cfg.out_dir
+        if input('Deleting "' + path + '", are you sure? [y/n]') == 'y':
+            clear_directory(path)
+    elif argv[1] == 'host':
+        import webhost
+        webhost.run()
