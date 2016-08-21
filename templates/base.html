@@ -4,7 +4,7 @@
 | A static one-page photo gallery website generator |
 | Github: https://github.com/AnthonyFu117/astphotos |
 | Author: Anthony Fu                                |
-| Theme: {% block theme_name %}Default{% endblock %}     |
+| Theme: {% block theme_name %}Default{% endblock %} |
 ===================== Astphotos =====================
 Generate Time: {{cfg.gentime}}
 -->
@@ -31,6 +31,7 @@ Generate Time: {{cfg.gentime}}
 {% block body %}{% endblock %}
 </body>
 
+<script type="text/javascript" src="{{cfg.static_dir}}/before.js"></script>
 {% block tail %}{% endblock %}
-<script type="text/javascript" src="{{cfg.static_dir}}/instance.js"></script>
+<script type="text/javascript" src="{{cfg.static_dir}}/after.js"></script>
 </html>

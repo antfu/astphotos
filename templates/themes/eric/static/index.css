@@ -1,0 +1,99 @@
+/* =============== Commons =============== */
+html, body, div
+{
+  font-family: sans-serif, Arial, 'Microsoft Yahei', '微软雅黑', MingLiU;
+  color: #fff;
+  cursor: default;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+body
+{
+  margin: 0;
+  background: #222;
+  padding: 0;
+}
+html, body
+{
+  height: 100%;
+}
+
+a
+{
+  opacity: 0.7;
+  text-decoration: none;
+  transition: opacity 0.3s ease-in;
+}
+a:hover
+{
+  opacity: 1;
+}
+.hidden
+{
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+
+.main
+{
+  width: 100%;
+  display: flex;
+}
+
+
+.panel
+{
+  max-height: 100%;
+  overflow: auto;
+  margin: 0;
+  padding: 1.5em;
+}
+.left.panel
+{
+  width: 200px;
+  flex: 1;
+}
+.right.panel
+{
+  flex: 6;
+}
+
+
+.scroller
+{
+  height: 100;
+  overflow: auto;
+  display: flex;
+}
+
+.albums-list
+{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.albums-list .album
+{
+  font-size: 0.7em;
+  opacity: 0.4;
+  transition: opacity 0.3s ease-in;
+  margin: 0.4em 0;
+}
+.albums-list .album:hover
+{
+  opacity: 0.8;
+}
+
+.detail
+{
+  padding: 0.1em;
+}
+.photo img
+{
+  width: 100%;
+}

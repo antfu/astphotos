@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{cfg.static_dir}}/index.css">
+{% endblock %}
+
+{% block body %}
+  <div class="nav">
+
+  </div>
+  <div class="main">
+    <div class="left panel">
+      <ul class="albums-list">
+        <li v-for="album in albums" class="album" track-by="id"  @click="gallery_expand(album)" :class="{selected:current == album}">
+          ${album.name}
+        </li>
+      </ul>
+    </div>
+    <div class="right panel">
+      <div id="gallery" class="gallery" :class="{hidden:!viewmode}">
+        <div v-if="current" class="scroller">
+          <div v-for="i in 3">
+            <div v-for="photo in current.photos" track-by="id" class="detail" v-if="$index % 3 == i">
+              <div class="photo" :style="{background: photo.color}">
+                <img class="image" v-photo="photo.path">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block tail %}
+<script type="text/javascript" src="static/index.js"></script>
+{% endblock %}
