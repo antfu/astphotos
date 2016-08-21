@@ -1,6 +1,5 @@
 'use strict';
 
-
 /* =============== Vue Directive ===============*/
 Vue.transition('height-toggle', {
   css: false,
