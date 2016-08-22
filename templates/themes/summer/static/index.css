@@ -1,8 +1,8 @@
 /* =============== Commons =============== */
 html, body, div
 {
-  font-family: sans-serif, Arial, 'Microsoft Yahei', '微软雅黑', MingLiU;
-  color: #fff;
+  font-family: Arial, sans-serif, 'Microsoft Yahei', '微软雅黑', MingLiU;
+  color: rgba(0,0,0,0.8);
   cursor: default;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -14,7 +14,7 @@ html, body, div
 body
 {
   margin: 0;
-  background: #222;
+  background: #fff;
   padding: 0;
 }
 html, body
@@ -38,33 +38,6 @@ a:hover
   pointer-events: none;
 }
 
-
-.main
-{
-  width: 100%;
-  display: flex;
-}
-
-
-.panel
-{
-  max-height: 100%;
-  overflow: auto;
-  margin: 0;
-  padding: 1.5em;
-}
-.left.panel
-{
-  width: 200px;
-  flex: 1;
-}
-.right.panel
-{
-  flex: 6;
-  padding: 3em;
-}
-
-
 .scroller
 {
   height: 100;
@@ -72,28 +45,45 @@ a:hover
   display: flex;
 }
 
-.albums-list
+.albums
 {
-  list-style-type: none;
+  text-align: center;
   margin: 0;
-  padding: 0;
+  padding: 2em;
 }
-.albums-list .album
+.albums .album
 {
+  vertical-align: top;
   font-size: 0.7em;
-  opacity: 0.3;
   transition: all 0.3s ease-in;
-  margin: 0.4em 0;
-  margin-left: 1em;
+  margin: 1em;
+  display: inline-block;
 }
-.albums-list .album:hover
+.albums .album .cover
 {
-  opacity: 0.8;
+  width: 32em;
+  height: 18em;
+  overflow: hidden;
 }
-.albums-list .album.selected
+.albums .album img
 {
-  margin-left: 0;
-  opacity: 1;
+  width: 100%;
+}
+.albums .album .title
+{
+  height: 13px;
+  font-size: 1.1em;
+  margin: 0.7em 1em 0.3em 1em;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.albums .album .des
+{
+  height: 13px;
+  font-style: italic;
+  margin: 0.5em 1em;
+  opacity: 0.4;
+  font-size: 0.8em;
 }
 
 .detail

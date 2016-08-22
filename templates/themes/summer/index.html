@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{cfg.static_dir}}/index.css">
+{% endblock %}
+
+{% block body %}
+  <div class="nav">
+
+  </div>
+  <div class="main">
+    <div class="albums">
+      <div v-for="album in albums" class="album" track-by="id"  @click="gallery_expand(album)" :class="{selected:current == album}">
+        <div class="cover"><img :src="album.cover"></div>
+        <div class="title">${album.name}</div>
+        <div class="des">${album.des}</div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block tail %}
+<script type="text/javascript" src="static/index.js"></script>
+{% endblock %}

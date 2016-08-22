@@ -21,8 +21,8 @@
         <div v-if="current" class="scroller">
           <div v-for="i in 3">
             <div v-for="photo in current.photos" track-by="id" class="detail" v-if="$index % 3 == i">
-              <div class="photo" :style="{background: photo.color}">
-                <img class="image" v-photo="photo.path">
+              <div class="photo">
+                <img class="image" v-photo="photo.path" :style="{background: photo.color}">
               </div>
             </div>
           </div>
