@@ -39,9 +39,10 @@ A static single-page photo gallery website generator
 - [ ] CLI support
   - [ ] init [name]
   - [ ] gen -static -index
-  - [ ] clear
+  - [x] clear
   - [ ] album [new|modify] [name]
+  - [x] host
 - [ ] Js Modulize
-- [ ] Use EXIF-Thumbail to calc default color
+- [x] ~~Use EXIF-Thumbail to calc default color~~ Use random samples (for better performance)
 - [ ] Folder copy
 - [x] Windows Unicode support
