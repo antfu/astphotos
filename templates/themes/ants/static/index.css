@@ -1,0 +1,677 @@
+/* =============== Commons =============== */
+html, body, div
+{
+  font-family:  Arial, sans-serif, 'Microsoft Yahei', '微软雅黑', MingLiU;
+  color: #fff;
+  cursor: default;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+body
+{
+  margin: 0;
+  background: #fff;
+}
+
+a
+{
+  color: #fff;
+  opacity: 0.7;
+  text-decoration: none;
+  transition: opacity 0.3s ease-in;
+}
+a:hover
+{
+  opacity: 1;
+}
+.hidden
+{
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.icon.button
+{
+  width: 2em;
+  height: 2em;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  display: inline-block;
+}
+.icon.button.invert:hover
+{
+  background: rgba(255,255,255,0.1);
+}
+.icon.button.invert:active
+{
+  background: rgba(255,255,255,0.2);
+}
+.icon.button:hover
+{
+  background: rgba(0,0,0,0.1);
+}
+.icon.button:active
+{
+  background: rgba(0,0,0,0.2);
+}
+.icon.button i
+{
+  vertical-align: middle;
+  line-height: 1.35em;
+}
+.pages
+{
+  transition: all 0.3s ease-in-out;
+  line-height: 1.3em;
+  margin-bottom: 0.1em;
+}
+.pages .total
+{
+  opacity: 0.6;
+}
+.pages *
+{
+  display: inline-block;
+  vertical-align: center;
+}
+.pages i
+{
+  transition: all 0.2s ease-in-out;
+  font-size: 1.3em;
+  opacity: 0.6;
+}
+.pages i:hover
+{
+  opacity: 1;
+}
+.block.title
+{
+  position: absolute;
+  top: -2em;
+  left: 2em;
+  color: #222;
+  font-weight: bold;
+}
+
+/* =============== Nav and Footer =============== */
+.nav-space
+{
+  height: 5em;
+  transition: all 0.3s ease-in-out;
+}
+.nav
+{
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 10;
+}
+.nav, .footer
+{
+  padding: 0.7em 3em 1em 3em;
+  background: rgba(255,255,255,0.90);
+  transition: all 0.3s ease-in-out;
+}
+.nav.hidden
+{
+  pointer-events: all !important;
+}
+.nav.hidden:hover
+{
+  opacity: 1 !important;
+}
+.nav *
+{
+  color: #222;
+  vertical-align: top;
+}
+.nav .headers
+{
+  display: inline-block;
+}
+.nav .header
+{
+  transition: all 0.3s ease-in-out;
+}
+.nav .sub.header
+{
+  opacity: 0.5;
+  font-size: 0.8em;
+  margin-top: -0.2em;
+}
+.nav .back
+{
+  position: absolute;
+  top: 1em;
+  right: 1.5em;
+}
+.nav .pages
+{
+  vertical-align: bottom;
+  font-size: 0.7em;
+  margin-top: 0.5em;
+}
+
+.footer *
+{
+  color: #222;
+}
+.footer .cell
+{
+  margin: 0 3em;
+}
+.footer .cell:first-child
+{
+  margin-left: 0 !important;
+}
+
+
+.menu
+{
+  font-size: 0.8em;
+}
+.menu .item
+{
+  text-transform: uppercase;
+  display: inline-block;
+  opacity: 0.7;
+  margin: 0 1em;
+  transition: all 0.3s ease-in-out;
+}
+.menu .item:hover
+{
+  opacity: 0.8;
+  border-bottom: 1px solid #222;
+  margin-bottom: -1px;
+}
+.menu .item.selected
+{
+  display: inline-block;
+  opacity: 0.8;
+  border-bottom: 1px solid #222;
+}
+
+
+/* =============== Albums =============== */
+.albums
+{
+  margin: 0;
+  width: 100%;
+  overflow: visible;
+  position: relative;
+}
+.albums .photo
+{
+  display: inline-block;
+  cursor: pointer;
+}
+.albums .hover.arrow
+{
+  width: 5%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0);
+}
+
+/* =============== Photo =============== */
+.photo
+{
+  cursor: default;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  margin-bottom: -4px;
+  overflow: hidden;
+  transition: all 0.3s ease-in;
+}
+.photo.full .image
+{
+  /*max-width: 100%;*/
+  max-height: 100%;
+  margin: 0;
+  transition: all 0.3s ease-in;
+}
+
+/* =============== Overlay =============== */
+.cover
+{
+  transition: all 0.3s ease-in;
+}
+.photo.cover.square
+{
+  position: relative;
+}
+.photo.cover.square .back-image
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-position: center center;
+}
+.photo.cover.square:before{
+	content: "";
+	display: block;
+	padding-top: 100%; 	/* Make height same as width */
+}
+.cover .inner-border
+{
+  transition: all 0.2s ease-in;
+  box-shadow: 0 0 0 2px #fff inset;
+  position: absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  opacity:0;
+}
+.cover.focus .inner-border
+{
+  opacity:1;
+}
+.cover.secondary
+{
+  opacity: 0.2;
+}
+.cover.secondary:hover
+{
+  opacity: 1;
+}
+.overlay
+{
+  position: absolute;
+  opacity: 0;
+  color: #fff;
+  font-size: 0.8em;
+  padding: 2em;
+  background: rgba(0,0,0,0.5);
+  transition: all 0.3s ease-in;
+}
+.overlay.left
+{
+  width: 20em;
+  top:0;
+  left:0;
+  bottom:0;
+}
+.overlay.right
+{
+  width: 20em;
+  top:0;
+  bottom:0;
+  right:0;
+}
+.overlay.bottom
+{
+  height: 10em;
+  left:0;
+  bottom:0;
+  right:0;
+}
+.overlay:not(.left):not(.right):not(.bottom)
+{
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+}
+.overlay:hover
+{
+  opacity: 1;
+}
+.overlay .info .name
+{
+  font-weight: bold;
+}
+.overlay .info .dash
+{
+  background: #ffffff;
+  width: 1.4em;
+  height: 0.1em;
+  margin: 1em 0;
+  opacity: 0.7;
+}
+.overlay .info p
+{
+  opacity: 0.8;
+  font-weight: lighter;
+}
+.overlay .info .label
+{
+  opacity: 0.7;
+}
+.overlay .info .des
+{
+  opacity: 0.8;
+}
+.overlay .text
+{
+  margin: 2em 0;
+}
+.overlay.bottom .info, .overlay.bottom .text
+{
+  margin: 0 0 0 10em;
+  max-width: 40em;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* =============== Gallery =============== */
+.gallery
+{
+  transition: all 0.3s ease-in-out;
+  padding-bottom: 2em;
+  margin: 0;
+}
+.gallery.hidden
+{
+  padding-bottom: 0;
+}
+.gallery .detail {
+  transition: all 0.3s ease-in;
+}
+.gallery .detail *{
+  color: #222;
+}
+.gallery .vertical .detail{
+  width: 100%;
+  position: relative;
+}
+.gallery .horizontal .detail{
+  padding: 0;
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 1em;
+}
+.gallery .horizontal .detail:first-child{
+  margin-left: 0 !important;
+}
+.gallery .horizontal .detail:last-child{
+  margin-right: 0 !important;
+}
+.gallery .detail .info, .gallery .detail .comments {
+  padding: 0.5em 1em;
+}
+.gallery .detail .info .title{
+}
+.gallery .detail .info .des{
+  font-size: 0.7em;
+  color: rgba(0,0,0,0.5);
+  margin-top: -0.2em;
+  margin-bottom: 0.2em;
+}
+.gallery .detail .info .meta{
+  font-size: 0.6em;
+  color: rgba(0,0,0,0.5);
+  display: inline-block;
+  margin-right: 0.5em;
+  vertical-align: top;
+}
+.gallery .detail .info .meta span:not(.label){
+  color: rgba(0,0,0,0.5);
+}
+.gallery .detail .info .meta a:hover{
+  border-bottom: 1px solid #222;
+}
+.gallery .detail .info .sub.meta{
+  opacity: 0.7;
+  float: right;
+  display: inline-block;
+  margin-left: 0.5em;
+}
+.gallery .detail .info .label{
+  color: rgba(0,0,0,0.9);
+}
+.gallery .vertical .detail, .gallery .vertical .detail .image{
+  width: 100%;
+}
+.gallery .horizontal .photo{
+  margin: 0;
+  height: 40em;
+  padding: 0;
+}
+.horizontal.scroller
+{
+  overflow-y: hidden;
+  overflow-x: scroll;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+/* =============== Modal =============== */
+.modal
+{
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 1;
+  z-index: 100;
+  background: rgba(0,0,0,0.9);
+  transition: all 0.25s ease-in-out;
+}
+.modal .inner
+{
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+.modal i
+{
+  text-shadow: 0px 0px 5px rgba(150, 150, 150, 1);
+}
+.modal .image
+{
+  position: absolute;
+}
+.modal .image.vertical
+{
+  height: 100%;
+}
+.modal .image.horizontal
+{
+  width: 100%;
+}
+.modal .close
+{
+  position: absolute;
+  top: 1em;
+  right: 1em;
+}
+.modal .nav-zone
+{
+  display: table;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  opacity: 0;
+  width: 3em;
+  height: 100%;
+  transition: all 0.3s ease-in-out;
+}
+.modal .nav-zone:hover
+{
+  opacity: 1;
+}
+.modal .nav-zone .center
+{
+  display: table-cell;
+  vertical-align: middle;
+}
+.modal .nav-zone .button:hover
+{
+  background: none;
+}
+.modal .left.nav-zone
+{
+  left: 0;
+}
+.modal .right.nav-zone
+{
+  right: 0;
+}
+
+
+#warning
+{
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 1;
+  z-index: 100;
+  background: #fff;
+  color: #444;
+  height: 100%;
+  transition: all 0.25s ease-in-out;
+}
+.vertical-centered
+{
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  color: #444;
+  vertical-align: middle;
+}
+#warning p
+{
+  font-size: 0.7em;
+  margin-top: -0.3em;
+}
+
+/* =============== Loaders =============== */
+.loader{
+  position:absolute;
+  max-width:200px;
+  margin:0 auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.4s ease-in-out;
+}
+
+.loader div{
+  float:left;
+  height:10px;
+  width:10px;
+  margin:0 5px;
+  border:2px solid #fff;
+  border-radius:100%;
+  animation: shrink 1s ease infinite 0ms;
+  transform: scale(.35);
+}
+
+.loader div:nth-child(2){
+  animation: shrink 1s ease infinite 350ms;
+}
+
+.loader div:nth-child(3){
+  animation: shrink 1s ease infinite 700ms;
+}
+
+@keyframes shrink{
+  50% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* =============== Media Query =============== */
+/* tablets and desktop */
+@media only screen and (min-width: 1001px) {
+  .photo.cover
+  {
+    width: 20%;
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1000px) {
+  .photo.cover
+  {
+    width: 25%;
+  }
+  .gallery .horizontal .photo{
+    height: 30em;
+  }
+}
+
+/* phones landscope */
+@media only screen and (min-width: 431px) and (max-width: 767px) {
+  .photo.cover
+  {
+    width: 33.33333333%;
+  }
+  .overlay
+  {
+    padding: 1.5em;
+  }
+  .gallery .horizontal .detail{
+    margin: 0 0.5em;
+  }
+  .gallery .horizontal .photo{
+    height: 25em;
+  }
+}
+
+/* phones */
+@media only screen and (max-width: 430px) {
+  .photo.cover
+  {
+    width: 50%;
+  }
+  .footer
+  {
+    padding: 1.5em 2em;
+  }
+  .overlay
+  {
+    padding: 1.3em;
+  }
+  .gallery .horizontal .detail{
+    margin: 0 0.2em;
+  }
+  .gallery .horizontal .photo{
+    height: 20em;
+  }
+  .nav, .footer
+  {
+    padding: 0.7em 1.5em 1em 1.5em;
+  }
+  .nav-space
+  {
+    height: 4em;
+  }
+}
+
+
+/* small phones */
+@media only screen and (max-width: 367px) {
+  .photo.cover
+  {
+    width: 100%;
+  }
+  .footer .cell{
+    display: block;
+    margin-left: 0;
+  }
+}
