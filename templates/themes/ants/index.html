@@ -77,7 +77,6 @@
   </div>
 
   <div class="albums" :style="{'margin-top': viewmode ? '1em' : 0 }">
-    <div v-if="viewmode" transition="fade-down" class="block title">{{cfg.lanuages.albums}}</div>
     <div v-for="album in albums" track-by="id" @click="router_go('albums', album.name)" class="photo cover"
         :style="{'background-color':album.color}" :class="{secondary:viewmode && current != album}">
       <div class="loader hidden"><div></div><div></div><div></div></div>

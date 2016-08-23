@@ -50,6 +50,13 @@ var vue_instance = new Vue({
   el: '#root',
   data: full_data,
   mixins: [vue_mix],
+  watch: {
+    'router': function(val, oldVal) {
+      console.log('router_changed', oldVal, val);
+      this.router_parser();
+      window.location.hash = this.$data.router.join('|');
+    }
+  },
   methods: {
     // MODAL
     modal_open: function(photo) {
@@ -96,30 +103,22 @@ var vue_instance = new Vue({
 
     find_album_by_name: function(album_name) {
       for (var i=0;i<this.$data.albums.length;i++)
-      {
         if (this.$data.albums[i].name == album_name)
           return this.$data.albums[i];
-      }
       return {};
     },
     router_go: function() {
       var args = [].slice.call(arguments);
       Vue.set(this.$data, 'router', args);
-      window.location.hash = this.$data.router.join('|');
-      this.router_parser();
     },
     router_append: function(target, index) {
       index = index || 0;
       this.$data.router.splice(index);
       Vue.set(this.$data.router, index, target);
-      window.location.hash = this.$data.router.join('|');
-      this.router_parser();
     },
     router_back: function(index) {
       index = index || (this.$data.router.length - 2) || 0;
       this.$data.router.splice(index);
-      window.location.hash = this.$data.router.join('|');
-      this.router_parser();
     },
     router_parser: function() {
       var r = this.$data.router;
