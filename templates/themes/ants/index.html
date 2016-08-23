@@ -11,13 +11,7 @@
     <div class="menu">
       <div class="title">${title}</div>
       <div class="item" @click="router_go('overview')" :class="{selected:router[0] == 'overview'}">Overview</div>
-      <div class="item" :class="{selected:router[0] == 'albums'}">
-        <span class="album-title" @click="router_go('albums')">Albums</span>
-        <span v-if="viewmode">
-          <span class="slash">/</span>
-          <span class="album-name">${current.name}</span>
-        </span>
-      </div>
+      <div class="item" @click="router_go('albums')"   :class="{selected:router[0] == 'albums'}"  >${viewmode? current.name: 'Albums'}</div>
       <div class="item" @click="router_go('about')"    :class="{selected:router[0] == 'about'}"   >About</div>
     </div>
     <div v-if="viewmode" class="headers">
