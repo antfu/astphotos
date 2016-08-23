@@ -304,8 +304,13 @@ a:hover
 }
 
 /* =============== Overlay =============== */
+.cover.warpper
+{
+  display: inline-block;
+}
 .photo.cover
 {
+  width: 100%;
   transition: all 0.3s ease-in;
   position: relative;
 }
@@ -327,37 +332,14 @@ a:hover
 	display: block;
 	padding-top: 66.66667%; 	/* Make height same as width */
 }
-.cover .inner-border
-{
-  transition: all 0.2s ease-in;
-  box-shadow: 0 0 0 2px #fff inset;
-  position: absolute;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  opacity:0;
-}
-.cover.focus .inner-border
-{
-  opacity:1;
-}
-.cover.secondary
-{
-  opacity: 0.2;
-}
-.cover.secondary:hover
-{
-  opacity: 1;
-}
 .overlay
 {
   position: absolute;
-  opacity: 0;
   color: #fff;
   font-size: 0.6em;
   padding: 2em;
-  background: rgba(0,0,0,0.5);
+  opacity: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.5), rgba(0,0,0,0.1), rgba(0,0,0,0));
   transition: all 0.3s ease-in;
 }
 .overlay.left
@@ -659,14 +641,14 @@ a:hover
 /* =============== Media Query =============== */
 /* tablets and desktop */
 @media only screen and (min-width: 1001px) {
-  .photo.cover
+  .cover.warpper
   {
     width: 20%;
   }
 }
 
 @media only screen and (min-width: 768px) and (max-width: 1000px) {
-  .photo.cover
+  .cover.warpper
   {
     width: 25%;
   }
@@ -677,7 +659,7 @@ a:hover
 
 /* phones landscope */
 @media only screen and (min-width: 431px) and (max-width: 767px) {
-  .photo.cover
+  .cover.warpper
   {
     width: 33.33333333%;
   }
@@ -695,7 +677,7 @@ a:hover
 
 /* phones */
 @media only screen and (max-width: 430px) {
-  .photo.cover
+  .cover.warpper
   {
     width: 50%;
   }
@@ -730,7 +712,7 @@ a:hover
 
 /* small phones */
 @media only screen and (max-width: 367px) {
-  .photo.cover
+  .cover.warpper
   {
     width: 100%;
   }

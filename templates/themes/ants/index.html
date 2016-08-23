@@ -72,23 +72,23 @@
   </div>
 
   <div class="albums" v-if="(router[0] == 'albums') && !viewmode">
-    <div v-for="album in albums" track-by="id" @click="router_go('albums', album.name)" class="photo cover"
-        :style="{'background-color':album.color}" :class="{secondary:viewmode && current != album}">
-      <div class="loader hidden"><div></div><div></div><div></div></div>
-      <div class="back-image" v-background-photo="album.cover"></div>
-      <div class="overlay">
-        <div class="info">
-          <div class="name">${album.name}</div>
-          <p v-if="album.des" class="des">${album.des}</p>
-          <div class="dash"></div>
-          <p class="amount">${album.amount}{{cfg.lanuages.photos}}</p>
-          <p v-if="album.photographer"><span class="label">{{cfg.lanuages.photographer}}</span>${album.photographer}</p>
-          <p v-if="album.location"><span class="label">{{cfg.lanuages.location}}</span>${album.location}</p>
-          <div v-if="album.comments" class="dash"></div>
-          <p v-if="album.comments">${album.comments}{{cfg.lanuages.comments}}</p>
+    <div v-for="album in albums" track-by="id" @click="router_go('albums', album.name)" class="cover warpper">
+      <div class="photo cover" :style="{'background-color':album.color}">
+        <div class="loader hidden"><div></div><div></div><div></div></div>
+        <div class="back-image" v-background-photo="album.cover"></div>
+        <div class="overlay">
+          <div class="info">
+            <div class="name">${album.name}</div>
+            <p v-if="album.des" class="des">${album.des}</p>
+            <div class="dash"></div>
+            <p class="amount">${album.amount}{{cfg.lanuages.photos}}</p>
+            <p v-if="album.photographer"><span class="label">{{cfg.lanuages.photographer}}</span>${album.photographer}</p>
+            <p v-if="album.location"><span class="label">{{cfg.lanuages.location}}</span>${album.location}</p>
+            <div v-if="album.comments" class="dash"></div>
+            <p v-if="album.comments">${album.comments}{{cfg.lanuages.comments}}</p>
+          </div>
         </div>
       </div>
-      <!--<div class="inner-border"></div>-->
     </div>
   </div>
 
