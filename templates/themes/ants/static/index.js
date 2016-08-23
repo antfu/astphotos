@@ -1,15 +1,6 @@
 'use strict';
 
 /* =============== Vue Directive ===============*/
-Vue.directive('full-photo',{
-  bind:function(){
-    var pic = $(this.el);
-    pic.css('opacity',0);
-    this.el.onload = function(){
-      pic.css('opacity',1);
-    };
-  }
-});
 Vue.directive('scrollable', function(){
   var el = $(this.el);
   el.bind('mousewheel DOMMouseScroll', scroll.scrollwheel);
@@ -47,8 +38,7 @@ var vue_mix = {
     },
     window_width: function() {
       return $(window).width();
-    },
-    photo_height: get_gallery_photo_height,
+    }
   }
 }
 
@@ -65,17 +55,6 @@ var on_gallery_collapse = function() {
 
 
 /* =============== Functions ===============*/
-var gallery_photo_resized = true;
-var gallery_photo_height = 0;
-function get_gallery_photo_height() {
-  if (!gallery_photo_resized)
-    return gallery_photo_height;
-  var temp = $('<div class="gallery" class="opacity:0"><div class="horizontal"><div class="photo"></div></div></div>').appendTo('body');
-  gallery_photo_height = temp.find('.photo').height() + 60;
-  gallery_photo_resized = false;
-  temp.remove();
-  return gallery_photo_height;
-}
 function immediate_and_timeout(func,timeout) {
   func();
   if (timeout == undefined)
@@ -84,7 +63,7 @@ function immediate_and_timeout(func,timeout) {
 }
 function resize_nav() {
   immediate_and_timeout(function () {
-    $('.nav-space').height($('#nav').outerHeight());
+    $('.nav-space').height($('.nav').outerHeight());
   },100);
 }
 
@@ -101,10 +80,6 @@ function body_scroll_to(to, on_complete) {
     if (on_complete)
       on_complete();
   });
-}
-
-function resize_update() {
-  gallery_photo_resized = true;
 }
 
 var scroll = {
@@ -146,8 +121,8 @@ var scroll = {
       if (index < 0 || index >= $('.gallery .photo').length)
         return;
       var target = $($('.gallery .photo')[index]).offset().top;
-      if (direction == -1 && !$('#nav').hasClass('hidden'))
-        target -= $('#nav').outerHeight();
+      if (direction == -1 && !$('.nav').hasClass('hidden'))
+        target -= $('.nav').outerHeight();
       if (index == 0)
         target = 0;
       body_scroll_to(target);
@@ -250,23 +225,21 @@ $(window).scroll(function() {
   var st = $(this).scrollTop();
   if (st < lastScrollTop){
     // upscroll
-    $('#nav').removeClass('hidden');
+    $('.nav').removeClass('hidden');
   } else {
     // downscroll
     if ($(window).scrollTop() > 300 )
-      $('#nav').addClass('hidden');
+      $('.nav').addClass('hidden');
   }
   lastScrollTop = st;
 
   if (scroll.vertical())
     scroll.update();
 });
-$(window).resize(resize_update);
 
 // Disable contextmenu
 if (!DEBUG) $('body').contextmenu(function(e) { e.preventDefault(); });
 
 $(function() {
-  resize_update();
   resize_nav();
 });

@@ -111,6 +111,13 @@ var vue_instance = new Vue({
       var args = [].slice.call(arguments);
       Vue.set(this.$data, 'router', args);
     },
+    route: function() {
+      var args = [].slice.call(arguments);
+      for (var i=0; i<args.length; i++)
+        if (this.$data.router[i] != args[i])
+          return false;
+      return true;
+    },
     router_append: function(target, index) {
       index = index || 0;
       this.$data.router.splice(index);

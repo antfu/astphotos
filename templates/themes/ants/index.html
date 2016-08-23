@@ -7,24 +7,24 @@
 {% endblock %}
 
 {% block body %}
-  <div class="nav" id="nav">
+  <div class="nav" :class="{'semi-transparent':route('about')}">
     <div class="menu">
       <div class="title">${title}</div>
-      <div class="item" @click="router_go('overview')" :class="{selected:router[0] == 'overview'}">Overview</div>
-      <div class="item" @click="router_go('albums')"   :class="{selected:router[0] == 'albums'}"  >${viewmode? current.name: 'Albums'}</div>
-      <div class="item" @click="router_go('about')"    :class="{selected:router[0] == 'about'}"   >About</div>
+      <div class="item" @click="router_go('overview')" :class="{selected:route('overview')}">Overview</div>
+      <div class="item" @click="router_go('albums')"   :class="{selected:route('albums')}"  >${viewmode? current.name: 'Albums'}</div>
+      <div class="item" @click="router_go('about')"    :class="{selected:route('about')}"   >About</div>
     </div>
-    <div v-if="viewmode" class="headers">
+    <!--<div v-if="viewmode" class="headers">
       <div class="header">${current.name}</div>
       <div class="sub header">${current.des || (current.amount + '{{cfg.lanuages.photos}}')}</div>
-      <!--<div class="pages">
+      <div class="pages">
         <div class="current">${current.page || 1}</div>
         <div class="divider">/</div>
         <div class="total">${current.amount}</div>
         <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(-1)">navigate_before</i>
         <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(1)">navigate_next</i>
-      </div>-->
-    </div>
+      </div>
+    </div>-->
     <div class="back">
       <div @click="scrolltop" id="scrolltop_btn" class="icon button hidden">
         <i class="material-icons">vertical_align_top</i>
@@ -43,15 +43,10 @@
   </div>
   <div class="nav-space"></div>
 
-
-
-  <div class="gallery" :class="{hidden:!viewmode}">
-    <div v-if="viewmode" transition="height-toggle" id="scroller" style="display:none;" class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
+  <div class="gallery" v-if="viewmode">
+    <div id="scroller" class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
       <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail" v-scrollable>
-        <div class="photo full" @click="modal_open(photo)"
-            :style="{background: photo.color,
-                     width:  current.gallery_mode==0 ? (photo.width * photo_height() / photo.height) : window_width(),
-                     height: current.gallery_mode==0 ? photo_height() : undefined}">
+        <div class="photo full" @click="modal_open(photo)" :style="{background: photo.color}">
           <div class="loader hidden"><div></div><div></div><div></div></div>
           <img class="image" v-photo="photo.path">
         </div>
@@ -76,7 +71,7 @@
     </div>
   </div>
 
-  <div class="albums" :style="{'margin-top': viewmode ? '1em' : 0 }">
+  <div class="albums" v-if="(router[0] == 'albums') && !viewmode">
     <div v-for="album in albums" track-by="id" @click="router_go('albums', album.name)" class="photo cover"
         :style="{'background-color':album.color}" :class="{secondary:viewmode && current != album}">
       <div class="loader hidden"><div></div><div></div><div></div></div>
@@ -97,7 +92,7 @@
     </div>
   </div>
 
-  <div id="footer" class="footer">
+  <div id="footer" class="footer" :class="{'semi-transparent':route('about')}">
     <a class="cell" :href="me_link" target="_blank">&${me}</a>
     <a class="cell" href="https://creativecommons.org/licenses/by-nc-nd/4.0" target="_blank">CC BY-NC-ND</a>
   </div>
@@ -126,6 +121,9 @@
     </div>
   </div>
 
+  <div class="background" :class="{hidden:!route('about')}">
+    <div class="img" v-background-photo="'static/img/Stone/7123925381fab7e513dc52f46166e5cb.jpg'"></div>
+  </div>
   <div id="warning">
     <div class="vertical-centered">
       <i class="material-icons">warning</i>

@@ -61,8 +61,8 @@ configs = dict(
     # Delete images those are not exist in src image folder
     delete_nonsrc_images = True,
     photo_resize = True,
-    photo_resize_horizontal_max_size = (1600,0),
-    photo_resize_vertical_max_size = (0,1600),
+    photo_resize_horizontal_max_size = (2000,0),
+    photo_resize_vertical_max_size = (0,2000),
     photo_resize_keep_exif = False,
 
     rename_photo_by_md5 = True,
