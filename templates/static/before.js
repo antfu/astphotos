@@ -11,6 +11,7 @@ $.each(full_data.albums,function(_,album){
   });
   album.cover = album_href_path + '/' + album.cover;
 });
+full_data.router = (window.location.hash || 'overview').replace('#','').split('|');
 
 /* =============== Vue Config ===============*/
 Vue.config.debug = DEBUG;

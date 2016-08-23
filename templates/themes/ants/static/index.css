@@ -2,7 +2,6 @@
 html, body, div
 {
   font-family:  Arial, sans-serif, 'Microsoft Yahei', '微软雅黑', MingLiU;
-  color: #fff;
   cursor: default;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -114,7 +113,7 @@ a:hover
 }
 .nav, .footer
 {
-  padding: 0.7em 3em 1em 3em;
+  padding: 1em 3em 1em 3em;
   background: rgba(255,255,255,0.90);
   transition: all 0.3s ease-in-out;
 }
@@ -134,6 +133,7 @@ a:hover
 .nav .headers
 {
   display: inline-block;
+  margin-top: 1.5em;
 }
 .nav .header
 {
@@ -160,6 +160,7 @@ a:hover
 
 .footer *
 {
+  font-size: 0.7em;
   color: #222;
 }
 .footer .cell
@@ -174,29 +175,68 @@ a:hover
 
 .menu
 {
-  font-size: 0.8em;
+  font-size: 0.7em;
 }
 .menu .item
 {
   text-transform: uppercase;
   display: inline-block;
-  opacity: 0.7;
-  margin: 0 1em;
-  transition: all 0.3s ease-in-out;
+  opacity: 0.3;
+  margin-right: 2em;
+  transition: opacity 0.3s ease-in-out;
+}
+.menu .title
+{
+  text-transform: uppercase;
+  display: inline-block;
+  margin-right: 3.2em;
 }
 .menu .item:hover
 {
   opacity: 0.8;
-  border-bottom: 1px solid #222;
-  margin-bottom: -1px;
 }
 .menu .item.selected
 {
+  opacity: 1;
+}
+.menu .item.selected:before
+{
+  content: "";
+  width: 0.2em;
+  height: 1em;
+  vertical-align: middle;
+  margin-right: 0.2em;
+  background: rgba(0,0,0,0.6);
+  line-height: 1em;
   display: inline-block;
-  opacity: 0.8;
-  border-bottom: 1px solid #222;
+  text-align: center;
+  margin-top: -0.2em;
+}
+.menu .item.selected .album-title
+{
+  opacity: 0.7;
+}
+.menu .item .slash
+{
+  opacity: 0.3;
+  margin: 0 0.2em;
+}
+.menu .item .album-name
+{
+  font-weight: bold;
 }
 
+
+
+.about
+{
+}
+.about p
+{
+  font-size: 0.7em;
+  max-width: 320px;
+  color: rgba(0,0,0,0.7);
+}
 
 /* =============== Albums =============== */
 .albums
@@ -240,15 +280,12 @@ a:hover
 }
 
 /* =============== Overlay =============== */
-.cover
+.photo.cover
 {
   transition: all 0.3s ease-in;
-}
-.photo.cover.square
-{
   position: relative;
 }
-.photo.cover.square .back-image
+.photo.cover .back-image
 {
   position: absolute;
   top: 0;
@@ -261,10 +298,10 @@ a:hover
   background-repeat:no-repeat;
   background-position: center center;
 }
-.photo.cover.square:before{
+.photo.cover:before{
 	content: "";
 	display: block;
-	padding-top: 100%; 	/* Make height same as width */
+	padding-top: 66.66667%; 	/* Make height same as width */
 }
 .cover .inner-border
 {
@@ -294,7 +331,7 @@ a:hover
   position: absolute;
   opacity: 0;
   color: #fff;
-  font-size: 0.8em;
+  font-size: 0.6em;
   padding: 2em;
   background: rgba(0,0,0,0.5);
   transition: all 0.3s ease-in;
@@ -655,7 +692,11 @@ a:hover
   }
   .nav, .footer
   {
-    padding: 0.7em 1.5em 1em 1.5em;
+    padding: 0.7em 1.5em 0.7em 1.5em;
+  }
+  .menu .title
+  {
+    display: none;
   }
   .nav-space
   {

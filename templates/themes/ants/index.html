@@ -8,47 +8,57 @@
 
 {% block body %}
   <div class="nav" id="nav">
-    <div v-if="!viewmode" class="headers">
-      <div class="header">${title}</div>
-      <div class="sub header">${des}</div>
-      <div class="menu">
-        <div class="item">Overview</div>
-        <div class="item">Projects</div>
-        <div class="item">About</div>
+    <div class="menu">
+      <div class="title">${title}</div>
+      <div class="item" @click="router_go('overview')" :class="{selected:router[0] == 'overview'}">Overview</div>
+      <div class="item" :class="{selected:router[0] == 'albums'}">
+        <span class="album-title" @click="router_go('albums')">Albums</span>
+        <span v-if="viewmode">
+          <span class="slash">/</span>
+          <span class="album-name">${current.name}</span>
+        </span>
       </div>
+      <div class="item" @click="router_go('about')"    :class="{selected:router[0] == 'about'}"   >About</div>
     </div>
     <div v-if="viewmode" class="headers">
       <div class="header">${current.name}</div>
       <div class="sub header">${current.des || (current.amount + '{{cfg.lanuages.photos}}')}</div>
-      <div class="pages">
+      <!--<div class="pages">
         <div class="current">${current.page || 1}</div>
         <div class="divider">/</div>
         <div class="total">${current.amount}</div>
-        <!--
         <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(-1)">navigate_before</i>
         <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(1)">navigate_next</i>
-        -->
-      </div>
+      </div>-->
     </div>
     <div class="back">
       <div @click="scrolltop" id="scrolltop_btn" class="icon button hidden">
         <i class="material-icons">vertical_align_top</i>
       </div>
-      <div @click="gallery_collapse" v-if="viewmode" transition="fade" class="icon button">
+      <div @click="router_back(1)" v-if="viewmode" transition="fade" class="icon button">
         <i class="material-icons">clear</i>
       </div>
+    </div>
+    <div class="about" v-if="router[0] == 'about'">
+      <div class="headers">
+        <div class="header">${title}</div>
+        <div class="sub header">${des}</div>
+      </div>
+      <p v-for="text in about_text">${text}</p>
     </div>
   </div>
   <div class="nav-space"></div>
 
-  <div id="gallery" class="gallery" :class="{hidden:!viewmode}">
+
+
+  <div class="gallery" :class="{hidden:!viewmode}">
     <div v-if="viewmode" transition="height-toggle" id="scroller" style="display:none;" class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
       <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail" v-scrollable>
         <div class="photo full" @click="modal_open(photo)"
             :style="{background: photo.color,
                      width:  current.gallery_mode==0 ? (photo.width * photo_height() / photo.height) : window_width(),
                      height: current.gallery_mode==0 ? photo_height() : undefined}">
-          <div class="loader hidden"><c></c><c></c><c></c></div>
+          <div class="loader hidden"><div></div><div></div><div></div></div>
           <img class="image" v-photo="photo.path">
         </div>
         <div v-if="current.display_info" class="info">
@@ -72,9 +82,9 @@
     </div>
   </div>
 
-  <div id="albums" class="albums" :style="{'margin-top': viewmode ? '1em' : 0 }">
+  <div class="albums" :style="{'margin-top': viewmode ? '1em' : 0 }">
     <div v-if="viewmode" transition="fade-down" class="block title">{{cfg.lanuages.albums}}</div>
-    <div v-for="album in albums" track-by="id" @click="gallery_expand(album)" class="square photo cover"
+    <div v-for="album in albums" track-by="id" @click="router_go('albums', album.name)" class="photo cover"
         :style="{'background-color':album.color}" :class="{secondary:viewmode && current != album}">
       <div class="loader hidden"><div></div><div></div><div></div></div>
       <div class="back-image" v-background-photo="album.cover"></div>

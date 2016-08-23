@@ -51,27 +51,6 @@ var vue_instance = new Vue({
   data: full_data,
   mixins: [vue_mix],
   methods: {
-    // GALLERY
-    gallery_expand: function(album) {
-      if (this.$data.viewmode == 0 || this.$data.current != album)
-      {
-        Vue.set(this.$data,'current',album);
-        Vue.set(this.$data.current,'page',1);
-        Vue.set(this.$data,'viewmode',1);
-        this.update_title();
-        if (on_gallery_expand)
-          on_gallery_expand.apply(this,album);
-      } else {
-        this.gallery_collapse();
-      }
-    },
-    gallery_collapse: function() {
-      Vue.set(this.$data,'viewmode',0);
-      this.update_title();
-      if (on_gallery_collapse)
-        on_gallery_collapse.apply(this);
-    },
-
     // MODAL
     modal_open: function(photo) {
       var vm = this;
@@ -113,10 +92,64 @@ var vue_instance = new Vue({
         document.title = this.$data.current.name + ' - ' + this.$data.title;
       else
         document.title = this.$data.title;
+    },
+
+    find_album_by_name: function(album_name) {
+      for (var i=0;i<this.$data.albums.length;i++)
+      {
+        if (this.$data.albums[i].name == album_name)
+          return this.$data.albums[i];
+      }
+      return {};
+    },
+    router_go: function() {
+      var args = [].slice.call(arguments);
+      Vue.set(this.$data, 'router', args);
+      window.location.hash = this.$data.router.join('|');
+      this.router_parser();
+    },
+    router_append: function(target, index) {
+      index = index || 0;
+      this.$data.router.splice(index);
+      Vue.set(this.$data.router, index, target);
+      window.location.hash = this.$data.router.join('|');
+      this.router_parser();
+    },
+    router_back: function(index) {
+      index = index || (this.$data.router.length - 2) || 0;
+      this.$data.router.splice(index);
+      window.location.hash = this.$data.router.join('|');
+      this.router_parser();
+    },
+    router_parser: function() {
+      var r = this.$data.router;
+      if (r.length >= 1)
+      {
+        if (r[0] == 'albums' && r.length >= 2)
+        {
+          var album = this.find_album_by_name(r[1]);
+          Vue.set(this.$data,'current', album);
+          var page = 1;
+          if (r.length >= 3)
+            page = parseInt(r[2]);
+          Vue.set(this.$data.current,'page',page);
+          Vue.set(this.$data,'viewmode',1);
+          this.update_title();
+          if (on_gallery_expand)
+            on_gallery_expand.apply(this,album);
+          return;
+        }
+      }
+
+      Vue.set(this.$data,'viewmode',0);
+      this.update_title();
+      if (on_gallery_collapse)
+        on_gallery_collapse.apply(this);
     }
   }
 });
 
 $(function(){
   vue_instance.update_title();
+  vue_instance.router_parser();
 })
