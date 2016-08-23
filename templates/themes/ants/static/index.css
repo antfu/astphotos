@@ -156,7 +156,7 @@ a:hover
 {
   position: absolute;
   top: 0.35em;
-  right: 1em;
+  right: 0.6em;
 }
 .nav .pages
 {
@@ -305,6 +305,7 @@ a:hover
   /*max-width: 100%;*/
   max-height: 100%;
   margin: 0;
+  margin-bottom: -4px;
   transition: all 0.3s ease-in;
 }
 
@@ -702,11 +703,7 @@ a:hover
   }
   .nav, .footer
   {
-    padding: 0.7em 1.5em 0.7em 1.5em;
-  }
-  .icon.button i
-  {
-    font-size: 1.2em;
+    padding: 1em 1.5em;
   }
   .menu .title
   {
