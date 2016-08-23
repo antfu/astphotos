@@ -191,6 +191,7 @@ a:hover
   opacity: 0.3;
   margin-right: 2em;
   transition: opacity 0.3s ease-in-out;
+  line-height: 1em;
 }
 .menu .title
 {
@@ -260,6 +261,10 @@ a:hover
 {
   width: 100%;
   height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-color: white;
 }
 
 /* =============== Albums =============== */
@@ -698,6 +703,10 @@ a:hover
   .nav, .footer
   {
     padding: 0.7em 1.5em 0.7em 1.5em;
+  }
+  .icon.button i
+  {
+    font-size: 1.2em;
   }
   .menu .title
   {

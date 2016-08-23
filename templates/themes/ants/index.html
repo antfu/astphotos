@@ -9,7 +9,7 @@
 {% block body %}
   <div class="nav" :class="{'semi-transparent':route('about')}">
     <div class="menu">
-      <div class="title">${title}</div>
+      <a class="title" @click="router_go('overview')">${title}</a>
       <div class="item" @click="router_go('overview')" :class="{selected:route('overview')}">Overview</div>
       <div class="item" @click="router_go('albums')"   :class="{selected:route('albums')}"  >${viewmode? current.name: 'Albums'}</div>
       <div class="item" @click="router_go('about')"    :class="{selected:route('about')}"   >About</div>
