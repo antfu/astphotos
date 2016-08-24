@@ -18,11 +18,17 @@ from   jinja2    import FileSystemLoader
 from   jinja2.environment import Environment
 from   PIL       import Image # PIL using Pillow (PIL fork)
 from   config    import configs as cfg
-from   css_html_js_minify import html_minify, js_minify, css_minify
+from   css_html_js_minify import html_minify, js_minify, css_minify, process_single_html_file, process_single_js_file, process_single_css_file
 
 
 if os.name == 'nt':
     os.system("@chcp 65001")
+
+Minifiers = {
+    'html': process_single_html_file,
+    'js'  : process_single_js_file,
+    'css' : process_single_css_file
+}
 
 class infodict(dict):
     def update_json(self,jsonpath):
@@ -285,33 +291,26 @@ def codecs_open(filename,open_type,encode=None):
 def copydir(src,dst,minify=False):
     if not os.path.exists(dst):
         os.mkdir(dst)
-    for f in glob.glob(os.path.join(src,'*.*')):
-        filename = os.path.basename(f)
-        dst_path = os.path.join(dst,filename)
-        # if the files modify time is the same, do not copy
-        if not os.path.exists(dst_path) or os.path.getmtime(f) != os.path.getmtime(dst_path):
-			if minify and '.min.' in filename:
-				log('  Copying',filename)
-				# use 'copy2' to keep file metadate
-				shutil.copy2(f,dst_path)
-			else:
-				# minify
-				if filename.endswith('js'):
-					log('  Minifing',filename)
-					process_single_js_file(f, overwrite=False, output_path=dst_path)
-					shutil.copystat(f,dst_path)
-				elif filename.endswith('css'):
-					log('  Minifing',filename)
-					process_single_css_file(f, overwrite=False, output_path=dst_path)
-					shutil.copystat(f,dst_path)
-				elif filename.endswith('html'):
-					log('  Minifing',filename)
-					process_single_html_file(f, overwrite=False, output_path=dst_path)
-					shutil.copystat(f,dst_path)
-				else:
-					log('  Copying',filename)
-					shutil.copy2(f,dst_path)
-					
+    for f in os.listdir(src):
+        if os.path.isfile(f):
+            filename = os.path.basename(f)
+            dst_path = os.path.join(dst,filename)
+            ext = get_ext(filename)
+            # if the files modify time is the same, do not copy
+            if not os.path.exists(dst_path) or os.path.getmtime(f) != os.path.getmtime(dst_path):
+        		if minify and '.min.' in filename and not ext in Minifiers.keys():
+        			log('  Copying',filename)
+        			# use 'copy2' to keep file metadate
+        			shutil.copy2(f,dst_path)
+        		else:
+        			# minify
+        			log('  Minifing',filename)
+        			Minifiers[ext](f, overwrite=False, output_path=dst_path)
+        			shutil.copystat(f,dst_path)
+		else:
+            # isdir
+            dirname = os.path.basename(f)
+            copydir(dirname, pjoin(dst,f), minify)
 
 def render(dst,**kwargs):
     j2_env = Environment(loader=FileSystemLoader(cfg.src_dir))
@@ -468,6 +467,9 @@ def change_ext(filepath,ext):
 
 def clear_ext(filepath):
     return '.'.join(filepath.split('.')[:-1])
+
+def get_ext(filepath):
+    return '.'.join(filepath.split('.')[-1])
 
 def clear_directory(path = None):
     if not path:

@@ -11,20 +11,19 @@ A static single-page photo gallery website generator
 1. You will get the complied static files under `complied/`! You can put them into your static website host and enjoy it!
 
 ## Configure
+
+**Directory Structure:**
 ```
-|- img
-  |- _site.json
-  |- about.md
-  |- [album_A]
-    |- _album.json
-    |- A.jpg
-    |- B.jpg
-    |...
-  |- [album_B]
-    |- _album.json
-    |...
-  |...
-```
+img
+├── _site.json
+├── about.md
+└── Album_A
+    ├── _album.json
+    ├── A.jpg
+    ├── B.jpg
+    ├── C.jpg
+    └── ...
+``` 
 
 - Edit `config_overridde.py` file base on `config_default.py`
 - Create `/img/_site.json`, write and save:
@@ -60,10 +59,10 @@ A static single-page photo gallery website generator
   - [ ] Interaction json generator
 - [ ] Javascripts decoupling
 - [x] ~~Use EXIF-Thumbail to calc default color~~ Use random samples (for better performance)
-- [ ] Folder copy
+- [x] Folder copy
 - [x] Windows Unicode support
 - [ ] Hash Router
-- [ ] Minify
+- [x] Minify
 - [ ] Markdown
 - [ ] About portrait
 - [ ] Backgound
