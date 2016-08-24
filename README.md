@@ -23,7 +23,7 @@ img
     ├── B.jpg
     ├── C.jpg
     └── ...
-``` 
+```
 
 - Edit `config_overridde.py` file base on `config_default.py`
 - Create `/img/_site.json`, write and save:
@@ -61,11 +61,11 @@ img
 - [x] ~~Use EXIF-Thumbail to calc default color~~ Use random samples (for better performance)
 - [x] Folder copy
 - [x] Windows Unicode support
-- [ ] Hash Router
+- [x] Hash Router
 - [x] Minify
-- [ ] Markdown
+- [x] Markdown
 - [ ] About portrait
-- [ ] Backgound
+- [ ] Backgound set
 - [ ] Photographer links dictionrary
 - [ ] Overview
 - [ ] Horizontal / Vertical view auto switch

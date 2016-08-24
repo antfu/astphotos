@@ -4,3 +4,4 @@ pillow
 termcolor
 csscompressor
 jsmin
+markdown

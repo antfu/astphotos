@@ -20,6 +20,7 @@ from   jinja2.environment import Environment
 from   PIL       import Image # PIL using Pillow (PIL fork)
 from   config    import configs as cfg
 from   jsmin     import jsmin
+from   markdown  import markdown
 
 if os.name == 'nt':
     os.system("@chcp 65001")
@@ -118,6 +119,7 @@ def generate_struct_tree():
 
     root = infodict()
     root.update_json(os.path.join(img_src_dir,'_site.json'))
+    root.about = read_markdown_if_exists(os.path.join(img_src_dir,'about.md'))
     root.albums = []
 
     log()
@@ -307,7 +309,7 @@ def copydir(src,dst,minify=False):
             ext = get_ext(filename)
             # if the files modify time is the same, do not copy
             if not os.path.exists(dst_path) or os.path.getmtime(path) != os.path.getmtime(dst_path):
-                if not minify or ('.min.' in filename and not ext in Minifiers.keys()):
+                if not minify or '.min.' in filename or (not ext in Minifiers.keys()):
                     log('  Copying',filename)
                     # use 'copy2' to keep file metadate
                     shutil.copy2(path,dst_path)
@@ -363,7 +365,6 @@ def im_resize(img):
 
 
 # === Utils === #
-
 def get_tags(img_path,details=False):
     # Open image file for reading (binary mode)
     f = codecs_open(img_path, 'rb')
@@ -456,6 +457,19 @@ def open_ini(filepath):
     config = ConfigParser.RawConfigParser()
     config.readfp(ini_fp)
     return config['root']
+
+def read_markdown_if_exists(path):
+    raw = read_if_exists(path)
+    if raw:
+        return markdown(raw)
+    return None
+
+def read_if_exists(path):
+    if os.path.exists(path):
+        with codecs_open(path,'r','utf-8') as f:
+            context = f.read()
+        return context
+    return None
 
 def open_json(filepath):
     f = codecs_open(filepath,'r','utf-8')

@@ -236,14 +236,10 @@ a:hover
 
 
 
-.about
-{
-}
-.about p
+.about .markdown
 {
   font-size: 0.7em;
-  max-width: 320px;
-  color: rgb(75, 75, 75);
+  opacity: 0.8;
 }
 
 

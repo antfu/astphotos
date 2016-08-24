@@ -19,7 +19,7 @@ configs = dict(
         favicon = 'static/favicon.ico',
         jquery_js = 'static/jquery-3.1.0.min.js',
         vue_js = 'static/vue.min.js',
-        material_icons = 'static/material-icons.css'
+        material_icons = 'static/material-icons/material-icons.css'
     ),
 
     # The lanuages display in webpage
@@ -48,7 +48,7 @@ configs = dict(
     sturct_filename = 'struct.json',
     src_file_type = 'jpg',
     themes_dir = 'themes',
-	
+
 	# Minfiy the css/js/html files to reduce transload
 	minify = True,
 

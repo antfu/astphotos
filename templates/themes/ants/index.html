@@ -38,7 +38,7 @@
         <div class="header"     v-text="title"></div>
         <div class="sub header" v-text="des"></div>
       </div>
-      <p v-for="text in about_text" v-text="text"></p>
+      <div class="markdown" v-html="about"></div>
     </div>
   </div>
   <div class="nav-space"></div>
