@@ -48,7 +48,9 @@ configs = dict(
     sturct_filename = 'struct.json',
     src_file_type = 'jpg',
     themes_dir = 'themes',
-
+	
+	# Minfiy the css/js/html files to reduce transload
+	minify = True,
 
     # If there is not title infomation in JSON file or EXIF tags,
     # use the file name as the title of the photo

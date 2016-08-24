@@ -18,6 +18,8 @@ from   jinja2    import FileSystemLoader
 from   jinja2.environment import Environment
 from   PIL       import Image # PIL using Pillow (PIL fork)
 from   config    import configs as cfg
+from   css_html_js_minify import html_minify, js_minify, css_minify
+
 
 if os.name == 'nt':
     os.system("@chcp 65001")
@@ -75,6 +77,9 @@ def copy_static():
     copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
     copydir(pjoin(cfg.src_dir,cfg.themes_dir,cfg.theme,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
 
+def minify_and_copy():
+	pass
+	
 def render_index():
     cfg.gentime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     render(pjoin(cfg.out_dir,'index.html'),cfg=cfg)
@@ -277,7 +282,7 @@ def generate_struct_tree():
 def codecs_open(filename,open_type,encode=None):
     return codecs.open(filename,open_type,encode)
 
-def copydir(src,dst):
+def copydir(src,dst,minify=False):
     if not os.path.exists(dst):
         os.mkdir(dst)
     for f in glob.glob(os.path.join(src,'*.*')):
@@ -285,9 +290,28 @@ def copydir(src,dst):
         dst_path = os.path.join(dst,filename)
         # if the files modify time is the same, do not copy
         if not os.path.exists(dst_path) or os.path.getmtime(f) != os.path.getmtime(dst_path):
-            log('  Copying',filename)
-            # use 'copy2' to keep file metadate
-            shutil.copy2(f,dst_path)
+			if minify and '.min.' in filename:
+				log('  Copying',filename)
+				# use 'copy2' to keep file metadate
+				shutil.copy2(f,dst_path)
+			else:
+				# minify
+				if filename.endswith('js'):
+					log('  Minifing',filename)
+					process_single_js_file(f, overwrite=False, output_path=dst_path)
+					shutil.copystat(f,dst_path)
+				elif filename.endswith('css'):
+					log('  Minifing',filename)
+					process_single_css_file(f, overwrite=False, output_path=dst_path)
+					shutil.copystat(f,dst_path)
+				elif filename.endswith('html'):
+					log('  Minifing',filename)
+					process_single_html_file(f, overwrite=False, output_path=dst_path)
+					shutil.copystat(f,dst_path)
+				else:
+					log('  Copying',filename)
+					shutil.copy2(f,dst_path)
+					
 
 def render(dst,**kwargs):
     j2_env = Environment(loader=FileSystemLoader(cfg.src_dir))
