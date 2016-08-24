@@ -14,12 +14,13 @@ import shutil
 import hashlib
 import jinja2
 import csscompressor
+import jsmin
+import htmlmin
 from   termcolor import colored, cprint
 from   jinja2    import FileSystemLoader
 from   jinja2.environment import Environment
 from   PIL       import Image # PIL using Pillow (PIL fork)
 from   config    import configs as cfg
-from   jsmin     import jsmin
 from   markdown  import markdown
 
 if os.name == 'nt':
@@ -40,18 +41,23 @@ class infodict(dict):
         if key in self.keys():
             del(self[key])
 
-def js_minify(src,target):
-    with codecs_open(src, 'r', 'utf-8') as src_file:
-        minified = jsmin(src_file.read())
-        with codecs_open(target, 'w', 'utf-8') as target_file:
-            target_file.write(minified)
+def js_minify(src,dst):
+    with codecs.open(src, 'r', 'utf-8') as src_file:
+        minified = jsmin.jsmin(src_file.read())
+        with codecs.open(dst, 'w', 'utf-8') as dst_file:
+            dst_file.write(minified)
 
-def css_minify(src,target):
-    with codecs_open(src, 'r', 'utf-8') as src_file:
+def css_minify(src,dst):
+    with codecs.open(src, 'r', 'utf-8') as src_file:
         minified = csscompressor.compress(src_file.read())
-        with codecs_open(target, 'w', 'utf-8') as target_file:
-            target_file.write(minified)
+        with codecs.open(dst, 'w', 'utf-8') as dst_file:
+            dst_file.write(minified)
 
+def html_minify(src,dst):
+    with codecs.open(src, 'r', 'utf-8') as src_file:
+        minified = htmlmin.minify(src_file.read(), remove_comments=True, remove_empty_space=True)
+        with codecs.open(dst, 'w', 'utf-8') as dst_file:
+            dst_file.write(minified)
 
 # Shorthand alias
 def log(*args,color=None,back=None,attrs=None,**kws):
@@ -60,7 +66,8 @@ def log(*args,color=None,back=None,attrs=None,**kws):
 pjoin = os.path.join
 Minifiers = {
     'js'  : js_minify,
-    'css' : css_minify
+    'css' : css_minify,
+    'html': html_minify
 }
 
 if not os.path.exists(cfg.out_dir):
@@ -97,7 +104,8 @@ def copy_static():
 
 def render_index():
     cfg.gentime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    render(pjoin(cfg.out_dir,'index.html'),cfg=cfg)
+    index_path = pjoin(cfg.out_dir,'index.html')
+    render(index_path,cfg=cfg)
 
 def generate_and_save():
     struct_tree = generate_struct_tree()
@@ -326,10 +334,12 @@ def copydir(src,dst,minify=False):
 def render(dst,**kwargs):
     j2_env = Environment(loader=FileSystemLoader(cfg.src_dir))
     s = j2_env.get_template(cfg.themes_dir+'/'+cfg.theme+'/index.html').render(**kwargs)
+    if cfg.minify:
+        s = htmlmin.minify(s, remove_comments=False, remove_empty_space=True)
+
     # save file
-    f = codecs_open(dst,'w','utf-8')
-    f.write(s)
-    f.close()
+    with codecs.open(dst, 'w', 'utf-8') as f:
+        f.write(s)
 
 def im_resize(img):
     size = img.size

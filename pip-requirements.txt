@@ -5,3 +5,4 @@ termcolor
 csscompressor
 jsmin
 markdown
+htmlmin

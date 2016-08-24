@@ -6,6 +6,18 @@
 <link rel="stylesheet" href="{{cfg.static_dir}}/index.css">
 {% endblock %}
 
+<!--<div v-if="viewmode" class="headers">
+  <div class="header">${current.name}</div>
+  <div class="sub header">${current.des || (current.amount + '{{cfg.lanuages.photos}}')}</div>
+  <div class="pages">
+    <div class="current">${current.page || 1}</div>
+    <div class="divider">/</div>
+    <div class="total">${current.amount}</div>
+    <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(-1)">navigate_before</i>
+    <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(1)">navigate_next</i>
+  </div>
+</div>-->
+
 {% block body %}
   <div class="nav" :class="{'semi-transparent':route('about')}">
     <div class="menu">
@@ -14,17 +26,6 @@
       <div class="item" @click="go('albums')"   :class="{selected:route('albums')}"  >${viewmode? current.name: 'Albums'}</div>
       <div class="item" @click="go('about')"    :class="{selected:route('about')}"   >About</div>
     </div>
-    <!--<div v-if="viewmode" class="headers">
-      <div class="header">${current.name}</div>
-      <div class="sub header">${current.des || (current.amount + '{{cfg.lanuages.photos}}')}</div>
-      <div class="pages">
-        <div class="current">${current.page || 1}</div>
-        <div class="divider">/</div>
-        <div class="total">${current.amount}</div>
-        <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(-1)">navigate_before</i>
-        <i v-if="!current.gallery_mode" class="material-icons" @click="scroll(1)">navigate_next</i>
-      </div>
-    </div>-->
     <div class="back">
       <div @click="scrolltop" id="scrolltop_btn" class="icon button hidden">
         <i class="material-icons">vertical_align_top</i>
