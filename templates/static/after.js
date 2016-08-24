@@ -55,6 +55,8 @@ var vue_instance = new Vue({
       console.log('router_changed', oldVal, val);
       this.router_parser(val, oldVal);
       window.location.hash = this.$data.router.join('|');
+      if (on_router_changed)
+        on_router_changed.apply(this,val);
     },
     'viewmode': function(val, oldVal) {
       this.update_title();
@@ -125,9 +127,9 @@ var vue_instance = new Vue({
       for (var i=0;i<this.$data.albums.length;i++)
         if (this.$data.albums[i].name == album_name)
           return this.$data.albums[i];
-      return {};
+      return undefined;
     },
-    
+
     go: function() {
       var args = [].slice.call(arguments);
       Vue.set(this.$data, 'router', args);
@@ -149,12 +151,17 @@ var vue_instance = new Vue({
       this.$data.router.splice(index);
     },
     router_parser: function(curr, old) {
+      curr = curr || [];
+      old  = old  || [];
       if (curr[0] === 'albums')
       {
         var album = this.find_album_by_name(curr[1]);
-        Vue.set(this.$data,'current', album);
-        Vue.set(this.$data.current,'page', parseInt(curr[2] || 1));
-        Vue.set(this.$data,'viewmode', 1);
+        if (album)
+        {
+          Vue.set(this.$data,'current', album);
+          Vue.set(this.$data.current,'page', parseInt(curr[2] || 1));
+          Vue.set(this.$data,'viewmode', 1);
+        }
         return;
       }
       if (old[0] === 'albums' && curr[0] !== 'albums')

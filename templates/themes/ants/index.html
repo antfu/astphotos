@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-  <div v-ref:nav class="nav" :class="{'semi-transparent':route('about')}">
+  <div class="nav" :class="{'semi-transparent':route('about')}">
     <div class="menu">
       <a  class="title" @click="go('overview')">${title}</a>
       <div class="item" @click="go('overview')" :class="{selected:route('overview')}">Overview</div>
@@ -43,7 +43,7 @@
   </div>
   <div class="nav-space"></div>
 
-  <div v-ref:gallery class="gallery" v-show="viewmode">
+  <div class="gallery" v-if="viewmode" transition="fade">
     <div id="scroller" class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
       <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail" v-scrollable>
         <div class="photo full" @click="modal_open(photo)" :style="{'background-color': photo.color}">
@@ -57,7 +57,7 @@
           <div v-if="photo.des"      class="des"      v-text="photo.des"></div>
           <div v-if="photo.photographer" class="meta">
             <span class="label">by </span>
-            <a v-text="photo.photographer" target="_blank" 
+            <a v-text="photo.photographer" target="_blank"
                :href="get_photographer_link(photo.photographer)"></a>
           </div>
           <div v-if="photo.location" class="meta">
@@ -71,7 +71,7 @@
     </div>
   </div>
 
-  <div v-ref:albums class="albums" v-show="(router[0] == 'albums') && !viewmode" transition="fade">
+  <div class="albums" v-show="(router[0] == 'albums') && !viewmode" transition="fade">
     <div v-for="album in albums" track-by="id" @click="go('albums', album.name)" class="cover warpper">
       <div class="photo cover" :style="{'background-color':album.color}">
         <div class="loader hidden"><div></div><div></div><div></div></div>

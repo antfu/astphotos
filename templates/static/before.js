@@ -20,3 +20,4 @@ Vue.config.delimiters = ['${', '}'];
 /* =============== Events ===============*/
 var on_gallery_expand;
 var on_gallery_collapse;
+var on_router_changed;

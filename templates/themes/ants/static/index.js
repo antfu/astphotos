@@ -43,16 +43,16 @@ var vue_mix = {
 }
 
 /* =============== Events ===============*/
-var on_gallery_expand = function(album) {
+var on_gallery_expand = function() {
   scroll.reset();
-  resize_nav();
   body_scroll_to(0);
 }
 var on_gallery_collapse = function() {
-  resize_nav();
   body_scroll_to(0);
 }
-
+var on_router_changed = function() {
+  resize_nav();
+}
 
 /* =============== Functions ===============*/
 function immediate_and_timeout(func,timeout) {

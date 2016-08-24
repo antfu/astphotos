@@ -2,4 +2,5 @@ exifread
 jinja2
 pillow
 termcolor
-css-html-js-minify
+csscompressor
+jsmin

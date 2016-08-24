@@ -13,22 +13,16 @@ import exifread
 import shutil
 import hashlib
 import jinja2
+import csscompressor
 from   termcolor import colored, cprint
 from   jinja2    import FileSystemLoader
 from   jinja2.environment import Environment
 from   PIL       import Image # PIL using Pillow (PIL fork)
 from   config    import configs as cfg
-from   css_html_js_minify import html_minify, js_minify, css_minify, process_single_html_file, process_single_js_file, process_single_css_file
-
+from   jsmin     import jsmin
 
 if os.name == 'nt':
     os.system("@chcp 65001")
-
-Minifiers = {
-    'html': process_single_html_file,
-    'js'  : process_single_js_file,
-    'css' : process_single_css_file
-}
 
 class infodict(dict):
     def update_json(self,jsonpath):
@@ -45,11 +39,28 @@ class infodict(dict):
         if key in self.keys():
             del(self[key])
 
+def js_minify(src,target):
+    with codecs_open(src, 'r', 'utf-8') as src_file:
+        minified = jsmin(src_file.read())
+        with codecs_open(target, 'w', 'utf-8') as target_file:
+            target_file.write(minified)
+
+def css_minify(src,target):
+    with codecs_open(src, 'r', 'utf-8') as src_file:
+        minified = csscompressor.compress(src_file.read())
+        with codecs_open(target, 'w', 'utf-8') as target_file:
+            target_file.write(minified)
+
+
 # Shorthand alias
 def log(*args,color=None,back=None,attrs=None,**kws):
     cprint(' '.join([str(x) for x in args]),color,back,attrs=attrs,**kws)
     #print(*[remove_unicode(str(x)) for x in args],**kws)
 pjoin = os.path.join
+Minifiers = {
+    'js'  : js_minify,
+    'css' : css_minify
+}
 
 if not os.path.exists(cfg.out_dir):
     os.mkdir(cfg.out_dir)
@@ -80,12 +91,9 @@ def gen():
 def copy_static():
     if not os.path.exists(cfg.src_dir):
         os.mkdir(cfg.src_dir)
-    copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
-    copydir(pjoin(cfg.src_dir,cfg.themes_dir,cfg.theme,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir))
+    copydir(pjoin(cfg.src_dir,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir),cfg.minify)
+    copydir(pjoin(cfg.src_dir,cfg.themes_dir,cfg.theme,cfg.static_dir),pjoin(cfg.out_dir,cfg.static_dir),cfg.minify)
 
-def minify_and_copy():
-	pass
-	
 def render_index():
     cfg.gentime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     render(pjoin(cfg.out_dir,'index.html'),cfg=cfg)
@@ -292,25 +300,26 @@ def copydir(src,dst,minify=False):
     if not os.path.exists(dst):
         os.mkdir(dst)
     for f in os.listdir(src):
-        if os.path.isfile(f):
-            filename = os.path.basename(f)
+        path = pjoin(src,f)
+        if os.path.isfile(path):
+            filename = f
             dst_path = os.path.join(dst,filename)
             ext = get_ext(filename)
             # if the files modify time is the same, do not copy
-            if not os.path.exists(dst_path) or os.path.getmtime(f) != os.path.getmtime(dst_path):
-        		if minify and '.min.' in filename and not ext in Minifiers.keys():
-        			log('  Copying',filename)
-        			# use 'copy2' to keep file metadate
-        			shutil.copy2(f,dst_path)
-        		else:
-        			# minify
-        			log('  Minifing',filename)
-        			Minifiers[ext](f, overwrite=False, output_path=dst_path)
-        			shutil.copystat(f,dst_path)
-		else:
+            if not os.path.exists(dst_path) or os.path.getmtime(path) != os.path.getmtime(dst_path):
+                if not minify or ('.min.' in filename and not ext in Minifiers.keys()):
+                    log('  Copying',filename)
+                    # use 'copy2' to keep file metadate
+                    shutil.copy2(path,dst_path)
+                else:
+                    # minify
+                    log('  Minifing',filename)
+                    Minifiers[ext](path,dst_path)
+                    shutil.copystat(path,dst_path)
+        else:
             # isdir
-            dirname = os.path.basename(f)
-            copydir(dirname, pjoin(dst,f), minify)
+            dirname = f
+            copydir(path, pjoin(dst,dirname), minify)
 
 def render(dst,**kwargs):
     j2_env = Environment(loader=FileSystemLoader(cfg.src_dir))
@@ -469,7 +478,7 @@ def clear_ext(filepath):
     return '.'.join(filepath.split('.')[:-1])
 
 def get_ext(filepath):
-    return '.'.join(filepath.split('.')[-1])
+    return filepath.split('.')[-1]
 
 def clear_directory(path = None):
     if not path:
