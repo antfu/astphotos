@@ -9,10 +9,10 @@
 {% block body %}
   <div class="nav" :class="{'semi-transparent':route('about')}">
     <div class="menu">
-      <a class="title" @click="router_go('overview')">${title}</a>
-      <div class="item" @click="router_go('overview')" :class="{selected:route('overview')}">Overview</div>
-      <div class="item" @click="router_go('albums')"   :class="{selected:route('albums')}"  >${viewmode? current.name: 'Albums'}</div>
-      <div class="item" @click="router_go('about')"    :class="{selected:route('about')}"   >About</div>
+      <a  class="title" @click="go('overview')">${title}</a>
+      <div class="item" @click="go('overview')" :class="{selected:route('overview')}">Overview</div>
+      <div class="item" @click="go('albums')"   :class="{selected:route('albums')}"  >${viewmode? current.name: 'Albums'}</div>
+      <div class="item" @click="go('about')"    :class="{selected:route('about')}"   >About</div>
     </div>
     <!--<div v-if="viewmode" class="headers">
       <div class="header">${current.name}</div>
@@ -35,7 +35,7 @@
     </div>
     <div class="about" v-if="router[0] == 'about'">
       <div class="headers">
-        <div class="header">${title}</div>
+        <div class="header"    >${title}</div>
         <div class="sub header">${des}</div>
       </div>
       <p v-for="text in about_text">${text}</p>
@@ -53,8 +53,8 @@
         <div v-if="current.display_info" class="info">
           <div v-if="photo.aperture" class="sub meta">${photo.aperture}</div>
           <div v-if="photo.exposure" class="sub meta">${photo.exposure}</div>
-          <div v-if="photo.title" class="title">${photo.title || '　'}</div>
-          <div v-if="photo.des" class="des">${photo.des}</div>
+          <div v-if="photo.title"    class="title"   >${photo.title}</div>
+          <div v-if="photo.des"      class="des"     >${photo.des}</div>
           <div v-if="photo.photographer" class="meta"><span class="label">by </span>
             <span v-if="!photo.photographer_link">
             ${photo.photographer}
@@ -71,8 +71,8 @@
     </div>
   </div>
 
-  <div class="albums" v-if="(router[0] == 'albums') && !viewmode">
-    <div v-for="album in albums" track-by="id" @click="router_go('albums', album.name)" class="cover warpper">
+  <div class="albums" v-if="(router[0] == 'albums') && !viewmode" transition="fade">
+    <div v-for="album in albums" track-by="id" @click="go('albums', album.name)" class="cover warpper">
       <div class="photo cover" :style="{'background-color':album.color}">
         <div class="loader hidden"><div></div><div></div><div></div></div>
         <div class="back-image" v-background-photo="album.cover"></div>

@@ -53,8 +53,24 @@ var vue_instance = new Vue({
   watch: {
     'router': function(val, oldVal) {
       console.log('router_changed', oldVal, val);
-      this.router_parser();
+      this.router_parser(val, oldVal);
       window.location.hash = this.$data.router.join('|');
+    },
+    'viewmode': function(val, oldVal) {
+      this.update_title();
+      if (val !== oldVal)
+      {
+        if (val === 0)
+        {
+          if (on_gallery_collapse)
+            on_gallery_collapse.apply(this);
+        }
+        else if (val === 1)
+        {
+          if (on_gallery_expand)
+            on_gallery_expand.apply(this, this.$data.current);
+        }
+      }
     }
   },
   methods: {
@@ -107,7 +123,8 @@ var vue_instance = new Vue({
           return this.$data.albums[i];
       return {};
     },
-    router_go: function() {
+    
+    go: function() {
       var args = [].slice.call(arguments);
       Vue.set(this.$data, 'router', args);
     },
@@ -127,30 +144,17 @@ var vue_instance = new Vue({
       index = index || (this.$data.router.length - 2) || 0;
       this.$data.router.splice(index);
     },
-    router_parser: function() {
-      var r = this.$data.router;
-      if (r.length >= 1)
+    router_parser: function(curr, old) {
+      if (curr[0] === 'albums')
       {
-        if (r[0] == 'albums' && r.length >= 2)
-        {
-          var album = this.find_album_by_name(r[1]);
-          Vue.set(this.$data,'current', album);
-          var page = 1;
-          if (r.length >= 3)
-            page = parseInt(r[2]);
-          Vue.set(this.$data.current,'page',page);
-          Vue.set(this.$data,'viewmode',1);
-          this.update_title();
-          if (on_gallery_expand)
-            on_gallery_expand.apply(this,album);
-          return;
-        }
+        var album = this.find_album_by_name(curr[1]);
+        Vue.set(this.$data,'current', album);
+        Vue.set(this.$data.current,'page', parseInt(curr[2] || 1));
+        Vue.set(this.$data,'viewmode', 1);
+        return;
       }
-
-      Vue.set(this.$data,'viewmode',0);
-      this.update_title();
-      if (on_gallery_collapse)
-        on_gallery_collapse.apply(this);
+      if (old[0] === 'albums' && curr[0] !== 'albums')
+        Vue.set(this.$data,'viewmode',0);
     }
   }
 });
