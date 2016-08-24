@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-  <div class="nav" :class="{'semi-transparent':route('about')}">
+  <div v-ref:nav class="nav" :class="{'semi-transparent':route('about')}">
     <div class="menu">
       <a  class="title" @click="go('overview')">${title}</a>
       <div class="item" @click="go('overview')" :class="{selected:route('overview')}">Overview</div>
@@ -35,15 +35,15 @@
     </div>
     <div class="about" v-if="router[0] == 'about'">
       <div class="headers">
-        <div class="header"    >${title}</div>
-        <div class="sub header">${des}</div>
+        <div class="header"     v-text="title"></div>
+        <div class="sub header" v-text="des"></div>
       </div>
-      <p v-for="text in about_text">${text}</p>
+      <p v-for="text in about_text" v-text="text"></p>
     </div>
   </div>
   <div class="nav-space"></div>
 
-  <div class="gallery" v-if="viewmode">
+  <div v-ref:gallery class="gallery" v-show="viewmode">
     <div id="scroller" class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
       <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail" v-scrollable>
         <div class="photo full" @click="modal_open(photo)" :style="{'background-color': photo.color}">
@@ -51,41 +51,47 @@
           <img class="image" v-photo="photo.path">
         </div>
         <div v-if="current.display_info" class="info">
-          <div v-if="photo.aperture" class="sub meta">${photo.aperture}</div>
-          <div v-if="photo.exposure" class="sub meta">${photo.exposure}</div>
-          <div v-if="photo.title"    class="title"   >${photo.title}</div>
-          <div v-if="photo.des"      class="des"     >${photo.des}</div>
-          <div v-if="photo.photographer" class="meta"><span class="label">by </span>
-            <span v-if="!photo.photographer_link">
-            ${photo.photographer}
-            </span>
-            <a v-if="photo.photographer_link" target="_blank" :href="photo.photographer_link">
-            ${photo.photographer}
-            </a>
+          <div v-if="photo.aperture" class="sub meta" v-text="photo.aperture"></div>
+          <div v-if="photo.exposure" class="sub meta" v-text="photo.exposure"></div>
+          <div v-if="photo.title"    class="title"    v-text="photo.title"></div>
+          <div v-if="photo.des"      class="des"      v-text="photo.des"></div>
+          <div v-if="photo.photographer" class="meta">
+            <span class="label">by </span>
+            <a v-text="photo.photographer" target="_blank" 
+               :href="get_photographer_link(photo.photographer)"></a>
           </div>
-          <div v-if="photo.location" class="meta"><span class="label">at </span>${photo.location}</div>
-          <div v-if="photo.datetime" class="meta">${dateformat(photo.datetime)}</div>
-          <div v-if="!photo.title" class="title">　</div>
+          <div v-if="photo.location" class="meta">
+            <span class="label">at </span>
+            <span v-text="photo.location"></span>
+          </div>
+          <div v-if="photo.datetime" class="meta"  v-text="dateformat(photo.datetime)"></div>
+          <div v-if="!photo.title"   class="title" v-text="　"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="albums" v-if="(router[0] == 'albums') && !viewmode" transition="fade">
+  <div v-ref:albums class="albums" v-show="(router[0] == 'albums') && !viewmode" transition="fade">
     <div v-for="album in albums" track-by="id" @click="go('albums', album.name)" class="cover warpper">
       <div class="photo cover" :style="{'background-color':album.color}">
         <div class="loader hidden"><div></div><div></div><div></div></div>
         <div class="back-image" v-background-photo="album.cover"></div>
         <div class="overlay">
           <div class="info">
-            <div class="name">${album.name}</div>
-            <p v-if="album.des" class="des">${album.des}</p>
+            <div class="name"   v-text="album.name"></div>
+            <p   class="des"    v-text="album.des" v-if="album.des"></p>
             <div class="dash"></div>
-            <p class="amount">${album.amount}{{cfg.lanuages.photos}}</p>
-            <p v-if="album.photographer"><span class="label">{{cfg.lanuages.photographer}}</span>${album.photographer}</p>
-            <p v-if="album.location"><span class="label">{{cfg.lanuages.location}}</span>${album.location}</p>
+            <p   class="amount" v-text="album.amount | pluralize 'photo'"></p>
+            <p v-if="album.photographer">
+              <span class="label">{{cfg.lanuages.photographer}}</span>
+              <span v-text="album.photographer"></span>
+            </p>
+            <p v-if="album.location">
+              <span class="label">{{cfg.lanuages.location}}</span>
+              <span v-text="album.location"></span>
+            </p>
             <div v-if="album.comments" class="dash"></div>
-            <p v-if="album.comments">${album.comments}{{cfg.lanuages.comments}}</p>
+            <p   v-if="album.comments" v-text="album.comments | pluralize 'comment'"></p>
           </div>
         </div>
       </div>
@@ -93,30 +99,36 @@
   </div>
 
   <div id="footer" class="footer" :class="{'semi-transparent':route('about')}">
-    <a class="cell" :href="me_link" target="_blank">&${me}</a>
+    <a class="cell" :href="me_link" target="_blank" v-text="'&' + me"></a>
     <a class="cell" href="https://creativecommons.org/licenses/by-nc-nd/4.0" target="_blank">CC BY-NC-ND</a>
   </div>
 
   <div id="modal" class="modal" :class="{'hidden':viewmode!=2}">
     <div v-if="viewmode==2" class="inner">
       <img v-modal-image="current.modal" class="image">
-      <div class="left nav-zone" @click="modal_next(-1)">
+      <div class="left nav-zone"  @click="modal_next(-1)">
         <div class="center">
-          <div class="icon button"><i class="material-icons">navigate_before</i></div>
+          <div class="icon button">
+            <i class="material-icons">navigate_before</i>
+          </div>
         </div>
       </div>
       <div class="right nav-zone" @click="modal_next(1)">
         <div class="center">
-          <div class="icon button"><i class="material-icons">navigate_next</i></div>
+          <div class="icon button">
+            <i class="material-icons">navigate_next</i>
+          </div>
         </div>
       </div>
       <div class="close">
         <div class="pages">
-          <div class="current">${current.modal+1}</div>
+          <div class="current" v-text="current.modal+1"></div>
           <div class="divider">/</div>
-          <div class="total">${current.amount}</div>
+          <div class="total"   v-text="current.amount"></div>
         </div>
-        <div class="icon button invert" @click="modal_close"><i class="material-icons">clear</i></div>
+        <div class="icon button invert" @click="modal_close">
+          <i class="material-icons">clear</i>
+        </div>
       </div>
     </div>
   </div>

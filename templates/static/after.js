@@ -116,6 +116,10 @@ var vue_instance = new Vue({
       else
         document.title = this.$data.title;
     },
+    get_photographer_link: function(photographer_name)
+    {
+      return undefined;
+    },
 
     find_album_by_name: function(album_name) {
       for (var i=0;i<this.$data.albums.length;i++)
