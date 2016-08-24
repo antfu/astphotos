@@ -43,7 +43,7 @@
   </div>
   <div class="nav-space"></div>
 
-  <div class="gallery" v-if="viewmode" transition="fade">
+  <div class="gallery" v-if="viewmode">
     <div id="scroller" class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
       <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail" v-scrollable>
         <div class="photo full" @click="modal_open(photo)" :style="{'background-color': photo.color}">
@@ -71,7 +71,7 @@
     </div>
   </div>
 
-  <div class="albums" v-show="(router[0] == 'albums') && !viewmode" transition="fade">
+  <div class="albums" v-show="(router[0] == 'albums') && !viewmode">
     <div v-for="album in albums" track-by="id" @click="go('albums', album.name)" class="cover warpper">
       <div class="photo cover" :style="{'background-color':album.color}">
         <div class="loader hidden"><div></div><div></div><div></div></div>

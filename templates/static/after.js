@@ -162,6 +162,8 @@ var vue_instance = new Vue({
           Vue.set(this.$data.current,'page', parseInt(curr[2] || 1));
           Vue.set(this.$data,'viewmode', 1);
         }
+        else
+          Vue.set(this.$data,'viewmode',0);
         return;
       }
       if (old[0] === 'albums' && curr[0] !== 'albums')
