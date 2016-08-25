@@ -9,7 +9,6 @@ import codecs
 import random
 import datetime
 import shutil
-import hashlib
 import jinja2
 import htmlmin
 from   termcolor import colored, cprint
@@ -17,13 +16,12 @@ from   jinja2    import FileSystemLoader
 from   jinja2.environment import Environment
 from   PIL       import Image # PIL using Pillow (PIL fork)
 from   config    import configs as cfg
-from   markdown  import markdown
 
-from utils.infodict  import infodict
+from utils.parser    import infodict, marked, md5
 from utils.minifier  import can_minify, auto_minify
 from utils.file      import *
 from utils.color     import hex_to_rgb, rgb_to_hex
-from utils.image     import *
+from core.image      import *
 
 if os.name == 'nt':
     os.system("@chcp 65001")
@@ -104,7 +102,7 @@ def generate_struct_tree():
 
     root = infodict()
     root.update_json(os.path.join(img_src_dir,'_site.json'))
-    root.about = read_markdown_if_exists(os.path.join(img_src_dir,'about.md'))
+    root.about = marked(os.path.join(img_src_dir,'about.md'))
     root.albums = []
 
     log()
@@ -160,7 +158,7 @@ def generate_struct_tree():
 
             photo = infodict(id = photo_id, md5 = photo_md5)
             # Update basic photo infos
-            photo.update(get_photo_info(photo_instance))
+            photo.update(photo_info(photo_instance))
             # Calc average color
             if cfg.calc_image_average_color:
                 photo.color = rgb_to_hex(color_average(photo_instance, cfg.calc_image_samples))
@@ -299,22 +297,11 @@ def render(dst,**kwargs):
         f.write(s)
 
 # === Utils === #
-def md5(fname):
-    hash_md5 = hashlib.md5()
-    with open(fname, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            hash_md5.update(chunk)
-    return hash_md5.hexdigest()
+
 
 def remove_unicode(string):
     return ''.join([i if ord(i) < 128 else '?' for i in string])
     #return string.encode('ascii','ignore').decode('utf-8')
-
-def read_markdown_if_exists(path):
-    raw = read_if_exists(path)
-    if raw:
-        return markdown(raw)
-    return None
 
 def clear_complied():
     path = cfg.out_dir

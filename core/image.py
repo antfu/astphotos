@@ -4,8 +4,8 @@ import exifread
 import datetime
 import random
 import codecs
-from   PIL       import Image # PIL using Pillow (PIL fork)
-from   utils.infodict  import infodict
+from   PIL           import Image # PIL using Pillow (PIL fork)
+from   utils.parser  import infodict
 
 def color_average(im, sample = 100):
     r,g,b = (0,0,0)
@@ -18,7 +18,7 @@ def color_average(im, sample = 100):
         b += tb
     return (int(r/sample),int(g/sample),int(b/sample))
 
-def get_photo_info(im, average_sample = 100):
+def photo_info(im, average_sample = 100):
     result = infodict()
     # PIL, Get image size and color
     result.width = im.size[0]

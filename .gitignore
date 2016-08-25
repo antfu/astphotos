@@ -5,6 +5,7 @@ logs/
 img/
 out/
 complied/
+temp/
 
 *.log
 *.json
