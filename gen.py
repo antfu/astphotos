@@ -8,14 +8,9 @@ import glob
 import codecs
 import random
 import datetime
-import configparser
-import exifread
 import shutil
 import hashlib
 import jinja2
-import csscompressor
-import jsmin
-import htmlmin
 from   termcolor import colored, cprint
 from   jinja2    import FileSystemLoader
 from   jinja2.environment import Environment
@@ -23,52 +18,33 @@ from   PIL       import Image # PIL using Pillow (PIL fork)
 from   config    import configs as cfg
 from   markdown  import markdown
 
+from utils.infodict  import infodict
+from utils.minifier  import can_minify, auto_minify
+from utils.file      import *
+from utils.color     import hex_to_rgb, rgb_to_hex
+from utils.image     import *
+
 if os.name == 'nt':
     os.system("@chcp 65001")
-
-class infodict(dict):
-    def update_json(self,jsonpath):
-        if os.path.exists(jsonpath):
-            self.update(open_json(jsonpath))
-
-    def __setattr__(self,key,value):
-        self[key]=value
-
-    def __getattr__(self,key):
-        return self.get(key,None)
-
-    def __delattr__(self,key):
-        if key in self.keys():
-            del(self[key])
-
-def js_minify(src,dst):
-    with codecs.open(src, 'r', 'utf-8') as src_file:
-        minified = jsmin.jsmin(src_file.read())
-        with codecs.open(dst, 'w', 'utf-8') as dst_file:
-            dst_file.write(minified)
-
-def css_minify(src,dst):
-    with codecs.open(src, 'r', 'utf-8') as src_file:
-        minified = csscompressor.compress(src_file.read())
-        with codecs.open(dst, 'w', 'utf-8') as dst_file:
-            dst_file.write(minified)
-
-def html_minify(src,dst):
-    with codecs.open(src, 'r', 'utf-8') as src_file:
-        minified = htmlmin.minify(src_file.read(), remove_comments=True, remove_empty_space=True)
-        with codecs.open(dst, 'w', 'utf-8') as dst_file:
-            dst_file.write(minified)
 
 # Shorthand alias
 def log(*args,color=None,back=None,attrs=None,**kws):
     cprint(' '.join([str(x) for x in args]),color,back,attrs=attrs,**kws)
     #print(*[remove_unicode(str(x)) for x in args],**kws)
 pjoin = os.path.join
-Minifiers = {
-    'js'  : js_minify,
-    'css' : css_minify,
-    'html': html_minify
+Photo_Sort_Methods = {
+    'filename': lambda photos: sorted(photos,key=lambda x: (x.path or ''))
+    'title'   : lambda photos: sorted(photos,key=lambda x: (x.title or ''))
+    'time'    : lambda photos: sorted(photos,key=lambda x: (x.datetime or ''))
+    'shuffle' : lambda photos: random.sample(photos, len(photos))
+    'custom'  : lambda photos: sorted(photos,key=lambda x: (x.index or -1))
 }
+Photo_Title_Splite_Placeholders = [
+    'title',
+    'des',
+    'photographer',
+    'location'
+]
 
 if not os.path.exists(cfg.out_dir):
     os.mkdir(cfg.out_dir)
@@ -144,16 +120,20 @@ def generate_struct_tree():
         if not os.path.exists(album_out_path):
             os.mkdir(album_out_path)
 
-        album = infodict()
-        album.id = album_id
-        album.display_info = cfg.display_info
-        album.gallery_mode = cfg.gallery_mode
-        album.href_path = album_href_path
+        album = infodict(
+            id = album_id,
+            name = album_name,
+            photographer = root.default_photographer,
+            cover = cfg.default_cover_filename+'.'+src_file_type,
+            gallery_mode = cfg.gallery_mode,
+
+            href_path = album_href_path,
+            display_info = cfg.display_info,
+            use_filename_as_default_title = cfg.use_filename_as_default_title,
+            photo_orderby = cfg.photo_orderby,
+            photo_order_descending = cfg.photo_order_descending
+        )
         album.update_json(pjoin(album_path,'_album.json'))
-        if not album.name:
-            album.name = album_name
-        if album.photographer == None and root.default_photographer:
-            album.photographer = root.default_photographer
 
         log('  ', end='')
         log('  ', album.name, '  ', color='grey', back='on_yellow')
@@ -161,14 +141,14 @@ def generate_struct_tree():
         album.photos = []
         photo_id = 0
 
-        photo_names = []
         # Search for photos
         for photo_path in glob.glob(pjoin(album_path,'*.'+src_file_type)):
             photo_filename = os.path.basename(photo_path)
-
+            photo_filename_without_ext = clear_ext(photo_filename)
+            photo_md5 =  md5(photo_path)
             # Generate output filename
             if cfg.rename_photo_by_md5:
-                photo_out_filename = md5(photo_path) + '.' + src_file_type
+                photo_out_filename = photo_md5 + '.' + src_file_type
             else:
                 photo_out_filename = photo_filename
             photo_out_path = pjoin(album_out_path,photo_out_filename)
@@ -177,34 +157,28 @@ def generate_struct_tree():
 
             photo_instance = Image.open(photo_path)
 
-            photo = infodict()
-            photo.id = photo_id
+            photo = infodict(id = photo_id, md5 = photo_md5)
             # Update basic photo infos
             photo.update(get_photo_info(photo_instance))
+            # Calc average color
+            if cfg.calc_image_average_color:
+                photo.color = rgb_to_hex(color_average(photo_instance, cfg.calc_image_samples))
+            # Update info from the same-name json file if it exists
+            photo.update_json(change_ext(photo_path,'json'))
             # Update info from the image's EXIF tags
             if cfg.extract_exif:
                 photo.update(get_exif(photo_path))
-            # Update info from the same-name json file if it exists
-            photo.update_json(change_ext(photo_path,'json'))
+
             photo.path = photo_href_path
-            # Use filename as title
-            if (album.use_filename_as_default_title or cfg.use_filename_as_default_title) and not photo.title:
-                name = clear_ext(photo_filename)
-                # But not the filename startswith '_'
-                if not name.startswith(cfg.filename_title_ignore_start):
-                    photo.title = clear_ext(photo_filename)
+            # Use filename as title, But not the filename startswith '_'
+            if not photo.title and album.use_filename_as_default_title and not name.startswith(cfg.filename_title_ignore_start):
+                photo.title = photo_filename_without_ext
             # If title contains '$', separate into
             # title & des & photographer & location
             if photo.title and cfg.photo_title_spliter in photo.title:
                 temp = photo.title.split(cfg.photo_title_spliter)
-                if len(temp) > 0:
-                    photo.title = temp[0]
-                if len(temp) > 1 and not photo.des:
-                    photo.des = temp[1]
-                if len(temp) > 2 and not photo.photographer:
-                    photo.photographer = temp[2]
-                if len(temp) > 3 and not photo.location:
-                    photo.location = temp[3]
+                for i in range(len(temp)):
+                    photo[Photo_Title_Splite_Placeholders[i]] = temp[i]
             # Get index from title
             if photo.title and cfg.photo_title_index_spliter in photo.title:
                 temp = photo.title.split(cfg.photo_title_index_spliter)
@@ -229,40 +203,38 @@ def generate_struct_tree():
                 del(photo.aperture)
                 del(photo.exposure)
 
-            log('  ' + (photo.title or clear_ext(photo_filename)) + '... ', end='')
+            log('  ' + (photo.title or photo_filename_without_ext) + '  ', color='cyan', end='')
 
             # Lazy copy
             if cfg.lazy_copy and os.path.exists(photo_out_path):
                 log('Skip', end='')
+            # Resize and Save
+            elif cfg.photo_resize:
+                log('Resizing', end='')
+                rim = image_resize(photo_instance, cfg.photo_resize_horizontal_max_size, cfg.photo_resize_vertical_max_size)
+                rim.save(photo_out_path)
+            # Just copy
             else:
-                # Resize and Save
-                if cfg.photo_resize:
-                    log('Resizing', end='')
-                    rim = im_resize(photo_instance)
-                    rim.save(photo_out_path)
-                # Just copy
-                else:
-                    log('Copying', end='')
-                    shutil.copy(photo_path,photo_out_path)
+                log('Copying', end='')
+                shutil.copy2(photo_path,photo_out_path)
 
             # Check wather it's cover
-            if (album.cover and album.cover.lower() == photo_filename.lower()) \
-              or (photo_filename.lower() == (cfg.default_cover_filename+'.'+src_file_type)):
+            if (album.cover and album.cover.lower() == photo_filename.lower()):
                 album.cover = photo_href_path
                 album.color = photo.color
 
             log()
             album.photos.append(photo)
-            photo_names.append(photo_out_filename.lower())
             photo_id += 1
 
-        if cfg.delete_nonsrc_images:
-            srcs = photo_names
-            outs = [os.path.basename(x).lower() for x in glob.glob(pjoin(album_out_path,'*.'+src_file_type))]
-            for o in outs:
-                if not o in srcs:
-                    log('  [!]Removing', o, color='red')
-                    os.remove(pjoin(album_out_path,o))
+        # delete the images which been deleted in source folder
+        #if cfg.delete_nonsrc_images:
+        #    srcs = photo_names
+        #    outs = [os.path.basename(x).lower() for x in glob.glob(pjoin(album_out_path,'*.'+src_file_type))]
+        #    for o in outs:
+        #        if not o in srcs:
+        #            log('  [!]Removing', o, color='red')
+        #            os.remove(pjoin(album_out_path,o))
 
         if album.photos:
             if not album.cover:
@@ -271,30 +243,20 @@ def generate_struct_tree():
                 album.cover = choiced_cover.path
                 album.color = choiced_cover.color
             # Photo orderby (can be override in album json file)
-            photo_orderby = album.photo_orderby or cfg.photo_orderby
-            photo_order_descending = album.photo_order_descending or cfg.photo_order_descending
-            if photo_orderby:
-                log('  [', photo_orderby, ']', color='green')
-                if   photo_orderby == 'filename':
-                    album.photos = sorted(album.photos,key=lambda x: (x.path or ''))
-                elif photo_orderby == 'title':
-                    album.photos = sorted(album.photos,key=lambda x: (x.title or ''))
-                elif photo_orderby == 'time':
-                    album.photos = sorted(album.photos,key=lambda x: (x.datetime or ''))
-                elif photo_orderby == 'shuffle':
-                    random.shuffle(album.photos)
-                elif photo_orderby == 'custom':
-                    album.photos = sorted(album.photos,key=lambda x: (x.index or -1))
+            if album.photo_orderby:
+                log('  [', album.photo_orderby, ']', color='green')
+                if album.photo_orderby in Photo_Sort_Methods.keys():
+                    album.photos = Photo_Sort_Methods[album.photo_orderby](album.photosr)
                 else:
-                    log('  !Warning: invaild photo_orderby', photo_orderby, color="on_red")
+                    log('  !Warning: invaild photo_orderby', album.photo_orderby, color="on_red")
             # Descending
-            if photo_order_descending:
+            if album.photo_order_descending:
                 album.photos = album.photos[::-1]
             album.amount = len(album.photos)
-            root.albums.append(album)
-            #log('  Cover :', os.path.basename(album.cover), color='green')
             log('  Amount:', album.amount, color='green')
             log()
+
+            root.albums.append(album)
             album_id += 1
 
     time_end = datetime.datetime.now()
@@ -303,33 +265,27 @@ def generate_struct_tree():
     log()
     return root
 
-def codecs_open(filename,open_type,encode=None):
-    return codecs.open(filename,open_type,encode)
-
 def copydir(src,dst,minify=False):
     if not os.path.exists(dst):
         os.mkdir(dst)
-    for f in os.listdir(src):
-        path = pjoin(src,f)
-        if os.path.isfile(path):
-            filename = f
-            dst_path = os.path.join(dst,filename)
-            ext = get_ext(filename)
+    for itemname in os.listdir(src):
+        src_path = pjoin(src,f)
+        if os.path.isfile(src_path):
+            dst_path = os.path.join(dst,itemname)
             # if the files modify time is the same, do not copy
-            if not os.path.exists(dst_path) or os.path.getmtime(path) != os.path.getmtime(dst_path):
-                if not minify or '.min.' in filename or (not ext in Minifiers.keys()):
-                    log('  Copying',filename)
-                    # use 'copy2' to keep file metadate
-                    shutil.copy2(path,dst_path)
-                else:
+            if not os.path.exists(dst_path) or os.path.getmtime(src_path) != os.path.getmtime(dst_path):
+                if minify and not '.min.' in itemname and can_minify(src_path):
                     # minify
-                    log('  Minifing',filename)
-                    Minifiers[ext](path,dst_path)
-                    shutil.copystat(path,dst_path)
+                    log('  Minifing ',itemname, color='orange')
+                    auto_minify(src_path,dst_path)
+                    shutil.copystat(src_path,dst_path)
+                else:
+                    log('  Copying ',itemname)
+                    # use 'copy2' to keep file metadate
+                    shutil.copy2(src_path,dst_path)
         else:
             # isdir
-            dirname = f
-            copydir(path, pjoin(dst,dirname), minify)
+            copydir(src_path, pjoin(dst,itemname), minify)
 
 def render(dst,**kwargs):
     j2_env = Environment(loader=FileSystemLoader(cfg.src_dir))
@@ -341,78 +297,7 @@ def render(dst,**kwargs):
     with codecs.open(dst, 'w', 'utf-8') as f:
         f.write(s)
 
-def im_resize(img):
-    size = img.size
-    # deceide the photo is vertical or horizontal and choose the target size
-    if size[0] >= size[1]:
-        t_size = cfg.photo_resize_horizontal_max_size
-    else:
-        t_size = cfg.photo_resize_vertical_max_size
-    # if there is no size limit
-    if not t_size:
-        return img
-    if t_size[0] == 0 and t_size[1] == 0:
-        return img
-    # if the photo size is smaller than target size
-    if t_size[0] > size[0] and t_size[1] > size[1]:
-        return img
-
-    # target width and height (keep the aspect ratio)
-    t_width = size[0]
-    t_height = size[1]
-    if t_size[0] != 0 and t_width > t_size[0]:
-        old_width = t_width
-        t_width = t_size[0]
-        t_height = t_height * t_width / old_width
-    if t_size[1] != 0 and t_height > t_size[1]:
-        old_height = t_height
-        t_height = t_size[1]
-        t_width = t_width * t_height / old_height
-
-    # resize
-    resized_img = img.resize((int(t_width),int(t_height)))
-    return resized_img
-
-
 # === Utils === #
-def get_tags(img_path,details=False):
-    # Open image file for reading (binary mode)
-    f = codecs_open(img_path, 'rb')
-    # Return Exif tags
-    tags = exifread.process_file(f, details=details)
-    f.close()
-    return tags
-
-def get_exif(img_path):
-    result = infodict()
-    tags = get_tags(img_path)
-
-    # Aperture
-    aperture = tags.get('EXIF FNumber',None)
-    if aperture:
-        aperture = aperture.printable
-        if '/' in aperture:
-            temp = aperture.split('/')
-            aperture = str(float(temp[0]) / float(temp[1]))
-        result.aperture = aperture + 'f'
-    # Exposure Time
-    exposure = tags.get('EXIF ExposureTime',None)
-    if exposure:
-        exposure = exposure.printable
-        if not '/' in exposure:
-            exposure += 's'
-        result.exposure = exposure
-    # Tooken DateTime
-    dt = tags.get('EXIF DateTimeOriginal',None)
-    if dt:
-        result.datetime = datetime.datetime.strptime(dt.printable,'%Y:%m:%d %H:%M:%S').isoformat()
-
-    title = tags.get('Image ImageDescription',None)
-    if title:
-        result.title = title.printable
-
-    return result
-
 def md5(fname):
     hash_md5 = hashlib.md5()
     with open(fname, "rb") as f:
@@ -420,94 +305,15 @@ def md5(fname):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-def get_photo_info(im):
-    result = infodict()
-    # PIL, Get image size and color
-    result.width = im.size[0]
-    result.height = im.size[1]
-    if result.width >= result.height:
-        # Horizontal
-        result.type = 0
-    else:
-        # Vertical
-        result.type = 1
-
-    # Calc average color
-    if cfg.calc_image_average_color:
-        result.color = rgb_to_hex(get_average_color(im, cfg.calc_image_samples))
-
-    return result
-
-def get_average_color(im, sample = 100):
-    r,g,b = (0,0,0)
-    w = im.size[0] - 1
-    h = im.size[1] - 1
-    for _ in range(sample):
-        tr, tg, tb = im.getpixel((random.randint(0,w),random.randint(0,h)))
-        r += tr
-        g += tg
-        b += tb
-    return (int(r/sample),int(g/sample),int(b/sample))
-
 def remove_unicode(string):
     return ''.join([i if ord(i) < 128 else '?' for i in string])
     #return string.encode('ascii','ignore').decode('utf-8')
-
-def hex_to_rgb(value):
-    value = value.lstrip('#')
-    lv = len(value)
-    return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
-
-def rgb_to_hex(rgb):
-    return '#%02x%02x%02x' % rgb
-
-def open_ini(filepath):
-    ini_str = '[root]\n' + codecs_open(filepath,'r','utf-8').read()
-    ini_fp = StringIO.StringIO(ini_str)
-    config = ConfigParser.RawConfigParser()
-    config.readfp(ini_fp)
-    return config['root']
 
 def read_markdown_if_exists(path):
     raw = read_if_exists(path)
     if raw:
         return markdown(raw)
     return None
-
-def read_if_exists(path):
-    if os.path.exists(path):
-        with codecs_open(path,'r','utf-8') as f:
-            context = f.read()
-        return context
-    return None
-
-def open_json(filepath):
-    f = codecs_open(filepath,'r','utf-8')
-    s = f.read()
-    f.close()
-    return json.loads(s)
-
-def save_json(filepath,obj,prefix):
-    f = codecs_open(filepath, 'w', 'utf-8')
-    t = json.dumps(obj)
-    if prefix:
-        t = prefix + t
-    f.write(t)
-    f.close()
-
-def change_ext(filepath,ext):
-    return '.'.join(filepath.split('.')[:-1]+[ext])
-
-def clear_ext(filepath):
-    return '.'.join(filepath.split('.')[:-1])
-
-def get_ext(filepath):
-    return filepath.split('.')[-1]
-
-def clear_directory(path = None):
-    if not path:
-        path = cfg.out_dir
-    shutil.rmtree(path)
 
 def clear_complied():
     path = cfg.out_dir
@@ -525,5 +331,5 @@ if __name__ == '__main__':
         if input('Deleting "' + path + '", are you sure? [y/n]') == 'y':
             clear_directory(path)
     elif argv[1] == 'host':
-        import webhost
-        webhost.run()
+        import utils.webhost
+        utils.webhost.run()
