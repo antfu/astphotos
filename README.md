@@ -69,3 +69,5 @@ img
 - [ ] Photographer links dictionrary
 - [ ] Overview
 - [ ] Horizontal / Vertical view auto switch
+- [ ] Thumbails
+- [ ] Source->Target filepath table
