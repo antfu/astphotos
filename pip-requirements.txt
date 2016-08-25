@@ -2,7 +2,8 @@ exifread
 jinja2
 pillow
 termcolor
+markdown
+
 csscompressor
 jsmin
-markdown
 htmlmin

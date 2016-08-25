@@ -7,11 +7,11 @@ import shutil
 
 def read_json(filepath):
     with codecs.open(filepath, 'r', 'utf-8') as f:
-    	return json.loads(f.read())
+        return json.loads(f.read())
 
 def save_json(filepath,obj,prefix=''):
-   	with codecs.open(filepath, 'w', 'utf-8') as f:
-    	f.write(prefix + json.dumps(obj))
+    with codecs.open(filepath, 'w', 'utf-8') as f:
+        f.write(prefix + json.dumps(obj))
 
 def read_if_exists(path):
     if os.path.exists(path):

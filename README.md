@@ -71,3 +71,4 @@ img
 - [ ] Horizontal / Vertical view auto switch
 - [ ] Thumbails
 - [ ] Source->Target filepath table
+- [ ] Image data's cache

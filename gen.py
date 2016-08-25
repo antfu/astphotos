@@ -11,6 +11,7 @@ import datetime
 import shutil
 import hashlib
 import jinja2
+import htmlmin
 from   termcolor import colored, cprint
 from   jinja2    import FileSystemLoader
 from   jinja2.environment import Environment
@@ -33,10 +34,10 @@ def log(*args,color=None,back=None,attrs=None,**kws):
     #print(*[remove_unicode(str(x)) for x in args],**kws)
 pjoin = os.path.join
 Photo_Sort_Methods = {
-    'filename': lambda photos: sorted(photos,key=lambda x: (x.path or ''))
-    'title'   : lambda photos: sorted(photos,key=lambda x: (x.title or ''))
-    'time'    : lambda photos: sorted(photos,key=lambda x: (x.datetime or ''))
-    'shuffle' : lambda photos: random.sample(photos, len(photos))
+    'filename': lambda photos: sorted(photos,key=lambda x: (x.path or '')),
+    'title'   : lambda photos: sorted(photos,key=lambda x: (x.title or '')),
+    'time'    : lambda photos: sorted(photos,key=lambda x: (x.datetime or '')),
+    'shuffle' : lambda photos: random.sample(photos, len(photos)),
     'custom'  : lambda photos: sorted(photos,key=lambda x: (x.index or -1))
 }
 Photo_Title_Splite_Placeholders = [
@@ -171,7 +172,7 @@ def generate_struct_tree():
 
             photo.path = photo_href_path
             # Use filename as title, But not the filename startswith '_'
-            if not photo.title and album.use_filename_as_default_title and not name.startswith(cfg.filename_title_ignore_start):
+            if not photo.title and album.use_filename_as_default_title and not photo_filename.startswith(cfg.filename_title_ignore_start):
                 photo.title = photo_filename_without_ext
             # If title contains '$', separate into
             # title & des & photographer & location
@@ -246,7 +247,7 @@ def generate_struct_tree():
             if album.photo_orderby:
                 log('  [', album.photo_orderby, ']', color='green')
                 if album.photo_orderby in Photo_Sort_Methods.keys():
-                    album.photos = Photo_Sort_Methods[album.photo_orderby](album.photosr)
+                    album.photos = Photo_Sort_Methods[album.photo_orderby](album.photos)
                 else:
                     log('  !Warning: invaild photo_orderby', album.photo_orderby, color="on_red")
             # Descending
@@ -269,7 +270,7 @@ def copydir(src,dst,minify=False):
     if not os.path.exists(dst):
         os.mkdir(dst)
     for itemname in os.listdir(src):
-        src_path = pjoin(src,f)
+        src_path = pjoin(src,itemname)
         if os.path.isfile(src_path):
             dst_path = os.path.join(dst,itemname)
             # if the files modify time is the same, do not copy

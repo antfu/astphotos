@@ -3,10 +3,6 @@ import os
 from   utils.file   import read_json
 
 class infodict(dict):
-    def update_json(self,jsonpath):
-        if os.path.exists(jsonpath):
-            self.update(read_json(jsonpath))
-
     def __setattr__(self,key,value):
         self[key]=value
 
@@ -16,3 +12,7 @@ class infodict(dict):
     def __delattr__(self,key):
         if key in self.keys():
             del(self[key])
+
+    def update_json(self,jsonpath):
+        if os.path.exists(jsonpath):
+            self.update(read_json(jsonpath))

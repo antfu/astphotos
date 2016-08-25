@@ -14,7 +14,7 @@ def css_minify(src,dst):
         minified = csscompressor.compress(src_file.read())
         with codecs.open(dst, 'w', 'utf-8') as dst_file:
             dst_file.write(minified)
-            
+
 def html_minify(src,dst):
     with codecs.open(src, 'r', 'utf-8') as src_file:
         minified = htmlmin.minify(src_file.read(), remove_comments=True, remove_empty_space=True)

@@ -2,6 +2,8 @@
 
 import exifread
 import datetime
+import random
+import codecs
 from   PIL       import Image # PIL using Pillow (PIL fork)
 from   utils.infodict  import infodict
 
@@ -30,12 +32,12 @@ def get_photo_info(im, average_sample = 100):
     return result
 
 def image_resize(img, horizontal_size = None, vertical_size = None):
-	if horizontal_size == None and vertical_size == None:
-		horizontal_size = (2000,0)
-	if vertical_size == None and horizontal_size != None:
-		vertical_size = (horizontal_size[1],horizontal_size[0])
-	if horizontal_size == None and vertical_size != None:
-		horizontal_size = (vertical_size[1],vertical_size[0])
+    if horizontal_size == None and vertical_size == None:
+        horizontal_size = (2000,0)
+    if vertical_size == None and horizontal_size != None:
+        vertical_size = (horizontal_size[1],horizontal_size[0])
+    if horizontal_size == None and vertical_size != None:
+        horizontal_size = (vertical_size[1],vertical_size[0])
 
     size = img.size
     # deceide the photo is vertical or horizontal and choose the target size
