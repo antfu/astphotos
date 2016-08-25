@@ -62,6 +62,19 @@ Minifiers = {
     'js'  : js_minify,
     'css' : css_minify
 }
+Photo_Sort_Methods = {
+    'filename': lambda photos: sorted(photos,key=lambda x: (x.path or ''))
+    'title'   : lambda photos: sorted(photos,key=lambda x: (x.title or ''))
+    'time'    : lambda photos: sorted(photos,key=lambda x: (x.datetime or ''))
+    'shuffle' : lambda photos: random.sample(photos, len(photos))
+    'custom'  : lambda photos: sorted(photos,key=lambda x: (x.index or -1))
+}
+Photo_Title_Splite_Placeholders = [
+    'title',
+    'des',
+    'photographer',
+    'location'
+]
 
 if not os.path.exists(cfg.out_dir):
     os.mkdir(cfg.out_dir)
@@ -136,16 +149,20 @@ def generate_struct_tree():
         if not os.path.exists(album_out_path):
             os.mkdir(album_out_path)
 
-        album = infodict()
-        album.id = album_id
-        album.display_info = cfg.display_info
-        album.gallery_mode = cfg.gallery_mode
-        album.href_path = album_href_path
+        album = infodict(
+            id = album_id,
+            name = album_name,
+            photographer = root.default_photographer,
+            cover = cfg.default_cover_filename+'.'+src_file_type,
+            gallery_mode = cfg.gallery_mode,
+            
+            href_path = album_href_path,
+            display_info = cfg.display_info,
+            use_filename_as_default_title = cfg.use_filename_as_default_title,
+            photo_orderby = cfg.photo_orderby,
+            photo_order_descending = cfg.photo_order_descending
+        )
         album.update_json(pjoin(album_path,'_album.json'))
-        if not album.name:
-            album.name = album_name
-        if album.photographer == None and root.default_photographer:
-            album.photographer = root.default_photographer
 
         log('  ', end='')
         log('  ', album.name, '  ', color='grey', back='on_yellow')
@@ -153,14 +170,14 @@ def generate_struct_tree():
         album.photos = []
         photo_id = 0
 
-        photo_names = []
         # Search for photos
         for photo_path in glob.glob(pjoin(album_path,'*.'+src_file_type)):
             photo_filename = os.path.basename(photo_path)
-
+            photo_filename_without_ext = clear_ext(photo_filename)
+            photo_md5 =  md5(photo_path)
             # Generate output filename
             if cfg.rename_photo_by_md5:
-                photo_out_filename = md5(photo_path) + '.' + src_file_type
+                photo_out_filename = photo_md5 + '.' + src_file_type
             else:
                 photo_out_filename = photo_filename
             photo_out_path = pjoin(album_out_path,photo_out_filename)
@@ -169,34 +186,25 @@ def generate_struct_tree():
 
             photo_instance = Image.open(photo_path)
 
-            photo = infodict()
-            photo.id = photo_id
+            photo = infodict(id = photo_id, md5 = photo_md5)
             # Update basic photo infos
             photo.update(get_photo_info(photo_instance))
+            # Update info from the same-name json file if it exists
+            photo.update_json(change_ext(photo_path,'json'))
             # Update info from the image's EXIF tags
             if cfg.extract_exif:
                 photo.update(get_exif(photo_path))
-            # Update info from the same-name json file if it exists
-            photo.update_json(change_ext(photo_path,'json'))
+            
             photo.path = photo_href_path
-            # Use filename as title
-            if (album.use_filename_as_default_title or cfg.use_filename_as_default_title) and not photo.title:
-                name = clear_ext(photo_filename)
-                # But not the filename startswith '_'
-                if not name.startswith(cfg.filename_title_ignore_start):
-                    photo.title = clear_ext(photo_filename)
+            # Use filename as title, But not the filename startswith '_'
+            if not photo.title and album.use_filename_as_default_title and not name.startswith(cfg.filename_title_ignore_start):
+                photo.title = photo_filename_without_ext
             # If title contains '$', separate into
             # title & des & photographer & location
             if photo.title and cfg.photo_title_spliter in photo.title:
                 temp = photo.title.split(cfg.photo_title_spliter)
-                if len(temp) > 0:
-                    photo.title = temp[0]
-                if len(temp) > 1 and not photo.des:
-                    photo.des = temp[1]
-                if len(temp) > 2 and not photo.photographer:
-                    photo.photographer = temp[2]
-                if len(temp) > 3 and not photo.location:
-                    photo.location = temp[3]
+                for i in range(len(temp)):
+                    photo[Photo_Title_Splite_Placeholders[i]] = temp[i]
             # Get index from title
             if photo.title and cfg.photo_title_index_spliter in photo.title:
                 temp = photo.title.split(cfg.photo_title_index_spliter)
@@ -221,40 +229,38 @@ def generate_struct_tree():
                 del(photo.aperture)
                 del(photo.exposure)
 
-            log('  ' + (photo.title or clear_ext(photo_filename)) + '... ', end='')
+            log('  ' + (photo.title or photo_filename_without_ext) + '  ', color='cyan', end='')
 
             # Lazy copy
             if cfg.lazy_copy and os.path.exists(photo_out_path):
-                log('Skip', end='')
+                log('Skip', end='')       
+            # Resize and Save
+            elif cfg.photo_resize:
+                log('Resizing', end='')
+                rim = im_resize(photo_instance)
+                rim.save(photo_out_path)
+            # Just copy
             else:
-                # Resize and Save
-                if cfg.photo_resize:
-                    log('Resizing', end='')
-                    rim = im_resize(photo_instance)
-                    rim.save(photo_out_path)
-                # Just copy
-                else:
-                    log('Copying', end='')
-                    shutil.copy(photo_path,photo_out_path)
+                log('Copying', end='')
+                shutil.copy2(photo_path,photo_out_path)
 
             # Check wather it's cover
-            if (album.cover and album.cover.lower() == photo_filename.lower()) \
-              or (photo_filename.lower() == (cfg.default_cover_filename+'.'+src_file_type)):
+            if (album.cover and album.cover.lower() == photo_filename.lower()):
                 album.cover = photo_href_path
                 album.color = photo.color
 
             log()
             album.photos.append(photo)
-            photo_names.append(photo_out_filename.lower())
             photo_id += 1
 
-        if cfg.delete_nonsrc_images:
-            srcs = photo_names
-            outs = [os.path.basename(x).lower() for x in glob.glob(pjoin(album_out_path,'*.'+src_file_type))]
-            for o in outs:
-                if not o in srcs:
-                    log('  [!]Removing', o, color='red')
-                    os.remove(pjoin(album_out_path,o))
+        # delete the images which been deleted in source folder
+        #if cfg.delete_nonsrc_images:
+        #    srcs = photo_names
+        #    outs = [os.path.basename(x).lower() for x in glob.glob(pjoin(album_out_path,'*.'+src_file_type))]
+        #    for o in outs:
+        #        if not o in srcs:
+        #            log('  [!]Removing', o, color='red')
+        #            os.remove(pjoin(album_out_path,o))
 
         if album.photos:
             if not album.cover:
@@ -263,30 +269,21 @@ def generate_struct_tree():
                 album.cover = choiced_cover.path
                 album.color = choiced_cover.color
             # Photo orderby (can be override in album json file)
-            photo_orderby = album.photo_orderby or cfg.photo_orderby
             photo_order_descending = album.photo_order_descending or cfg.photo_order_descending
-            if photo_orderby:
-                log('  [', photo_orderby, ']', color='green')
-                if   photo_orderby == 'filename':
-                    album.photos = sorted(album.photos,key=lambda x: (x.path or ''))
-                elif photo_orderby == 'title':
-                    album.photos = sorted(album.photos,key=lambda x: (x.title or ''))
-                elif photo_orderby == 'time':
-                    album.photos = sorted(album.photos,key=lambda x: (x.datetime or ''))
-                elif photo_orderby == 'shuffle':
-                    random.shuffle(album.photos)
-                elif photo_orderby == 'custom':
-                    album.photos = sorted(album.photos,key=lambda x: (x.index or -1))
+            if album.photo_orderby:
+                log('  [', album.photo_orderby, ']', color='green')
+                if album.photo_orderby in Photo_Sort_Methods.keys():
+                    album.photos = Photo_Sort_Methods[album.photo_orderby](album.photosr)
                 else:
-                    log('  !Warning: invaild photo_orderby', photo_orderby, color="on_red")
+                    log('  !Warning: invaild photo_orderby', album.photo_orderby, color="on_red")
             # Descending
-            if photo_order_descending:
+            if album.photo_order_descending:
                 album.photos = album.photos[::-1]
             album.amount = len(album.photos)
-            root.albums.append(album)
-            #log('  Cover :', os.path.basename(album.cover), color='green')
             log('  Amount:', album.amount, color='green')
             log()
+
+            root.albums.append(album)
             album_id += 1
 
     time_end = datetime.datetime.now()
