@@ -11,10 +11,10 @@ from config import configs
 __author__ = 'Anthony Fu'
 
 import os
-if not os.path.exists('config_override.py'):
-    f = open('config_override.py','w')
-    f.write('configs = dict(\n\n)')
-    f.close()
+for filename in ['config_default.py', 'config_override.py']:
+    if not os.path.exists(filename):
+        with open(filename,'w') as f:
+            f.write('# -*- coding: utf-8 -*-\n\nconfigs = dict(\n\n)')
 
 class IndexedDict(dict):
     '''
