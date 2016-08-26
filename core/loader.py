@@ -48,6 +48,7 @@ def load_album(album_path, cached=None):
     album.cover = cfg.default_cover_filename+'.'+cfg.src_file_type
     album.gallery_mode = cfg.gallery_mode
 
+    album._src_folder_name = basename(album_path)
     album._src_path = album_path
     album._display_info = cfg.display_info
     album._orderby = cfg.photo_orderby
@@ -101,6 +102,8 @@ def load_photo(photo_path, cached=None):
         return cached
 
     photo.md5 = md5(photo_path)
+    phoot._ext = filename.split('.')[-1]
+    
     photo_instance = Image.open(photo_path)
 
     # Update basic photo infos
@@ -116,7 +119,7 @@ def load_photo(photo_path, cached=None):
     photo.path = photo_href_path
     # Use filename as title, But not the filename startswith '_'
     if not photo.title and not filename.startswith(cfg.filename_title_ignore_start):
-        photo.title = filename.split('.')[-1]
+        photo.title = filename.split('.')[:-1]
     # If title contains '$', separate into
     # title & des & photographer & location
     if photo.title and cfg.photo_title_spliter in photo.title:
