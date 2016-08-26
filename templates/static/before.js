@@ -6,11 +6,11 @@ if (full_data)
 /* =============== Data Process ===============*/
 var overview_index = -1;
 $.each(full_data.albums,function(i,album){
-  var album_href_path = album.href_path;
+  /*var album_href_path = album.href_path;
   $.each(album.photos,function(_,photo){
     photo.path = album_href_path + '/' + photo.path;
   });
-  album.cover = album_href_path + '/' + album.cover;
+  album.cover = album_href_path + '/' + album.cover;*/
   if (album.name == '_overview')
   {
     full_data.overview_album = album;

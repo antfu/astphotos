@@ -23,6 +23,8 @@ from utils.file      import *
 from utils.color     import hex_to_rgb, rgb_to_hex
 from core.image      import *
 
+from core.index      import load_and_save
+
 if os.name == 'nt':
     os.system("@chcp 65001")
 
@@ -56,13 +58,14 @@ def gen():
     log('- Copying completed', color='cyan')
 
     log('- Generating Structure tree...', color='cyan')
-    struct_tree = generate_struct_tree()
+    generate_and_save(True)
+    #struct_tree = generate_struct_tree()
     log('- Generating completed', color='cyan')
 
-    json_path = pjoin(cfg.out_dir,cfg.static_dir,cfg.sturct_filename)
-    log('- Saving struct json file...', color='cyan')
-    save_json(json_path ,struct_tree,'var full_data = ')
-    log('- Saving completed', color='cyan')
+    #json_path = pjoin(cfg.out_dir,cfg.static_dir,cfg.sturct_filename)
+    #log('- Saving struct json file...', color='cyan')
+    #save_json(json_path ,struct_tree,'var full_data = ')
+    #log('- Saving completed', color='cyan')
 
     log('- Rendering template file...', color='cyan')
     render_index()
@@ -82,10 +85,14 @@ def render_index():
     index_path = pjoin(cfg.out_dir,'index.html')
     render(index_path,cfg=cfg)
 
-def generate_and_save():
-    struct_tree = generate_struct_tree()
-    json_path = pjoin(cfg.out_dir,cfg.static_dir,cfg.sturct_filename)
-    save_json(json_path ,struct_tree,'var full_data = ')
+def generate_and_save(old=False):
+    if old:
+        struct_tree = generate_struct_tree()
+        json_path = pjoin(cfg.out_dir,cfg.static_dir,cfg.sturct_filename)
+        save_json(json_path ,struct_tree,'var full_data = ')
+    else:
+        load_and_save(cfg.img_dir, pjoin(cfg.out_dir,cfg.static_dir))
+
 
 def generate_struct_tree():
     time_start = datetime.datetime.now()
@@ -151,8 +158,8 @@ def generate_struct_tree():
             else:
                 photo_out_filename = photo_filename
             photo_out_path = pjoin(album_out_path,photo_out_filename)
-            photo_href_path = photo_out_filename
-            #photo_href_path = pjoin(cfg.static_dir,cfg.img_dir,album_name,photo_out_filename).replace('\\','/')
+            #photo_href_path = photo_out_filename
+            photo_href_path = pjoin(cfg.static_dir,cfg.img_dir,album_name,photo_out_filename).replace('\\','/')
 
             photo_instance = Image.open(photo_path)
 

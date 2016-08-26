@@ -6,6 +6,11 @@ from utils.color  import rgb_to_hex
 from utils.file   import change_ext
 from core.image   import photo_info, get_exif
 from config       import configs as cfg
+from random       import choice
+from utils.parser import md5
+from PIL          import Image
+from core.image   import color_average
+
 
 Photo_Sort_Methods = {
     'filename': lambda photos: sorted(photos,key=lambda x: (x._src_path or '')),
@@ -33,10 +38,11 @@ def load(dir_path, use_cache=True):
         album_cache = None
         if cached:
             for a in cached.albums:
+                a = infodict(a)
                 if a._src_path == album_path:
                     album_cache = a
                     break
-        root.albums.append(load_album(album_path),root_cache)
+        root.albums.append(load_album(album_path,album_cache))
 
     return root
 
@@ -44,34 +50,36 @@ def load_album(album_path, cached=None):
     album = infodict()
 
     album.name = basename(album_path)
-    album.photographer = root.default_photographer
-    album.cover = cfg.default_cover_filename+'.'+cfg.src_file_type
+    #album.photographer = cfg.default_photographer
     album.gallery_mode = cfg.gallery_mode
 
+    album._cover = cfg.default_cover_filename+'.'+cfg.src_file_type
     album._src_folder_name = basename(album_path)
     album._src_path = album_path
     album._display_info = cfg.display_info
     album._orderby = cfg.photo_orderby
     album._order_desc = cfg.photo_order_descending
 
-    album.update_json(pjoin(album_path,'_album.json'))
+    album.update_json(join(album_path,'_album.json'))
     album.photos = []
 
-    for photo_path in listdir(album_path):
-        if isdir(join(album_path,photo_path)) or not album_path.lower().endswith(cfg.src_file_type):
+    for photo_name in listdir(album_path):
+        photo_path = join(album_path,photo_name)
+        if isdir(photo_path) or not photo_name.lower().endswith(cfg.src_file_type):
             continue
 
         photo_cache = None
         if cached:
             for c in cached.photos:
+                c = infodict(c)
                 if c._src_path == photo_path:
                     photo_cache = c
                     break
-        album.photos.append(load_photo(photo_path),photo_cache)
+        album.photos.append(load_photo(photo_path,photo_cache))
 
     if not album.cover:
         # Random choice a photo as cover
-        choiced_cover = (random.choice(album.photos))
+        choiced_cover = choice(album.photos)
         album.cover = choiced_cover.path
         album.color = choiced_cover.color
     # Photo orderby (can be override in album json file)
@@ -102,8 +110,8 @@ def load_photo(photo_path, cached=None):
         return cached
 
     photo.md5 = md5(photo_path)
-    phoot._ext = filename.split('.')[-1]
-    
+    photo._ext = filename.split('.')[-1]
+
     photo_instance = Image.open(photo_path)
 
     # Update basic photo infos
@@ -111,12 +119,12 @@ def load_photo(photo_path, cached=None):
     # Calc average color
     photo.color = rgb_to_hex(color_average(photo_instance, cfg.calc_image_samples))
     # Update info from the same-name json file if it exists
-    photo.update_json()
+    photo.update_json(meta_path)
     # Update info from the image's EXIF tags
     if cfg.extract_exif:
         photo.update(get_exif(photo_path))
 
-    photo.path = photo_href_path
+    #photo.path = photo_href_path
     # Use filename as title, But not the filename startswith '_'
     if not photo.title and not filename.startswith(cfg.filename_title_ignore_start):
         photo.title = filename.split('.')[:-1]

@@ -17,6 +17,7 @@ class infodict(dict):
             del(self[key])
 
     def update_json(self,jsonpath):
+        print(jsonpath)
         if os.path.exists(jsonpath):
             self.update(read_json(jsonpath))
 

@@ -10,6 +10,7 @@ def read_json(filepath):
         return json.loads(f.read())
 
 def save_json(filepath,obj,prefix=''):
+    prefix = prefix or ''
     with codecs.open(filepath, 'w', 'utf-8') as f:
         f.write(prefix + json.dumps(obj))
 
