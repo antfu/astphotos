@@ -44,17 +44,22 @@
   </div>
   <div class="nav-space"></div>
 
-  <div class="overview" v-if="route('overview')">
+  <div class="overview vertical-gallery" v-if="route('overview')">
       <div v-for="photo in overview_album.photos || []" class="detail">
         <div class="photo full" :style="{'background-color': photo.color}">
           <div class="loader hidden"><div></div><div></div><div></div></div>
           <img class="image" v-photo="photo.path">
         </div>
+        <div class="info">
+          <div v-if="photo.title"     v-text="photo.title"></div>
+          <div v-if="photo.title && photo.datetime" style="margin-left:-0.4em;">,</div>
+          <div v-if="photo.datetime"  v-text="dateformat(photo.datetime)"></div>
+        </div>
       </div>
   </div>
 
   <div class="gallery" v-if="viewmode">
-    <div id="scroller" class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
+    <div v-if="!is_mobile_device()" id="scroller" class="horizontal scroller">
       <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail" v-scrollable>
         <div class="photo full" @click="modal_open(photo)" :style="{'background-color': photo.color}">
           <div class="loader hidden"><div></div><div></div><div></div></div>
@@ -76,6 +81,19 @@
           </div>
           <div v-if="photo.datetime" class="meta"  v-text="dateformat(photo.datetime)"></div>
           <div v-if="!photo.title"   class="title" v-text="　"></div>
+        </div>
+      </div>
+    </div>
+    <div v-else class="vertical-gallery">
+      <div v-for="photo in current ? current.photos:[]" class="detail">
+        <div class="photo full" :style="{'background-color': photo.color}">
+          <div class="loader hidden"><div></div><div></div><div></div></div>
+          <img class="image" v-photo="photo.path">
+        </div>
+        <div class="info">
+          <div v-if="photo.title"     v-text="photo.title"></div>
+          <div v-if="photo.title && photo.datetime" style="margin-left:-0.4em;">,</div>
+          <div v-if="photo.datetime"  v-text="dateformat(photo.datetime)"></div>
         </div>
       </div>
     </div>

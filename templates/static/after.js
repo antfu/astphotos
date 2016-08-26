@@ -168,6 +168,10 @@ var vue_instance = new Vue({
       }
       if (old[0] === 'albums' && curr[0] !== 'albums')
         Vue.set(this.$data,'viewmode',0);
+    },
+
+    is_mobile_device: function() {
+      return $(window).width() < 767;
     }
   }
 });

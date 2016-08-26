@@ -1,7 +1,7 @@
 /* =============== Commons =============== */
 html, body, div
 {
-  font-family:  Arial, sans-serif, 'Microsoft Yahei', '微软雅黑', MingLiU;
+  font-family:  monospace, Arial, sans-serif, 'Microsoft Yahei', '微软雅黑', MingLiU;
   cursor: default;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -135,7 +135,7 @@ a:hover
 .nav *
 {
   color: #222;
-  vertical-align: top;
+  vertical-align: middle;
 }
 .nav .headers
 {
@@ -210,7 +210,7 @@ a:hover
 .menu .item.selected:before
 {
   content: "";
-  width: 0.2em;
+  width: 0.13em;
   height: 1em;
   vertical-align: middle;
   margin-right: 0.2em;
@@ -218,7 +218,7 @@ a:hover
   line-height: 1em;
   display: inline-block;
   text-align: center;
-  margin-top: -0.2em;
+  margin-top: -0.18em;
 }
 .menu .item.selected .album-title
 {
@@ -263,20 +263,43 @@ a:hover
   background-color: white;
 }
 
-/* =============== overview =============== */
-.overview
+/* =============== vertical-gallery =============== */
+.vertical-gallery
 {
 
 }
-.overview .photo
+.vertical-gallery .photo
 {
-  margin-bottom: 1em;
 }
-.overview .photo img
+.vertical-gallery .photo img
 {
   width: 100%;
 }
-
+.vertical-gallery .detail
+{
+  position: relative;
+}
+.vertical-gallery .detail .info
+{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.3));
+  padding-top: 1.4em;
+  padding-left: 0.9em;
+  padding-bottom: 0.2em;
+  font-size: 0.6em;
+  height: 2em;
+  margin-top: -2em;
+}
+.vertical-gallery .detail .info div
+{
+  display: inline-block;
+  color: white;
+  margin-right: 0.5em;
+  opacity: 0.8;
+}
 
 /* =============== Albums =============== */
 .albums
