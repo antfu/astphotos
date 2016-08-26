@@ -44,6 +44,15 @@
   </div>
   <div class="nav-space"></div>
 
+  <div class="overview" v-if="route('overview')">
+      <div v-for="photo in overview_album.photos || []" class="detail">
+        <div class="photo full" :style="{'background-color': photo.color}">
+          <div class="loader hidden"><div></div><div></div><div></div></div>
+          <img class="image" v-photo="photo.path">
+        </div>
+      </div>
+  </div>
+
   <div class="gallery" v-if="viewmode">
     <div id="scroller" class="scroller" :class="{horizontal:current.gallery_mode==0,vertical:current.gallery_mode==1}">
       <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail" v-scrollable>

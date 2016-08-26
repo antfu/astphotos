@@ -275,7 +275,7 @@ def copydir(src,dst,minify=False):
             if not os.path.exists(dst_path) or os.path.getmtime(src_path) != os.path.getmtime(dst_path):
                 if minify and not '.min.' in itemname and can_minify(src_path):
                     # minify
-                    log('  Minifing ',itemname, color='orange')
+                    log('  Minifing ',itemname, color='yellow')
                     auto_minify(src_path,dst_path)
                     shutil.copystat(src_path,dst_path)
                 else:
