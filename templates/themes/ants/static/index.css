@@ -275,11 +275,11 @@ a:hover
 {
   width: 100%;
 }
-.vertical-gallery .detail
+.vertical-gallery .photo-block
 {
   position: relative;
 }
-.vertical-gallery .detail .info
+.vertical-gallery .photo-block .info
 {
   position: absolute;
   bottom: 0;
@@ -293,14 +293,63 @@ a:hover
   height: 2em;
   margin-top: -2em;
 }
-.vertical-gallery .detail .info div
+.vertical-gallery .photo-block .info div
 {
   display: inline-block;
   color: white;
   margin-right: 0.5em;
   opacity: 0.8;
 }
+.vertical-gallery .photo-block .details
+{
+  padding: 0.5em 1em;
+  font-size: 0.8em;
+}
+.vertical-gallery .photo-block .details .basic
+{
+  padding: 1em 2em;
+}
+.vertical-gallery .photo-block .details .title
+{
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2em;
 
+}
+.vertical-gallery .photo-block .details .des
+{
+  text-align: center;
+  opacity: 0.7;
+  font-size: 0.9em;
+  padding-top: 0.1em;
+}
+.vertical-gallery .photo-block .details .meta
+{
+  font-style: italic;
+  text-align: center;
+  opacity: 0.7;
+}
+.vertical-gallery .photo-block .details table
+{
+  width: 100%;
+  color: rgb(128,128,128);
+  table-layout: fixed;
+  padding: 1em 2em;
+}
+.vertical-gallery .photo-block .details table tr
+{
+  height: 3em;
+}
+.vertical-gallery .photo-block .details table td i
+{
+  vertical-align: middle;
+}
+.vertical-gallery .photo-block .details table td div
+{
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 1em;
+}
 /* =============== Albums =============== */
 .albums
 {

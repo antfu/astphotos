@@ -45,7 +45,7 @@
   <div class="nav-space"></div>
 
   <div class="overview vertical-gallery" v-if="route('overview')">
-      <div v-for="photo in overview_album.photos || []" class="detail">
+      <div v-for="photo in overview_album.photos || []" class="photo-block">
         <div class="photo full" :style="{'background-color': photo.color}">
           <div class="loader hidden"><div></div><div></div><div></div></div>
           <img class="image" v-photo="photo.path">
@@ -59,7 +59,7 @@
   </div>
 
   <div class="gallery" v-if="viewmode">
-    <div v-if="!is_mobile_device()" id="scroller" class="horizontal scroller">
+    <!--<div v-if="!is_mobile_device()" id="scroller" class="horizontal scroller">
       <div v-for="photo in current ? current.photos:[]" track-by="id" class="detail" v-scrollable>
         <div class="photo full" @click="modal_open(photo)" :style="{'background-color': photo.color}">
           <div class="loader hidden"><div></div><div></div><div></div></div>
@@ -83,17 +83,46 @@
           <div v-if="!photo.title"   class="title" v-text="　"></div>
         </div>
       </div>
-    </div>
-    <div v-else class="vertical-gallery">
-      <div v-for="photo in current ? current.photos:[]" class="detail">
+    </div>-->
+    <div class="vertical-gallery">
+      <div v-for="photo in current ? current.photos:[]" class="photo-block" @click="toggle_info(photo)">
         <div class="photo full" :style="{'background-color': photo.color}">
           <div class="loader hidden"><div></div><div></div><div></div></div>
           <img class="image" v-photo="photo.path">
+          <div class="info" v-show="!photo.expend" transition="fade">
+            <div v-if="photo.title"     v-text="photo.title"></div>
+            <div v-if="photo.title && photo.datetime" style="margin-left:-0.4em;">,</div>
+            <div v-if="photo.datetime"  v-text="dateformat(photo.datetime)"></div>
+          </div>
         </div>
-        <div class="info">
-          <div v-if="photo.title"     v-text="photo.title"></div>
-          <div v-if="photo.title && photo.datetime" style="margin-left:-0.4em;">,</div>
-          <div v-if="photo.datetime"  v-text="dateformat(photo.datetime)"></div>
+        <div class="details" v-show="photo.expend" transition="fade-down">
+          <div class="basic" v-show="photo.title">
+            <div v-if="photo.title"    class="title"    v-text="photo.title"></div>
+            <div v-if="photo.des"      class="des"      v-text="photo.des"></div>
+            <div v-if="photo.photographer" class="meta">
+              <span class="label">by </span>
+              <a v-text="photo.photographer" target="_blank"
+                 :href="get_photographer_link(photo.photographer)"></a>
+            </div>
+          </div>
+          <table class="extra">
+            <tr>
+              <td><i class="material-icons">crop</i><div>${(photo.width+' x '+photo.height) || 'Unknown'}</div></td>
+              <td><i class="material-icons">access_time</i><div>${dateformat(photo.datetime) || 'Unknown'}</div></td>
+            </tr>
+            <tr>
+              <td><i class="material-icons">camera</i><div>${photo.aperture || 'Unknown'}</div></td>
+              <td><i class="material-icons">timelapse</i><div>${photo.exposure || 'Unknown'}</div></td>
+            </tr>
+            <tr>
+              <td><i class="material-icons">location_on</i><div>${photo.location || 'Unknown'}</div></td>
+              <td><i class="material-icons">nature_people</i><div>${photo.focal || 'Unknown'}</div></td>
+            </tr>
+            <tr>
+              <td><i class="material-icons">group</i><div>${photo.people || 'Unknown'}</div></td>
+              <td><i class="material-icons">color_lens</i><div>${(photo.color||'').toUpperCase() || 'Unknown'}</div></td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
@@ -129,36 +158,6 @@
   <div id="footer" class="footer" :class="{'semi-transparent':route('about')}">
     <a class="cell" :href="me_link" target="_blank" v-text="'&' + me"></a>
     <a class="cell" href="https://creativecommons.org/licenses/by-nc-nd/4.0" target="_blank">CC BY-NC-ND</a>
-  </div>
-
-  <div id="modal" class="modal" :class="{'hidden':viewmode!=2}">
-    <div v-if="viewmode==2" class="inner">
-      <img v-modal-image="current.modal" class="image">
-      <div class="left nav-zone"  @click="modal_next(-1)">
-        <div class="center">
-          <div class="icon button">
-            <i class="material-icons">navigate_before</i>
-          </div>
-        </div>
-      </div>
-      <div class="right nav-zone" @click="modal_next(1)">
-        <div class="center">
-          <div class="icon button">
-            <i class="material-icons">navigate_next</i>
-          </div>
-        </div>
-      </div>
-      <div class="close">
-        <div class="pages">
-          <div class="current" v-text="current.modal+1"></div>
-          <div class="divider">/</div>
-          <div class="total"   v-text="current.amount"></div>
-        </div>
-        <div class="icon button invert" @click="modal_close">
-          <i class="material-icons">clear</i>
-        </div>
-      </div>
-    </div>
   </div>
 
   <div class="background" :class="{hidden:!route('about')}">

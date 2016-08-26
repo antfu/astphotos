@@ -98,6 +98,7 @@ var vue_instance = new Vue({
 
     // COMONS
     dateformat: function(datestr) {
+      if (!datestr) return '';
       var monthNames = [
         "January", "February", "March",
         "April", "May", "June", "July",
@@ -172,6 +173,9 @@ var vue_instance = new Vue({
 
     is_mobile_device: function() {
       return $(window).width() < 767;
+    },
+    toggle_info: function(photo) {
+      Vue.set(photo,'expend',!photo.expend) ;
     }
   }
 });
