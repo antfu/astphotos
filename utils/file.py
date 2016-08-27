@@ -6,7 +6,8 @@ import json
 from os              import listdir, mkdir
 from os.path         import join, getmtime, exists, isfile
 from shutil          import rmtree, copy2, copystat
-from utils.minifier  import auto_minify
+from utils.minifier  import can_minify, auto_minify
+from utils.output    import log
 
 def read_json(filepath):
     with codecs.open(filepath, 'r', 'utf-8') as f:
