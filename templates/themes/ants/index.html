@@ -129,7 +129,7 @@
   </div>
 
   <div class="albums" v-show="(router[0] == 'albums') && !viewmode">
-    <div v-for="album in albums" track-by="id" @click="go('albums', album.name)" class="cover warpper">
+    <div v-for="album in albums" track-by="md5" @click="go('albums', album.name)" class="cover warpper">
       <div class="photo cover" :style="{'background-color':album.color}">
         <div class="loader hidden"><div></div><div></div><div></div></div>
         <div class="back-image" v-background-photo="album.cover"></div>

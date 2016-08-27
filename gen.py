@@ -58,8 +58,8 @@ def gen():
     log('- Copying completed', color='cyan')
 
     log('- Generating Structure tree...', color='cyan')
-    generate_and_save(True)
     #struct_tree = generate_struct_tree()
+    generate_and_save()
     log('- Generating completed', color='cyan')
 
     #json_path = pjoin(cfg.out_dir,cfg.static_dir,cfg.sturct_filename)

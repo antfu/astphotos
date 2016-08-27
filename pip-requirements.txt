@@ -3,6 +3,7 @@ jinja2
 pillow
 termcolor
 markdown
+progressbar2
 
 csscompressor
 jsmin

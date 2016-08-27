@@ -1,13 +1,12 @@
 from os           import listdir
-from os.path      import join, basename, getmtime, exists, isdir
+from os.path      import join, basename, getmtime, getctime, exists, isdir
 from random       import sample
-from utils.parser import infodict, marked
+from utils.parser import infodict, marked, md5, md5_text
 from utils.color  import rgb_to_hex
 from utils.file   import change_ext
 from core.image   import photo_info, get_exif
 from config       import configs as cfg
 from random       import choice
-from utils.parser import md5
 from PIL          import Image
 from core.image   import color_average
 
@@ -52,6 +51,7 @@ def load_album(album_path, cached=None):
     album.name = basename(album_path)
     #album.photographer = cfg.default_photographer
     album.gallery_mode = cfg.gallery_mode
+    album.md5 = md5_text(getctime(album_path))
 
     album._cover = cfg.default_cover_filename+'.'+cfg.src_file_type
     album._src_folder_name = basename(album_path)
@@ -77,11 +77,11 @@ def load_album(album_path, cached=None):
                     break
         album.photos.append(load_photo(photo_path,photo_cache))
 
-    if not album.cover:
-        # Random choice a photo as cover
-        choiced_cover = choice(album.photos)
-        album.cover = choiced_cover.path
-        album.color = choiced_cover.color
+    #if not album.cover:
+    #    # Random choice a photo as cover
+    #    choiced_cover = choice(album.photos)
+    #    album.cover = choiced_cover.path
+    #    album.color = choiced_cover.color
     # Photo orderby (can be override in album json file)
     if album._orderby:
         if album._orderby in Photo_Sort_Methods.keys():

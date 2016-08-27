@@ -42,3 +42,8 @@ def md5(fname):
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
+
+def md5_text(text):
+    hash_md5 = hashlib.md5()
+    hash_md5.update(str(text).encode())
+    return hash_md5.hexdigest()
