@@ -18,6 +18,13 @@ Photo_Sort_Methods = {
     'shuffle' : lambda photos: sample(photos, len(photos)),
     'custom'  : lambda photos: sorted(photos,key=lambda x: (x.index or -1))
 }
+Photo_Title_Splite_Placeholders = [
+    'title',
+    'des',
+    'photographer',
+    'location'
+]
+
 
 def load(dir_path, use_cache=True):
     cached = None
@@ -77,12 +84,6 @@ def load_album(album_path, cached=None):
                     break
         album.photos.append(load_photo(photo_path,photo_cache))
 
-    #if not album.cover:
-    #    # Random choice a photo as cover
-    #    choiced_cover = choice(album.photos)
-    #    album.cover = choiced_cover.path
-    #    album.color = choiced_cover.color
-    # Photo orderby (can be override in album json file)
     if album._orderby:
         if album._orderby in Photo_Sort_Methods.keys():
             album.photos = Photo_Sort_Methods[album._orderby](album.photos)

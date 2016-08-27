@@ -3,7 +3,10 @@
 import os
 import codecs
 import json
-import shutil
+from os              import listdir, mkdir
+from os.path         import join, getmtime, exists, isfile
+from shutil          import rmtree, copy2, copystat
+from utils.minifier  import auto_minify
 
 def read_json(filepath):
     with codecs.open(filepath, 'r', 'utf-8') as f:
@@ -20,9 +23,34 @@ def read_if_exists(path):
             return f.read()
     return None
 
-def clear_directory(path):
-    shutil.rmtree(path)
+def mkdir_if_not(dst_path):
+    if not exists(dst_path):
+        mkdir(dst_path)
 
+def clear_directory(path):
+    rmtree(path)
+
+def copydir(src,dst,minify=False):
+    if not exists(dst):
+        mkdir(dst)
+    for itemname in listdir(src):
+        src_path = join(src,itemname)
+        if isfile(src_path):
+            dst_path = join(dst,itemname)
+            # if the files modify time is the same, do not copy
+            if not exists(dst_path) or getmtime(src_path) != getmtime(dst_path):
+                if minify and not '.min.' in itemname and can_minify(src_path):
+                    # minify
+                    log('  Minifing ',itemname, color='yellow')
+                    auto_minify(src_path,dst_path)
+                    copystat(src_path,dst_path)
+                else:
+                    log('  Copying ',itemname)
+                    # use 'copy2' to keep file metadate
+                    copy2(src_path,dst_path)
+        else:
+            # isdir
+            copydir(src_path, join(dst,itemname), minify)
 
 
 def change_ext(filepath,ext):

@@ -1,6 +1,7 @@
 
 from os         import mkdir
 from os.path    import exists, join, basename
+from utils.file import mkdir_if_not
 from shutil     import copy2
 from config     import configs as cfg
 from core.image import image_resize, Image
@@ -31,10 +32,6 @@ def copy_albums(album_data, dst_path):
         album_data.cover = choiced_cover.path
         album_data.color = choiced_cover.color
 
-
-def mkdir_if_not(dst_path):
-    if not exists(dst_path):
-        mkdir(dst_path)
 
 def resize_and_copy(src_path, dst_path):
     # Lazy copy
