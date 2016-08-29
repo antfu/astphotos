@@ -1,6 +1,6 @@
 
 from os         import mkdir
-from os.path    import exists, join, basename
+from os.path    import exists, join, basename, getmtime
 from utils.file import mkdir_if_not
 from shutil     import copy2
 from config     import configs as cfg
@@ -9,6 +9,17 @@ from random     import choice
 
 def copy_images(data, dst_path):
     mkdir_if_not(dst_path)
+
+    copylist = ['portrait','background']
+    for name in copylist:
+        filename = '_{}.jpg'.format(name)
+        file_src_path = join(data._src_path,filename)
+        file_dst_path = join(dst_path,filename)
+        if exists(file_src_path):
+            if not exists(file_dst_path) or getmtime(file_src_path) != getmtime(file_dst_path):
+                copy2(file_src_path, file_dst_path)
+            data[name] = join('static', 'img', filename).replace('\\','/')
+
     for album in data.albums:
         album_out_path = join(dst_path, album._src_folder_name)
         copy_albums(album, album_out_path)
@@ -43,4 +54,4 @@ def resize_and_copy(src_path, dst_path):
         rim.save(dst_path)
     # Just copy
     else:
-        shutil.copy2(photo_path,dst_path)
+        copy2(photo_path,dst_path)

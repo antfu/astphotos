@@ -35,6 +35,7 @@ def load(dir_path, use_cache=True):
     root = infodict()
     root.update_json(join(dir_path,'_site.json'))
     root.about = marked(join(dir_path,'about.md'))
+    root._src_path = dir_path
     root.albums = []
 
     for album_name in listdir(dir_path):

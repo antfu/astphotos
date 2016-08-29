@@ -34,17 +34,20 @@
         <i class="material-icons">clear</i>
       </div>
     </div>
-    <div class="about" v-if="router[0] == 'about'">
+    <div class="about" v-show="router[0] == 'about'">
       <div class="headers">
         <div class="header"     v-text="title"></div>
         <div class="sub header" v-text="des"></div>
       </div>
-      <div class="markdown" v-html="about"></div>
+      <div class="content">
+        <div v-if="portrait" class="portrait"><img class="image" v-photo="portrait"></div>
+        <div class="markdown" v-html="about"></div>
+      </div>
     </div>
   </div>
   <div class="nav-space"></div>
 
-  <div class="overview vertical-gallery" v-if="route('overview')">
+  <div class="overview vertical-gallery" v-show="route('overview')">
       <div v-for="photo in overview_album.photos || []" class="photo-block">
         <div class="photo full" :style="{'background-color': photo.color}">
           <div class="loader hidden"><div></div><div></div><div></div></div>
@@ -160,8 +163,8 @@
     <a class="cell" href="https://creativecommons.org/licenses/by-nc-nd/4.0" target="_blank">CC BY-NC-ND</a>
   </div>
 
-  <div class="background" :class="{hidden:!route('about')}">
-    <div class="img" v-background-photo="'static/img/Stone/7123925381fab7e513dc52f46166e5cb.jpg'"></div>
+  <div v-if="background" class="background" :class="{hidden:!route('about')}">
+    <div class="img" v-background-photo="background"></div>
   </div>
   <div id="warning">
     <div class="vertical-centered">

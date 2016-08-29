@@ -10,6 +10,12 @@ from jinja2.environment import Environment
 
 class infodict(dict):
     def __setattr__(self,key,value):
+        if isinstance(value, dict) and not isinstance(value,infodict):
+            value = infodict(value)
+        elif isinstance(value, list):
+            for vi in value:
+                if isinstance(vi, dict) and not isinstance(vi,infodict):
+                    vi = infodict(vi)
         self[key]=value
 
     def __getattr__(self,key):
@@ -24,11 +30,18 @@ class infodict(dict):
             self.update(read_json(jsonpath))
 
     def remove_keys_startswith(self, starts='_'):
+        dels = []
         for k,v in self.items():
             if k.startswith(starts):
-                del(self[k])
+                dels.append(k)
             elif isinstance(v,infodict):
                 v.remove_keys_startswith(starts)
+            elif isinstance(v,list):
+                for vi in v:
+                    if isinstance(vi,infodict):
+                        vi.remove_keys_startswith(starts)
+        for k in dels:
+            del(self[k])
 
     def save(self, path, prefix=None):
         save_json(path, self, prefix)

@@ -235,13 +235,30 @@ a:hover
 }
 
 
-
+.about .content
+{
+  padding: 1em 1em 1em 0;
+}
 .about .markdown
 {
   font-size: 0.7em;
   opacity: 0.8;
+  max-width: 50em;
+  padding: 0;
+  display: inline-block;
+  vertical-align: top;
 }
-
+.about .portrait
+{
+  width: 10em;
+  display: inline-block;
+  margin: 0 2em 1.5em 0;
+  vertical-align: top;
+}
+.about .portrait img
+{
+  width: 100%;
+}
 
 .background
 {

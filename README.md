@@ -57,18 +57,20 @@ img
   - [ ] album [new|modify] [name]
   - [x] host
   - [ ] Interaction json generator
-- [ ] Javascripts decoupling
+- [x] Javascripts decoupling
 - [x] ~~Use EXIF-Thumbail to calc default color~~ Use random samples (for better performance)
 - [x] Folder copy
 - [x] Windows Unicode support
 - [x] Hash Router
 - [x] Minify
 - [x] Markdown
-- [ ] About portrait
-- [ ] Backgound set
+- [x] About portrait
+- [x] Backgound set
 - [ ] Photographer links dictionrary
-- [ ] Overview
-- [ ] Horizontal / Vertical view auto switch
+- [x] Overview
+- [x] Horizontal / Vertical view auto switch
 - [ ] Thumbails
 - [ ] Source->Target filepath table
-- [ ] Image data's cache
+- [x] Image data's cache
+- [ ] ProgessBar / Logs
+- [x] Imporve infodict
