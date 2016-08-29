@@ -10,12 +10,18 @@ from random     import choice
 def copy_images(data, dst_path):
     mkdir_if_not(dst_path)
 
-    copylist = ['portrait','background']
+    copylist = ['portrait','background','logo']
+    support_format = ['jpg','png']
     for name in copylist:
-        filename = '_{}.jpg'.format(name)
-        file_src_path = join(data._src_path,filename)
-        file_dst_path = join(dst_path,filename)
-        if exists(file_src_path):
+        is_exists = False
+        for frmt in support_format:
+            filename = '_{}.{}'.format(name,frmt)
+            file_src_path = join(data._src_path,filename)
+            file_dst_path = join(dst_path,filename)
+            if exists(file_src_path):
+                is_exists = True
+                break
+        if is_exists:
             if not exists(file_dst_path) or getmtime(file_src_path) != getmtime(file_dst_path):
                 copy2(file_src_path, file_dst_path)
             data[name] = join('static', 'img', filename).replace('\\','/')

@@ -21,7 +21,10 @@
 {% block body %}
   <div class="nav" :class="{'semi-transparent':route('about')}">
     <div class="menu">
-      <a  class="title" @click="go('overview')">${title}</a>
+      <a  class="title" @click="go('overview')">
+        <img  v-if="logo" class="logo" v-photo="logo"/>
+        <span v-else v-text="title"><span>
+      </a>
       <div class="item" @click="go('overview')" :class="{selected:route('overview')}">Overview</div>
       <div class="item" @click="go('albums')"   :class="{selected:route('albums')}"  >${viewmode? current.name: 'Albums'}</div>
       <div class="item" @click="go('about')"    :class="{selected:route('about')}"   >About</div>

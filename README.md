@@ -66,7 +66,7 @@ img
 - [x] Markdown
 - [x] About portrait
 - [x] Backgound set
-- [ ] Photographer links dictionrary
+- [x] Photographer links dictionrary
 - [x] Overview
 - [x] Horizontal / Vertical view auto switch
 - [ ] Thumbails
@@ -74,3 +74,5 @@ img
 - [x] Image data's cache
 - [ ] ProgessBar / Logs
 - [x] Imporve infodict
+- [ ] Photo details toggle
+- [x] Logo support

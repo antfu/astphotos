@@ -121,7 +121,7 @@ var vue_instance = new Vue({
     },
     get_photographer_link: function(photographer_name)
     {
-      return undefined;
+      return this.$data.photographer_links[photographer_name];
     },
 
     find_album_by_name: function(album_name) {

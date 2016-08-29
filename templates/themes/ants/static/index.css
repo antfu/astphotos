@@ -112,7 +112,7 @@ a:hover
 }
 .nav, .footer
 {
-  padding: 1em 3em 1em 3em;
+  padding: 1em 3em 1em 1em;
   background: rgba(255,255,255,0.90);
   transition: all 0.3s ease-in-out;
 }
@@ -197,6 +197,7 @@ a:hover
 {
   text-transform: uppercase;
   display: inline-block;
+  opacity: 1;
   margin-right: 3.2em;
 }
 .menu .item:hover
@@ -234,6 +235,11 @@ a:hover
   font-weight: bold;
 }
 
+.logo
+{
+  height: 3em;
+  margin: -1em 0;
+}
 
 .about .content
 {
@@ -821,10 +827,6 @@ a:hover
   .nav, .footer
   {
     padding: 1em 1.5em;
-  }
-  .menu .title
-  {
-    display: none;
   }
   .nav-space
   {
