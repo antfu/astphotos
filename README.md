@@ -76,4 +76,4 @@ img
 - [x] Imporve infodict
 - [x] Photo details toggle
 - [x] Logo support
-- [ ] Interactive Metadata Editor
+- [x] Interactive Metadata Editor

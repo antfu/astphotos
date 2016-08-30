@@ -5,18 +5,56 @@ function set_text($el,text) {
     return $el.addClass('not-set').text('not set');
 }
 
+function value_update(host, key, value) {
+  var path;
+  if (host && host._src_path)
+    path = host._src_path;
+  else
+    path = 'img\\_site.json';
+
+  $.ajax({
+    type:"POST",
+    url:'/api/json_update',
+    data:JSON.stringify({path:path,key:key,value:value}),
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+    success: function() {
+      console.log(path, key, value);
+    }
+  })
+}
+
 Vue.directive('editable',{
   twoWay: true,
   bind: function(text) {
-    text = text || '';
     var vmi = this;
-    var el = $(this.el).empty();
+
+    var expressions = vmi.expression.split('.');
+    var scope = vmi._scope || vm;
+    var host = scope;
+    var key = expressions[expressions.length-1];
+    for (var i=0; i<expressions.length-1; i++)
+      host = host[expressions[i]];
+
+    text = text || '';
+    var el = $(vmi.el).empty();
     var span = $('<span>').appendTo(el);
     var input = $('<input>').val(text).hide().appendTo(el);
 
     function submit() {
-      text = input.val();
-      vmi.set(text)
+      span.show();
+      input.hide();
+
+      var new_text = input.val();
+      if ((new_text+'') === (text+''))
+        return;
+      text = new_text
+      vmi.set(text);
+      set_text(span,text);
+      input.val(text);
+      value_update(host, key, text);
+    }
+    function cancel() {
       set_text(span,text).show();
       input.val(text).hide();
     }
@@ -27,8 +65,11 @@ Vue.directive('editable',{
       // Enter pressed
       if(e.which === 13)
         submit();
+      // Escape pressed
+      else if (e.which === 27)
+        cancel();
     });
-    el.on('dblclick',function() {
+    el.on('click',function() {
       span.hide();
       input.show().focus();
     });
@@ -42,7 +83,7 @@ Vue.directive('editable',{
   unbind: function() {
     var el = $(this.el);
     el.empty();
-  },
+  }
 });
 
 var vm = new Vue({
@@ -62,6 +103,10 @@ var vm = new Vue({
       return path.replace(/\\/g, '/');
     }
   }
+});
+
+Vue.directive('upwatch',{
+
 });
 
 

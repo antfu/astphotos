@@ -8,10 +8,12 @@ import tornado.ioloop
 import tornado.options
 import tornado.websocket
 
-from   os.path     import join
-from   gen         import cfg
-from   core.loader import load
-from   json        import dumps, loads
+from   os.path          import join, isdir
+from   gen              import cfg
+from   core.loader      import load
+from   json             import dumps, loads
+from   core.edit        import JsonEditor
+from   utils.file       import change_ext
 
 class index_handler(tornado.web.RequestHandler):
     def get(self):
@@ -22,6 +24,17 @@ class data_handler(tornado.web.RequestHandler):
         self.set_header('Content-Type', 'application/json')
         self.write(dumps(load(cfg.img_dir, True)))
 
+class api_handler(tornado.web.RequestHandler):
+    def post(self, action):
+        data = loads(self.request.body.decode('utf-8'))
+        if action == 'json_update':
+            if isdir(data['path']):
+                path = join(data['path'],'_album.json')
+            else:
+                path = change_ext(data['path'],'json')
+            _editor = JsonEditor(path)
+            _editor[data['key']] = data['value']
+
 
 def run():
     print('Start')
@@ -31,6 +44,7 @@ def run():
             (r'/?',index_handler),
             (r'/data',data_handler),
             (r'/img/(.*)', tornado.web.StaticFileHandler, {'path': cfg.img_dir}),
+            (r'/api/(.*)',api_handler),
         ],
         template_path=join('editor'),
         static_path=join('editor','static'),

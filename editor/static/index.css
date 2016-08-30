@@ -30,6 +30,7 @@ html, body, div, input
   opacity: 0.4;
   text-align: right;
   vertical-align: middle;
+  margin-right: 1em;
 }
 .editable
 {
@@ -51,6 +52,7 @@ html, body, div, input
 {
   border: none !important;
   outline: none;
+  padding: 0 0.4em;
   box-shadow:inset 0px 0px 0px 1px #777;
   -webkit-appearance: none;
 }
@@ -80,17 +82,25 @@ html, body, div, input
   opacity: 0.4;
 }
 
-.photo>*
+.photo
 {
-  display: inline-block;
-  vertical-align: top;
+  width: 60em;
+  box-shadow: 2px 2px 12px 0px rgba(50, 50, 50, 0.47);
+  margin: 1em 0;
+  display: flex;
 }
 .photo .preview
 {
-  width: 25%;
+  flex: 3;
+  margin-bottom: -4px;
+}
+.photo .meta
+{
+  flex: 1;
 }
 .photo .meta table
 {
+  width: 100%;
   padding: 1em;
 }
 .photo img
