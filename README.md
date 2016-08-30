@@ -74,5 +74,6 @@ img
 - [x] Image data's cache
 - [ ] ProgessBar / Logs
 - [x] Imporve infodict
-- [ ] Photo details toggle
+- [x] Photo details toggle
 - [x] Logo support
+- [ ] Interactive Metadata Editor

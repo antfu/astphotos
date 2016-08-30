@@ -101,7 +101,7 @@
             <div v-if="photo.datetime"  v-text="dateformat(photo.datetime)"></div>
           </div>
         </div>
-        <div class="details" v-show="photo.expend" transition="fade-down">
+        <div class="details" v-show="photo.expend">
           <div class="basic" v-show="photo.title">
             <div v-if="photo.title"    class="title"    v-text="photo.title"></div>
             <div v-if="photo.des"      class="des"      v-text="photo.des"></div>

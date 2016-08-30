@@ -175,6 +175,12 @@ var vue_instance = new Vue({
       return $(window).width() < 767;
     },
     toggle_info: function(photo) {
+      if (!photo.expend)
+      {
+        if (this.$data.expend_photo)
+          Vue.set(this.$data.expend_photo,'expend',false);
+        Vue.set(this.$data,'expend_photo',photo);
+      }
       Vue.set(photo,'expend',!photo.expend) ;
     }
   }
