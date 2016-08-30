@@ -29,7 +29,8 @@ def run():
     app = tornado.web.Application(
         handlers=[
             (r'/?',index_handler),
-            (r'/data',data_handler)
+            (r'/data',data_handler),
+            (r'/img/(.*)', tornado.web.StaticFileHandler, {'path': cfg.img_dir}),
         ],
         template_path=join('editor'),
         static_path=join('editor','static'),
