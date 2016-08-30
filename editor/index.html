@@ -45,7 +45,6 @@
   </div>
 
   <div class="albums relax card">
-    <div class="title">Albums</div>
     <div v-for="album in albums" @click="set_current(album)" class="album">
       <div class="name" v-text="album.name"></div>
       <div class="amount" v-text="album.amount + ' photos'"></div>

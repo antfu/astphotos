@@ -60,6 +60,7 @@ html, body, div, input
   padding: 0 0.4em;
   box-shadow:inset 0px 0px 0px 1px #777;
   -webkit-appearance: none;
+  width: 100%;
 }
 
 .not-set
@@ -94,7 +95,6 @@ html, body, div, input
 {
   vertical-align: top;
   padding: 0.1em;
-  margin-left: 1em;
 }
 .album div
 {
@@ -107,10 +107,11 @@ html, body, div, input
 
 .photo-column
 {
-  columns: 3 auto;
+  column-count: 3;
 }
 .photo
 {
+  break-inside: avoid;
   display: flex;
   vertical-align: top;
 }
