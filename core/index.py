@@ -6,7 +6,7 @@ from utils.file  import mkdir_if_not
 from config      import configs as cfg
 
 
-def load_and_save(src_path, out_path, use_cache=True):
+def load_and_save(src_path, out_path=None, use_cache=True):
     mkdir_if_not(out_path)
 
     data = load(src_path, use_cache)

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!--
+================== Astphotos Editor ==================
+| A static one-page photo gallery website generator |
+| Github: https://github.com/antfu/astphotos |
+| Author: Anthony Fu |
+================== Astphotos Editor ==================
+-->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Astphoto Editor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="static/index.css">
+  <script type="text/javascript" src="static/jquery-3.1.0.min.js"></script>
+  <script type="text/javascript" src="static/vue.min.js"></script>
+</head>
+
+<body id="root">
+  <div class="button" @click="update">Update</div><br><br>
+
+  <table>
+    <tbody>
+      <tr>
+        <td><div class="label">Title:</div></td>
+        <td><div class="editable" v-editable="title"></div></td>
+      </tr>
+      <tr>
+        <td><div class="label">Des:</div></td>
+        <td><div class="editable" v-editable="des"></div></td>
+      </tr>
+      <tr>
+        <td><div class="label">Me:</div></td>
+        <td><div class="editable" v-editable="me"></div></td>
+      </tr>
+      <tr>
+        <td><div class="label">Link:</div></td>
+        <td><div class="editable" v-editable="me_link"></div></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="albums">
+    <div v-for="album in albums" class="album">
+      <table>
+        <tbody>
+          <tr>
+            <td><div class="label">Album:</div></td>
+            <td><div class="editable" v-editable="album.name"></div></td>
+          </tr>
+          <tr>
+            <td><div class="label">Des:</div></td>
+            <td><div class="editable" v-editable="album.des"></div></td>
+          </tr>
+          <tr>
+            <td><div class="label">At:</div></td>
+            <td><div class="editable" v-editable="album.location"></div></td>
+          </tr>
+          <tr>
+            <td><div class="label">By:</div></td>
+            <td><div class="editable" v-editable="album.photographer"></div></td>
+          </tr>
+          <tr>
+            <td><div class="label">Amount:</div></td>
+            <td><div class="editable" v-text="album.amount"></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+
+<script type="text/javascript" src="static/index.js"></script>
+</html>

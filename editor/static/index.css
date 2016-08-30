@@ -1,0 +1,58 @@
+html, body, div, input
+{
+  font-family:  monospace, Arial, sans-serif, 'Microsoft Yahei', '微软雅黑', MingLiU !important;
+  cursor: default;
+}
+
+.button
+{
+  cursor: pointer;
+  display: inline-block;
+  border: 1px solid #333;
+}
+
+.label
+{
+  font-size: 10px;
+  opacity: 0.4;
+  text-align: right;
+  vertical-align: middle;
+}
+.editable
+{
+  min-width: 10em;
+  font-size: 10px;
+  vertical-align: middle;
+}
+.editable>*
+{
+  margin: 0;
+  vertical-align: middle;
+  border: none !important;
+}
+.editable span
+{
+}
+.editable input
+{
+  outline: none;
+  box-shadow:inset 0px 0px 0px 1px #777;
+  -webkit-appearance: none;
+}
+
+.albums
+{
+
+}
+.album
+{
+  display: inline-block;
+  vertical-align: top;
+}
+.album table
+{
+  display: inline-block;
+  border: 1px solid #444;
+  padding: 0.5em;
+  margin: 0.5em;
+}

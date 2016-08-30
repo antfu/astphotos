@@ -60,3 +60,6 @@ if __name__ == '__main__':
     elif argv[1] == 'host':
         import utils.webhost
         utils.webhost.run()
+    elif argv[1] == 'editor':
+        import editor.editor
+        editor.editor.run()
