@@ -14,13 +14,11 @@
   <link rel="stylesheet" href="static/index.css">
   <script type="text/javascript" src="static/jquery-3.1.0.min.js"></script>
   <script type="text/javascript" src="static/vue.min.js"></script>
+  <link rel="stylesheet" href="static/material-icons/material-icons.css">
 </head>
 
 <body id="root">
-  <span class="title">Double click to edit</span>
-  <div class="button" @click="update">Update</div><br><br>
-
-  <div>
+  <div class="site relax card">
     <div class="title">Site</div>
     <table>
       <tbody>
@@ -42,19 +40,20 @@
         </tr>
       </tbody>
     </table>
+    <br>
+    <div class="button" @click="update"><i class="material-icons">autorenew</i><br>Refresh</div>
   </div>
 
-  <div class="albums">
+  <div class="albums relax card">
     <div class="title">Albums</div>
-    <div v-for="album in albums" class="album">
+    <div v-for="album in albums" @click="set_current(album)" class="album">
       <div class="name" v-text="album.name"></div>
       <div class="amount" v-text="album.amount + ' photos'"></div>
-      <div class="button" @click="set_current(album)">Edit</div>
     </div>
   </div>
 
-  <div v-if="current" class="photos">
-    <div class="title" v-text="'Album: ' + current.name"></div>
+  <div v-if="current" class="photos relax card">
+    <div class="title" v-text="current.name"></div>
     <table>
       <tbody>
         <tr>
@@ -75,8 +74,10 @@
         </tr>
       </tbody>
     </table>
-    <br>
-    <div class="photo" v-for="photo in current.photos">
+  </div>
+
+  <div v-if="current" class="photo-column">
+    <div class="photo card" v-for="photo in current.photos">
       <div class="preview">
         <img :src="img_path(photo._src_path)"/>
       </div>
@@ -115,7 +116,6 @@
         </table>
       </div>
     </div>
-
   </div>
 
 
