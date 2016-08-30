@@ -34,14 +34,19 @@ html, body, div, input
 {
   opacity: 0.4;
   text-align: right;
-  vertical-align: middle;
-  margin-right: 1em;
+  vertical-align: top;
+  margin-right: 0.6em;
+}
+.label i
+{
+  font-size: 14px;
+  line-height: 14px;
+  margin-top: 2px;
+  display: block;
 }
 .editable
 {
-  min-width: 10em;
-  min-height: 1.4em;
-  vertical-align: middle;
+  vertical-align: top;
 }
 .editable>*
 {
@@ -64,7 +69,7 @@ html, body, div, input
 
 .not-set
 {
-  opacity: 0.25;
+  opacity: 0.2;
   font-style: italic;
 }
 
@@ -122,11 +127,11 @@ html, body, div, input
 .photo .meta
 {
   flex: 1;
+  padding: 0.8em 1em;
 }
 .photo .meta table
 {
   width: 100%;
-  padding: 1em;
 }
 .photo img
 {
