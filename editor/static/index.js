@@ -12,15 +12,14 @@ function value_update(host, key, value) {
   else
     path = 'img\\_site.json';
 
+  console.log(path+'  -> '+key+' : "'+value+'"');
+
   $.ajax({
     type:"POST",
     url:'/api/json_update',
     data:JSON.stringify({path:path,key:key,value:value}),
     contentType: "application/json; charset=utf-8",
-    dataType: "json",
-    success: function() {
-      console.log(path, key, value);
-    }
+    dataType: "json"
   })
 }
 
@@ -28,13 +27,6 @@ Vue.directive('editable',{
   twoWay: true,
   bind: function(text) {
     var vmi = this;
-
-    var expressions = vmi.expression.split('.');
-    var scope = vmi._scope || vm;
-    var host = scope;
-    var key = expressions[expressions.length-1];
-    for (var i=0; i<expressions.length-1; i++)
-      host = host[expressions[i]];
 
     text = text || '';
     var el = $(vmi.el).empty();
@@ -52,6 +44,13 @@ Vue.directive('editable',{
       vmi.set(text);
       set_text(span,text);
       input.val(text);
+
+      var expressions = vmi.expression.split('.');
+      var scope = vmi._scope || vm;
+      var host = scope;
+      var key = expressions[expressions.length-1];
+      for (var i=0; i<expressions.length-1; i++)
+        host = host[expressions[i]];
       value_update(host, key, text);
     }
     function cancel() {
