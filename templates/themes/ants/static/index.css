@@ -249,7 +249,7 @@ a:hover
 {
   font-size: 0.7em;
   opacity: 0.8;
-  max-width: 50em;
+  max-width: 30em;
   padding: 0;
   display: inline-block;
   vertical-align: top;
@@ -801,6 +801,19 @@ a:hover
   .vertical-gallery .photo
   {
     margin: 0;
+  }
+  .overlay
+  {
+    opacity: 0.8;
+  }
+  .overlay .info>*:not(.name):not(.des)
+  {
+    display: none;
+  }
+  .about .portrait
+  {
+    display: block;
+    width: 80%;
   }
 }
 

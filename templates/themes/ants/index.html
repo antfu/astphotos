@@ -144,7 +144,7 @@
             <div class="name"   v-text="album.name"></div>
             <p   class="des"    v-text="album.des" v-if="album.des"></p>
             <div class="dash"></div>
-            <p   class="amount" v-text="album.amount | pluralize 'photo'"></p>
+            <p   class="amount" v-text="album.amount + ' photo'"></p>
             <p v-if="album.photographer">
               <span class="label">{{cfg.lanuages.photographer}}</span>
               <span v-text="album.photographer"></span>
