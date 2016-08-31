@@ -23,6 +23,50 @@ function value_update(host, key, value) {
   })
 }
 
+
+function FileSelectHandler(e) {
+  console.log(e);
+	// cancel event and hover styling
+	FileDragHover(e);
+
+	// fetch FileList object
+	var files = e.target.files || e.originalEvent.dataTransfer.files;
+
+	// process all File objects
+	for (var i = 0, f; f = files[i]; i++) {
+    console.log(f);
+	}
+  return false;
+}
+function FileDragHover(e) {
+	e.stopPropagation();
+	e.preventDefault();
+	e.target.className = (e.type == "dragover" ? "hover" : "");
+  return false;
+}
+
+if (window.File && window.FileList && window.FileReader) {
+  var fileselect = $('#fileselect');
+	var filedrag = $('#file_upload');
+		//submitbutton = $id("submitbutton");
+
+	// file select
+	fileselect.on('change', FileSelectHandler);
+
+	// is XHR2 available?
+	var xhr = new XMLHttpRequest();
+	if (xhr.upload) {
+		// file drop
+		filedrag.on("dragover", FileDragHover);
+		filedrag.on("dragleave", FileDragHover);
+		filedrag.on("drop", FileSelectHandler);
+	}
+}
+else
+{
+  $('#file_upload').closest('.photo').remove();
+}
+
 Vue.directive('editable',{
   twoWay: true,
   bind: function(text) {
@@ -100,14 +144,12 @@ var vm = new Vue({
     },
     img_path: function(path) {
       return path.replace(/\\/g, '/');
+    },
+    new_album: function() {
+
     }
   }
 });
-
-Vue.directive('upwatch',{
-
-});
-
 
 $(function() {
   vm.update();

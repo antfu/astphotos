@@ -49,6 +49,8 @@
       <div class="name" v-text="album.name"></div>
       <div class="amount" v-text="album.amount + ' photos'"></div>
     </div>
+    <br>
+    <div class="button" @click="new_album"><i class="material-icons">add</i><br>New Album</div>
   </div>
 
   <div v-if="current" class="photos relax card">
@@ -75,8 +77,14 @@
     </table>
   </div>
 
-  <div v-if="current" class="photo-column">
-    <div class="photo card" v-for="photo in current.photos">
+  <div v-show="current" class="photo-column">
+    <div class="photo card">
+      <div id="file_upload">
+        Drag photos here to upload.
+        <input type="file" id="fileselect" multiple="multiple" />
+      </div>
+    </div>
+    <div class="photo card" v-for="photo in current?current.photos:[]">
       <div class="preview">
         <img :src="img_path(photo._src_path)"/>
       </div>
