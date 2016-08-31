@@ -48,7 +48,7 @@ img
 ```
 - Regenerate the website
 
-## Todo
+## Todos
 - **CLI**
   - [ ] init [name]
   - [ ] gen -static -index
@@ -56,6 +56,7 @@ img
   - [ ] album [new|modify] [name]
   - [x] host
   - [ ] Interaction json generator
+
 - **Generator**
   - [x] ~~Use EXIF-Thumbail to calc default color~~ Use random samples (for better performance)
   - [x] Folder copy
@@ -81,8 +82,9 @@ img
   - [x] Photo details toggle
 
 - **Interactive Metadata Editor**
+  - [x] Metadata Edit
   - [x] Photo uploading
   - [ ] Upload progress bar
   - [ ] New album
   - [ ] Update after uploads
-  - [ ] Reconsider UI
+  - [x] Reconsider UI

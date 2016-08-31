@@ -23,6 +23,25 @@ html, body, div, input
 {
 }
 
+.header
+{
+  margin: 1em 2em;
+  font-size: 20px;
+}
+.header .button
+{
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  margin-bottom: -0.2em;
+}
+.header i
+{
+  font-size: 20px;
+  line-height: 16px;
+}
+
+
 table
 {
   width: 90%;
@@ -53,12 +72,23 @@ table td:first-child
   margin-top: 5px;
   display: block;
 }
+.noeditable
+{
+  vertical-align: middle;
+  height: 16px;
+  margin: 0.2em 0.1em;
+  width: 100%;
+  line-height: 16px;
+  padding: 0.2em 0.4em;
+  opacity: 0.8;
+}
 .editable
 {
   vertical-align: top;
   height: 16px;
   margin: 0.2em 0.1em;
   width: 100%;
+  line-height: 16px;
 }
 .editable>*
 {
@@ -66,7 +96,6 @@ table td:first-child
   vertical-align: middle;
   height: 16px;
   padding: 0.2em 0.4em;
-  line-height: 16px;
 }
 .editable .text
 {
@@ -87,6 +116,12 @@ table td:first-child
   font-style: italic;
 }
 
+
+.grid
+{
+  display: flex;
+}
+
 .card
 {
   box-shadow: 2px 2px 8px 0px rgba(50, 50, 50, 0.15);
@@ -102,17 +137,19 @@ table td:first-child
 {
   display: inline-block;
   vertical-align: top;
+  flex: 1;
 }
 
 .albums
 {
   display: inline-block;
   vertical-align: top;
+  flex: 1;
 }
 .album
 {
   vertical-align: top;
-  padding: 0.1em;
+  padding: 0.3em 0.1em;
 }
 .album div
 {
@@ -121,6 +158,10 @@ table td:first-child
 .album .amount
 {
   opacity: 0.4;
+}
+.album-info
+{
+  flex: 3;
 }
 
 .photo-column
@@ -159,7 +200,7 @@ table td:first-child
   text-align: center;
   font-size: 16px;
   opacity: 0.4;
-  background: rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.04);
   transition: box-shadow 0.2s ease-in;
 }
 #file_upload.hover

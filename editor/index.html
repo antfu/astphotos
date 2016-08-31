@@ -18,63 +18,71 @@
 </head>
 
 <body id="root">
-  <div class="site relax card">
-    <div class="title">Site</div>
-    <table>
-      <tbody>
-        <tr>
-          <td><div class="label"><i class="material-icons">title</i></div></td>
-          <td><div class="editable" v-editable="title"></div></td>
-        </tr>
-        <tr>
-          <td><div class="label"><i class="material-icons">chat</i></div></td>
-          <td><div class="editable" v-editable="des"></div></td>
-        </tr>
-        <tr>
-          <td><div class="label"><i class="material-icons">person</i></div></td>
-          <td><div class="editable" v-editable="me"></div></td>
-        </tr>
-        <tr>
-          <td><div class="label"><i class="material-icons">link</i></div></td>
-          <td><div class="editable" v-editable="me_link"></div></td>
-        </tr>
-      </tbody>
-    </table>
-    <br>
-    <div class="button" @click="update"><i class="material-icons">autorenew</i><br>Refresh</div>
+  <div class="header">
+    Astphoto Editor
+    <div class="button" @click="update"><i class="material-icons">autorenew</i></div>
   </div>
-
-  <div class="albums relax card">
-    <div v-for="album in albums" @click="set_current(album)" class="album">
-      <div class="name" v-text="album.name"></div>
-      <div class="amount" v-text="album.amount + ' photos'"></div>
+  <div class="grid">
+    <div class="site relax card">
+      <div class="title">Site</div>
+      <table>
+        <tbody>
+          <tr>
+            <td><div class="label"><i class="material-icons">title</i></div></td>
+            <td><div class="editable" v-editable="title"></div></td>
+          </tr>
+          <tr>
+            <td><div class="label"><i class="material-icons">chat</i></div></td>
+            <td><div class="editable" v-editable="des"></div></td>
+          </tr>
+          <tr>
+            <td><div class="label"><i class="material-icons">person</i></div></td>
+            <td><div class="editable" v-editable="me"></div></td>
+          </tr>
+          <tr>
+            <td><div class="label"><i class="material-icons">link</i></div></td>
+            <td><div class="editable" v-editable="me_link"></div></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <br>
-    <div class="button" @click="new_album"><i class="material-icons">add</i><br>New Album</div>
-  </div>
 
-  <div v-if="current" class="photos relax card">
-    <div class="title" v-text="current.name"></div>
-    <table>
-      <tbody>
-        <tr>
-          <td><div class="label"><i class="material-icons">title</i></div></td>
-          <td><div class="editable" v-editable="current.name"></div></td>
-        </tr>
-        <tr>
-          <td><div class="label"><i class="material-icons">chat</i></div></td>
-          <td><div class="editable" v-editable="current.des"></div></td>
-        </tr>
-        <tr>
-          <td><div class="label"><i class="material-icons">location_on</i></div></td>
-          <td><div class="editable" v-editable="current.location"></div></td>
-        </tr>
-        <tr>
-          <td><div class="label"><i class="material-icons">photo_camera</i></div></td>
-          <td><div class="editable" v-editable="current.photographer"></div></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="albums relax card">
+      <div v-for="album in albums" @click="set_current(album)" class="album">
+        <div class="name" v-text="album.name"></div>
+        <div class="amount" v-text="album.amount + ' photos'"></div>
+      </div>
+      <br>
+      <div class="button" @click="new_album"><i class="material-icons">add</i><br>New Album</div>
+    </div>
+
+    <div class="album-info relax card">
+      <div class="title" v-show="current"  v-text="current.name"></div>
+      <table v-show="current" >
+        <tbody>
+          <tr>
+            <td><div class="label"><i class="material-icons">title</i></div></td>
+            <td><div class="editable" v-editable="current.name"></div></td>
+          </tr>
+          <tr>
+            <td><div class="label"><i class="material-icons">chat</i></div></td>
+            <td><div class="editable" v-editable="current.des"></div></td>
+          </tr>
+          <tr>
+            <td><div class="label"><i class="material-icons">location_on</i></div></td>
+            <td><div class="editable" v-editable="current.location"></div></td>
+          </tr>
+          <tr>
+            <td><div class="label"><i class="material-icons">photo_camera</i></div></td>
+            <td><div class="editable" v-editable="current.photographer"></div></td>
+          </tr>
+          <tr>
+            <td><div class="label"><i class="material-icons">photo_library</i></div></td>
+            <td><div class="noeditable" v-text="current.amount + ' photos'"></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div v-show="current" class="photo-column">
