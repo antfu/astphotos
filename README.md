@@ -49,31 +49,40 @@ img
 - Regenerate the website
 
 ## Todo
-- [x] Template/theme support
-- [ ] CLI support
+- **CLI**
   - [ ] init [name]
   - [ ] gen -static -index
   - [x] clear
   - [ ] album [new|modify] [name]
   - [x] host
   - [ ] Interaction json generator
-- [x] Javascripts decoupling
-- [x] ~~Use EXIF-Thumbail to calc default color~~ Use random samples (for better performance)
-- [x] Folder copy
-- [x] Windows Unicode support
-- [x] Hash Router
-- [x] Minify
-- [x] Markdown
-- [x] About portrait
-- [x] Backgound set
-- [x] Photographer links dictionrary
-- [x] Overview
-- [x] Horizontal / Vertical view auto switch
-- [ ] Thumbails
-- [ ] Source->Target filepath table
-- [x] Image data's cache
-- [ ] ProgessBar / Logs
-- [x] Imporve infodict
-- [x] Photo details toggle
-- [x] Logo support
-- [x] Interactive Metadata Editor
+- **Generator**
+  - [x] ~~Use EXIF-Thumbail to calc default color~~ Use random samples (for better performance)
+  - [x] Folder copy
+  - [x] Windows Unicode support
+  - [x] Template/theme support
+  - [x] Minify
+  - [x] Markdown
+  - [x] Overview
+  - [ ] Thumbails
+  - [x] Backgound set
+  - [x] About portrait
+  - [x] Photographer links dictionrary
+  - [ ] Source->Target filepath table
+  - [x] Image data's cache
+  - [ ] ProgessBar / Logs
+  - [x] Imporve infodict
+  - [x] Logo support
+
+- **Template**
+  - [x] Javascripts decoupling
+  - [x] Hash Router
+  - [x] Horizontal / Vertical view auto switch
+  - [x] Photo details toggle
+
+- **Interactive Metadata Editor**
+  - [x] Photo uploading
+  - [ ] Upload progress bar
+  - [ ] New album
+  - [ ] Update after uploads
+  - [ ] Reconsider UI

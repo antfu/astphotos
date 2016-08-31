@@ -14,6 +14,7 @@ from   core.loader      import load
 from   json             import dumps, loads
 from   core.edit        import JsonEditor
 from   utils.file       import change_ext
+from   codecs           import open
 
 class index_handler(tornado.web.RequestHandler):
     def get(self):
@@ -35,6 +36,17 @@ class api_handler(tornado.web.RequestHandler):
             _editor = JsonEditor(path)
             _editor[data['key']] = data['value']
 
+class upload_handler(tornado.web.RequestHandler):
+    def post(self):
+        fileinfo = self.request.body
+        fname = self.get_argument('filename', default=None)
+        if not fname:
+            self.finish('No filename')
+            return
+
+        with open(fname, 'wb') as f:
+            f.write(self.request.body)
+        self.finish(fname + ' is uploaded')
 
 def run():
     print('Start')
@@ -45,6 +57,7 @@ def run():
             (r'/data',data_handler),
             (r'/img/(.*)', tornado.web.StaticFileHandler, {'path': cfg.img_dir}),
             (r'/api/(.*)',api_handler),
+            (r'/upload',upload_handler),
         ],
         template_path=join('editor'),
         static_path=join('editor','static'),

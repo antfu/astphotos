@@ -23,7 +23,31 @@ function value_update(host, key, value) {
   	// process all File objects
   	for (var i = 0, f; f = files[i]; i++) {
       console.log(f);
+      var filepath = vm.$data.current._src_path + '/' + f.name;
+      $.ajax({
+        type: 'post',
+        url: '/upload?filename=' + filepath,
+        data: f,
+        success: function () {
+          console.log('Uploaded ['+filepath+']');
+        },
+        xhrFields: {
+          // add listener to XMLHTTPRequest object directly for progress (jquery doesn't have this yet)
+          onprogress: function (progress) {
+            // calculate upload progress
+            var percentage = Math.floor((progress.total / progress.totalSize) * 100);
+            // log upload progress to console
+            console.log('progress', percentage);
+            if (percentage === 100) {
+              console.log('DONE!');
+            }
+          }
+        },
+        processData: false,
+        contentType: f.type
+      });
   	}
+    $('#fileselect').val('');
     return false;
   }
   function FileDragHover(e) {
