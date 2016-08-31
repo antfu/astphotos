@@ -1,10 +1,3 @@
-function set_text($el,text) {
-  if (text)
-    return $el.removeClass('not-set').text(text);
-  else
-    return $el.addClass('not-set').text('not set');
-}
-
 function value_update(host, key, value) {
   var path;
   if (host && host._src_path)
@@ -23,71 +16,67 @@ function value_update(host, key, value) {
   })
 }
 
+(function InitFileSelect() {
+  function FileSelectHandler(e) {
+  	FileDragHover(e);
+  	var files = e.target.files || e.originalEvent.dataTransfer.files;
+  	// process all File objects
+  	for (var i = 0, f; f = files[i]; i++) {
+      console.log(f);
+  	}
+    return false;
+  }
+  function FileDragHover(e) {
+  	e.stopPropagation();
+  	e.preventDefault();
+  	e.target.className = (e.type == "dragover" ? "hover" : "");
+    return false;
+  }
 
-function FileSelectHandler(e) {
-  console.log(e);
-	// cancel event and hover styling
-	FileDragHover(e);
-
-	// fetch FileList object
-	var files = e.target.files || e.originalEvent.dataTransfer.files;
-
-	// process all File objects
-	for (var i = 0, f; f = files[i]; i++) {
-    console.log(f);
-	}
-  return false;
-}
-function FileDragHover(e) {
-	e.stopPropagation();
-	e.preventDefault();
-	e.target.className = (e.type == "dragover" ? "hover" : "");
-  return false;
-}
-
-if (window.File && window.FileList && window.FileReader) {
-  var fileselect = $('#fileselect');
-	var filedrag = $('#file_upload');
-		//submitbutton = $id("submitbutton");
-
-	// file select
-	fileselect.on('change', FileSelectHandler);
-
-	// is XHR2 available?
-	var xhr = new XMLHttpRequest();
-	if (xhr.upload) {
-		// file drop
-		filedrag.on("dragover", FileDragHover);
-		filedrag.on("dragleave", FileDragHover);
-		filedrag.on("drop", FileSelectHandler);
-	}
-}
-else
-{
-  $('#file_upload').closest('.photo').remove();
-}
+  if (window.File && window.FileList && window.FileReader) {
+    var fileselect = $('#fileselect');
+  	var filedrag = $('#file_upload');
+  	fileselect.on('change', FileSelectHandler);
+  	// is XHR2 available?
+  	var xhr = new XMLHttpRequest();
+  	if (xhr.upload) {
+  		filedrag.on("dragover", FileDragHover);
+  		filedrag.on("dragleave", FileDragHover);
+  		filedrag.on("drop", FileSelectHandler);
+  	}
+  }
+  else
+  {
+    $('#file_upload').closest('.photo').remove();
+  }
+})();
 
 Vue.directive('editable',{
   twoWay: true,
   bind: function(text) {
     var vmi = this;
-
-    text = text || '';
     var el = $(vmi.el).empty();
-    var span = $('<span>').appendTo(el);
-    var input = $('<input>').val(text).hide().appendTo(el);
 
-    function submit() {
-      span.show();
-      input.hide();
+    vmi.text = text || '';
+    vmi.span = $('<div>').addClass('text').appendTo(el);
+    vmi.input = $('<input>').val(vmi.text).hide().appendTo(el);
 
-      var new_text = input.val();
-      if ((new_text+'') === (text+''))
+    vmi.set_text = function()
+    {
+      if (vmi.text)
+        return vmi.span.removeClass('not-set').text(vmi.text);
+      else
+        return vmi.span.addClass('not-set').text('not set');
+    };
+    vmi.submit = function() {
+      vmi.escape();
+
+      var new_text = vmi.input.val();
+      if ((new_text+'') === (vmi.text+''))
         return;
-      text = new_text
-      vmi.set(text);
-      set_text(span,text);
-      input.val(text);
+      vmi.text = new_text;
+      vmi.set_text();
+      vmi.input.val(vmi.text);
 
       var expressions = vmi.expression.split('.');
       var scope = vmi._scope || vm;
@@ -95,33 +84,39 @@ Vue.directive('editable',{
       var key = expressions[expressions.length-1];
       for (var i=0; i<expressions.length-1; i++)
         host = host[expressions[i]];
-      value_update(host, key, text);
-    }
-    function cancel() {
-      set_text(span,text).show();
-      input.val(text).hide();
-    }
+      value_update(host, key, vmi.text);
+    };
+    vmi.cancel = function() {
+      vmi.set_text();
+      vmi.span.show();
+      vmi.input.val(vmi.text).hide();
+    };
+    vmi.edit = function() {
+      vmi.span.hide();
+      vmi.input.show().focus();
+    };
+    vmi.escape = function() {
+      vmi.span.show();
+      vmi.input.hide();
+    };
 
-    set_text(span,text);
-    input.on('blur', submit);
-    input.on('keypress', function (e) {
+    vmi.set_text();
+    vmi.input.on('blur', vmi.submit);
+    vmi.input.on('keydown', function (e) {
       // Enter pressed
       if(e.which === 13)
-        submit();
+        vmi.submit();
       // Escape pressed
       else if (e.which === 27)
-        cancel();
+        vmi.cancel();
     });
-    el.on('click',function() {
-      span.hide();
-      input.show().focus();
-    });
+    el.on('click', vmi.edit);
   },
   update: function(text) {
-    text = text || '';
-    var el = $(this.el);
-    set_text(el.find('span'),text);
-    el.find('input').val(text);
+    var vmi = this;
+    vmi.text = text || '';
+    vmi.set_text();
+    vmi.input.val(vmi.text);
   },
   unbind: function() {
     var el = $(this.el);

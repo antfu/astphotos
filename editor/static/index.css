@@ -23,6 +23,15 @@ html, body, div, input
 {
 }
 
+table
+{
+  width: 90%;
+}
+table td:first-child
+{
+  width: 16px;
+}
+
 .title
 {
   font-size: 12px;
@@ -39,32 +48,37 @@ html, body, div, input
 }
 .label i
 {
-  font-size: 14px;
-  line-height: 14px;
-  margin-top: 2px;
+  font-size: 16px;
+  line-height: 16px;
+  margin-top: 5px;
   display: block;
 }
 .editable
 {
   vertical-align: top;
+  height: 16px;
+  margin: 0.2em 0.1em;
+  width: 100%;
 }
 .editable>*
 {
   margin: 0;
   vertical-align: middle;
+  height: 16px;
+  padding: 0.2em 0.4em;
+  line-height: 16px;
 }
-.editable span
+.editable .text
 {
-  border-bottom: 1px solid #777;
-  width: 100%;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 .editable input
 {
-  border: none !important;
+  display: inline-block;
   outline: none;
-  padding: 0 0.4em;
-  box-shadow:inset 0px 0px 0px 1px #777;
-  width: auto;
+  border: 1px solid rgba(0,0,0,0.3);
+  border-radius: 3px;
+  width: 100%;
 }
 
 .not-set
@@ -140,15 +154,15 @@ html, body, div, input
 
 #file_upload
 {
-  padding: 5em -;
+  padding: 4em 5em;
   width: 100%;
   text-align: center;
   font-size: 16px;
   opacity: 0.4;
   background: rgba(0,0,0,0.1);
-  transition: opacity 0.2s ease-in;
+  transition: box-shadow 0.2s ease-in;
 }
 #file_upload.hover
 {
-  box-shadow: inset 0px 0px 24px 0px rgba(50, 50, 50, 0.25);
+  box-shadow: inset 0px 0px 30px 0px rgba(50, 50, 50, 0.3);
 }
