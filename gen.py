@@ -1,12 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
-import sys
-import codecs
 import datetime
-import jinja2
-import htmlmin
 
 from os.path            import join
 from config             import configs as cfg
