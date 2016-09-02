@@ -4,10 +4,18 @@ A static single-page photo gallery website generator
 ***The README file is still under construction...***
 
 ## Get started
-1. `gen.py init Astphoto` *( you can replace "Astphoto" to the name you like )*
-1. `gen.py create album "My Family"`
+
+#### Interactive Editor
+*The new Interactive Editor is now available!*
+1. Run command `astphoto.py editor`
+1. Open the browser and go to `http://localhost:81`
+1. Create albums, add photos, modify photos' metadata easily!
+
+#### CLI
+1. `astphoto.py init Astphoto` *( you can replace "Astphoto" to the name you like )*
+1. `astphoto.py create album "My Family"`
 1. Copy your photos/images to `img/my_family/`
-1. `gen.py gen`
+1. `astphoto.py gen`
 1. You will get the complied static files under `complied/`! You can put them into your static website host and enjoy it!
 
 ## Configure
@@ -74,6 +82,7 @@ img
   - [ ] ProgessBar / Logs
   - [x] Imporve infodict
   - [x] Logo support
+  - [ ] Auto create root folder if not exists
 
 - **Template**
   - [x] Javascripts decoupling
@@ -88,3 +97,4 @@ img
   - [ ] New album
   - [ ] Update after uploads
   - [x] Reconsider UI
+  - [ ] Configure settings in Editor
