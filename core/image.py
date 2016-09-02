@@ -4,21 +4,23 @@ import exifread
 import datetime
 import random
 import codecs
-from   PIL           import Image # PIL using Pillow (PIL fork)
-from   utils.parser  import infodict
+from   PIL import Image  # PIL using Pillow (PIL fork)
+from   utils.parser import infodict
 
-def color_average(im, sample = 100):
-    r,g,b = (0,0,0)
+
+def color_average(im, sample=100):
+    r, g, b = (0, 0, 0)
     w = im.size[0] - 1
     h = im.size[1] - 1
     for _ in range(sample):
-        tr, tg, tb = im.getpixel((random.randint(0,w),random.randint(0,h)))
+        tr, tg, tb = im.getpixel((random.randint(0, w), random.randint(0, h)))
         r += tr
         g += tg
         b += tb
-    return (int(r/sample),int(g/sample),int(b/sample))
+    return int(r / sample), int(g / sample), int(b / sample)
 
-def photo_info(im, average_sample = 100):
+
+def photo_info(im, average_sample=100):
     result = infodict()
     # PIL, Get image size and color
     result.width = im.size[0]
@@ -31,13 +33,14 @@ def photo_info(im, average_sample = 100):
         result.type = 1
     return result
 
-def image_resize(img, horizontal_size = None, vertical_size = None):
-    if horizontal_size == None and vertical_size == None:
-        horizontal_size = (2000,0)
-    if vertical_size == None and horizontal_size != None:
-        vertical_size = (horizontal_size[1],horizontal_size[0])
-    if horizontal_size == None and vertical_size != None:
-        horizontal_size = (vertical_size[1],vertical_size[0])
+
+def image_resize(img, horizontal_size=None, vertical_size=None):
+    if horizontal_size is None and vertical_size is None:
+        horizontal_size = (2000, 0)
+    if vertical_size is None and horizontal_size is not None:
+        vertical_size = (horizontal_size[1], horizontal_size[0])
+    if horizontal_size is None and vertical_size is not None:
+        horizontal_size = (vertical_size[1], vertical_size[0])
 
     size = img.size
     # deceide the photo is vertical or horizontal and choose the target size
@@ -67,22 +70,24 @@ def image_resize(img, horizontal_size = None, vertical_size = None):
         t_width = t_width * t_height / old_height
 
     # resize
-    resized_img = img.resize((int(t_width),int(t_height)))
+    resized_img = img.resize((int(t_width), int(t_height)))
     return resized_img
 
-def get_tags(img_path,details=False):
+
+def get_tags(img_path, details=False):
     # Open image file for reading (binary mode)
     with codecs.open(img_path, 'rb') as f:
         # Return Exif tags
         tags = exifread.process_file(f, details=details)
     return tags
 
+
 def get_exif(img_path):
     result = infodict()
     tags = get_tags(img_path)
 
     # Aperture
-    aperture = tags.get('EXIF FNumber',None)
+    aperture = tags.get('EXIF FNumber', None)
     if aperture:
         aperture = aperture.printable
         if '/' in aperture:
@@ -90,18 +95,18 @@ def get_exif(img_path):
             aperture = str(float(temp[0]) / float(temp[1]))
         result.aperture = aperture + 'f'
     # Exposure Time
-    exposure = tags.get('EXIF ExposureTime',None)
+    exposure = tags.get('EXIF ExposureTime', None)
     if exposure:
         exposure = exposure.printable
         if not '/' in exposure:
             exposure += 's'
         result.exposure = exposure
     # Tooken DateTime
-    dt = tags.get('EXIF DateTimeOriginal',None)
+    dt = tags.get('EXIF DateTimeOriginal', None)
     if dt:
-        result.datetime = datetime.datetime.strptime(dt.printable,'%Y:%m:%d %H:%M:%S').isoformat()
+        result.datetime = datetime.datetime.strptime(dt.printable, '%Y:%m:%d %H:%M:%S').isoformat()
 
-    title = tags.get('Image ImageDescription',None)
+    title = tags.get('Image ImageDescription', None)
     if title:
         result.title = title.printable
 

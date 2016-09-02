@@ -11,7 +11,8 @@ from utils.output       import log
 from utils.file         import copydir, mkdir_if_not
 from core.index         import load_and_save
 
-def gen():
+
+def run():
     log('*** Generator Start ***', color='cyan')
 
     log('- Copying static files...', color='cyan')
@@ -34,10 +35,12 @@ def copy_static():
     copydir(join(cfg.src_dir,cfg.static_dir),join(cfg.out_dir,cfg.static_dir),cfg.minify)
     copydir(join(cfg.src_dir,cfg.themes_dir,cfg.theme,cfg.static_dir),join(cfg.out_dir,cfg.static_dir),cfg.minify)
 
+
 def render_index():
     cfg.gentime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     index_path = join(cfg.out_dir,'index.html')
     template_render(index_path,cfg=cfg)
+
 
 def generate_and_save():
     load_and_save(cfg.img_dir, join(cfg.out_dir,cfg.static_dir))
@@ -47,7 +50,7 @@ if __name__ == '__main__':
 
     argv = sys.argv
     if len(argv) < 2 or argv[1] == 'gen':
-        gen()
+        run()
     elif argv[1] == 'clear':
         path = cfg.out_dir
         if input('Deleting "' + path + '", are you sure? [y/n]') == 'y':

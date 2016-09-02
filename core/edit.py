@@ -1,12 +1,12 @@
-
 from os.path import exists
-from codecs  import open
-from json    import dumps, loads
+from codecs import open
+from json import dumps, loads
+
 
 class JsonEditor:
     def __init__(self, path, data=None):
         self.path = path
-        if data == None:
+        if data is None:
             if exists(self.path):
                 with open(self.path, 'r', 'utf-8') as f:
                     data = loads(f.read())
@@ -23,7 +23,7 @@ class JsonEditor:
 
     def __delitem__(self, key):
         if key in self.data.keys():
-            del(self.data[key])
+            del (self.data[key])
             self.save()
 
     def save(self):
